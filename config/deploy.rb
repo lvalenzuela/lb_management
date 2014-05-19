@@ -3,7 +3,7 @@ require "rvm/capistrano"
 
 set :application, "Longbourn Management"
 set :repository,  "git@github.com:lvalenzuela/lb_management.git"
-set :deploy_to, "/home/ubuntu/lb_management"
+set :deploy_to, "/var/www/html/management_app"
 set :scm, :git
 set :branch, "master"
 set :user, "ubuntu"
@@ -14,7 +14,7 @@ set :deploy_via, :copy
 set :ssh_options, { :forward_agent => true }
 set :keep_releases, 5
 default_run_options[:pty] = true
-server "54.237.95.165", :app, :web, :db, :primary => true
+server "50.16.3.249", :app, :web, :db, :primary => true
 
 set :rvm_ruby_string, :local        # use the same ruby as used locally for deployment
 
@@ -25,10 +25,11 @@ namespace :deploy do
   task :start do ; end
   task :stop do ; end
 
-  #desc "Symlink shared config files"
-  #task :symlink_config_files do
-  #  run "#{ sudo } ln -s #{ deploy_to }/shared/config/database.yml #{ current_path }/config/database.yml"
-  #end
+  desc "Symlink shared config files"
+  task :symlink_config_files do
+    run "#{ sudo } ln -s #{ deploy_to }/shared/config/database.yml #{ current_path }/config/database.yml"
+    run "#{ sudo } ln -s #{ deploy_to }/shared/config/secrets.yml #{ current_path }/config/secrets.yml"
+  end
 
   # NOTE: I don't use this anymore, but this is how I used to do it.
   desc "Precompile assets after deploy"
@@ -45,6 +46,6 @@ namespace :deploy do
   end
 end
 
-#after "deploy", "deploy:symlink_config_files"
+after "deploy", "deploy:symlink_config_files"
 after "deploy", "deploy:restart"
 after "deploy", "deploy:cleanup"
