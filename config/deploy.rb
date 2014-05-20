@@ -9,7 +9,7 @@ set :branch, "master"
 set :user, "ubuntu"
 set :group, "deployers"
 set :use_sudo, false
-set :rails_env, "development"
+set :rails_env, "production"
 set :deploy_via, :copy
 set :ssh_options, { :forward_agent => true }
 set :keep_releases, 5
@@ -47,5 +47,6 @@ namespace :deploy do
 end
 
 after "deploy", "deploy:symlink_config_files"
+#after "deploy", "deploy:precompile_assets"
 after "deploy", "deploy:restart"
 after "deploy", "deploy:cleanup"

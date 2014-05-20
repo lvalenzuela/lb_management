@@ -17,4 +17,4 @@
 
 #ignorar archivos de configuracion
 /config/database.yml
-#/config/secrets.yml
+/config/secrets.yml
