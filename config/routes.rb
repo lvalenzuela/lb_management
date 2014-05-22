@@ -13,11 +13,12 @@ Rails.application.routes.draw do
 
   resources :reports do
     collection do
+      get 'clients'
       get 'courses'
-      post 'courses'
-      get 'course_members'
+      get 'members'
       get 'reporte_preliminar'
       get 'generate_report'
+      get 'generate_bulk_reports'
       get 'show'
     end
   end

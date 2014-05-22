@@ -2,6 +2,7 @@
 <!-- Barra de navegacion superior -->
 <%= render "shared_partials/navbar"%>
 
+
 <div class="container-fluid">
   <div class="row">
     <!-- Barra de navegacion izquierda -->
@@ -9,50 +10,36 @@
 
 
     <div class="col-sm-8 col-sm-offset-4 col-md-10 col-md-offset-2 main">
-      	<div class="row">
-	      	<h1 class="page-header">Cursos de Longbourn</h1>
-	      	<div class="col-md-4">
-		      	<%=form_tag('courses') do%>
-			  		<div class="input-group">
-				      <%=text_field_tag "course_name", nil, class: "form-control search-box", placeholder: "Buscar por nombre del Curso" %>
-				      <span class="input-group-btn">
-				      	<%=submit_tag "Buscar", class: "btn btn-default"%>
-				      </span>
-			  		</div>
-				<%end%>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-12 col-md-12">
-				<div class="table-responsive">
-					<table class="table table-striped courses-table">
-						<thead>
-							<tr>
-								<th>Nombre del Curso</th>
-								<th>Nombre Abreviado</th>
-								<th>Fecha de Inicio</th>
-							</tr>
-						</thead>
-						<tbody>
-
-						<%@courses.each do |course|%>
-							<tr>
-								<td><%=link_to course.fullname, :controller => 'reports', :action => 'course_members', :params => {:course_id => course.id}%></td>
-								<td><%=course.shortname%></td>
-								<td><%=DateTime.strptime(course.startdate.to_s,"%s")%></td>
-							</tr>
-						<%end%>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4 col-md-offset-4">
-				<%=paginate @courses %>
-			</div>
-		</div>
-		</div>
+    	<h1 class="page-header">Cursos Por Clientes - <%=@courses.first().institution%></h1>
+    	<div class="row">
+    		<div class="col-sm-3 col-sm-offset-9 col-md-3 col-md-offset-9">
+    			<%=form_for :course_filter, :url => 'courses', :html => {:id => "filter_form"}, method: 'get' do |f|%>
+	    			<%=f.hidden_field :institution, :value => @courses.first().institution %>
+	    			<label>Filtrar por</label>
+	    			<%=f.select :value, options_for_select({"Curso" => "1", "Departamento" => "2"}, @selected), {:include_blank => false} ,:onchange => "$('#filter_form').submit();"%>
+	    		<%end%>
+    		</div>
+    	</div>
+    	<div class="row">
+	     	<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Nombre</th>
+							<th>Cliente</th>
+							<th>Alumnos</th>
+						</tr>
+					</thead>
+					<%@courses.each do |course|%>
+						<tr>
+							<td><%=link_to course.fullname, :controller => "reports", :action => "members", :params => {:filter => @selected, :fullname => course.fullname, :institution => course.institution} %></td>
+							<td><%=course.institution%></td>
+							<td><%=course.alumnos%></td>
+						</tr>
+					<%end%>
+				</table>
+	     	</div>
+     	</div>
     </div>
   </div>
 </div>

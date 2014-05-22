@@ -1,54 +1,302 @@
 module ReportsHelper
+
+	def find_members(institution,group,filter)
+		if filter == "1" || filter.nil? #Curso
+			query = "select
+						course.id as courseid,
+						course.fullname as course_fullname,
+						user.id as userid,
+						user.firstname as firstname,
+						user.lastname as lastname,
+						user.institution as institution,
+						user.department as department
+					from mdl_user as user
+					left join(
+						select
+							r_assign.userid,
+							context.instanceid
+						from mdl_role_assignments as r_assign
+						inner join mdl_context as context
+							on r_assign.contextid = context.id and contextlevel = 50
+						where
+							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
+						on user.id = t.userid
+					left join mdl_course as course
+						on course.id = t.instanceid
+					where
+						user.institution is not null
+						and user.institution != ''
+						and user.institution like '%#{institution}%'
+						and user.deleted != 1
+						and course.fullname is not null
+						and course.fullname != ''
+						and course.fullname = '#{group}'
+					group by user.id"
+		elsif filter == "2" #Departamento
+			query = "select
+						course.id as courseid,
+						course.fullname as course_fullname,
+						user.id as userid,
+						user.firstname as firstname,
+						user.lastname as lastname,
+						user.institution as institution,
+						user.department as department
+					from mdl_user as user
+					left join(
+						select
+							r_assign.userid,
+							context.instanceid
+						from mdl_role_assignments as r_assign
+						inner join mdl_context as context
+							on r_assign.contextid = context.id and contextlevel = 50
+						where
+							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
+						on user.id = t.userid
+					left join mdl_course as course
+						on course.id = t.instanceid
+					where
+						user.institution is not null
+						and user.institution != ''
+						and user.institution like '%experian%'
+						and user.department = '#{group}'
+						and user.deleted != 1
+						and course.fullname is not null
+						and course.fullname != ''
+					group by user.id;"
+		end
+
+		members = User.find_by_sql(query)
+	end
+
+	def find_course_by_institution(institution, filter)
+		if filter == "1" || filter.nil? #Por Curso
+			query = "select
+						distinct(course.id) as id,
+						course.fullname as fullname,
+						user.institution as institution,
+						count(distinct(user.id)) as alumnos,
+						count(distinct(user.department)) as departments
+					from mdl_user as user
+					left join(
+						select
+							r_assign.userid,
+							context.instanceid
+						from mdl_role_assignments as r_assign
+						inner join mdl_context as context
+							on r_assign.contextid = context.id and contextlevel = 50
+						where
+							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
+						on user.id = t.userid
+					left join mdl_course as course
+						on course.id = t.instanceid
+					where
+						user.institution is not null
+						and user.institution != ''
+						and user.institution like '%#{institution}%'
+						and user.deleted != 1
+						and course.fullname is not null
+						and course.fullname != ''
+					group by course.id"
+		elsif filter == "2" #Por Departamento
+			query = "select
+						distinct(user.department) as fullname,
+						count(distinct(user.id)) as alumnos,
+						user.institution
+					from mdl_user as user
+					left join(
+						select
+							r_assign.userid,
+							context.instanceid
+						from mdl_role_assignments as r_assign
+						inner join mdl_context as context
+							on r_assign.contextid = context.id and contextlevel = 50
+						where
+							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
+						on user.id = t.userid
+					left join mdl_course as course
+						on course.id = t.instanceid
+					where
+						user.institution is not null
+						and user.institution != ''
+						and user.institution like '%#{institution}%'
+						and user.deleted != 1
+						and course.fullname is not null
+						and course.fullname != ''
+					group by user.department"
+		end
+		
+		course = Course.find_by_sql(query)
+	end
+
+	def find_institutions(institution_name)
+
+		if institution_name.nil?
+			query_conditions = ""
+		else
+			query_conditions = "and user.institution like '%#{institution_name}%'"
+		end
+
+		query = "select
+					user.institution as institution,
+					count(distinct(user.department)) as departments,
+					count(distinct(course.id)) as cursos,
+					count(distinct(user.id)) as alumnos
+				from mdl_user as user
+				left join(
+					select
+						r_assign.userid,
+						context.instanceid
+					from mdl_role_assignments as r_assign
+					inner join mdl_context as context
+						on r_assign.contextid = context.id and contextlevel = 50
+					where
+						r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
+					on user.id = t.userid
+				left join mdl_course as course
+					on course.id = t.instanceid
+				where
+					user.institution is not null
+					and user.institution != ''
+					#{query_conditions}
+					and user.deleted != 1
+					and course.fullname is not null
+					and course.fullname != ''
+				group by user.institution"
+		
+
+		institutions = User.find_by_sql(query)
+	end
+
 	def find_grades(user_id,course_id)
-		grades = GradeGrades.find_by_sql("	select 
-												avg(case when lower(gc.fullname) = '?' then gg.finalgrade end) as assistance,
-												avg(case when lower(gc.fullname) = 'homework' then gg.finalgrade end) as homework,
-												avg(case when lower(gc.fullname) = 'writing test' then gg.finalgrade end) as writing_test,
-												avg(case when lower(gc.fullname) = 'tests t.e.g.' then gg.finalgrade end) as tests_teg,
-												avg(case when lower(gc.fullname) = 'tests' then gg.finalgrade end) as tests,
-												avg(case when lower(gc.fullname) = 'oral tests' then gg.finalgrade end) as oral_tests
-											from mdl_grade_categories as gc
-											left join mdl_grade_items as gi
-												on gi.categoryid = gc.id 
-											left join mdl_grade_grades as gg
-												on gg.itemid = gi.id and gg.userid = 340
-											where 
-												gc.courseid = 137
-												and gc.depth = 2;")
+
+		query = "select 
+					avg(case when lower(gc.fullname) = '?' then gg.finalgrade end) as assistance,
+					avg(case when lower(gc.fullname) = 'homework' then gg.finalgrade end) as homework,
+					avg(case when lower(gc.fullname) = 'writing test' then gg.finalgrade end) as writing_test,
+					avg(case when lower(gc.fullname) = 'tests t.e.g.' then gg.finalgrade end) as tests_teg,
+					avg(case when lower(gc.fullname) = 'tests' then gg.finalgrade end) as tests,
+					avg(case when lower(gc.fullname) = 'oral tests' then gg.finalgrade end) as oral_tests
+				from mdl_grade_categories as gc
+				left join mdl_grade_items as gi
+					on gi.categoryid = gc.id 
+				left join mdl_grade_grades as gg
+					on gg.itemid = gi.id and gg.userid = 340
+				where 
+					gc.courseid = 137
+					and gc.depth = 2"
+
+		grades = GradeGrades.find_by_sql(query)
 		return grades.first()
 	end
 
+	def get_user_assignments(user_id, course_id)
+		query = "select
+					from_unixtime(assign_sub.timemarked) as entrega_alumno,
+					(case when assign.timedue != 0 then from_unixtime(assign.timedue) else 0 end) as fecha_entrega,
+					(case when assign.timeavailable != 0 then from_unixtime(assign.timeavailable) else 0 end) as fecha_habilitada,
+					assign_sub.grade as nota
+				from mdl_assignment_submissions as assign_sub
+				inner join mdl_assignment as assign
+					on assign_sub.assignment = assign.id
+				inner join mdl_user as user
+					on assign_sub.userid = user.id and user.id = #{user_id}
+				where
+					assign.course = #{course_id}"
+
+		assignments = User.find_by_sql(query)
+
+		ontime = 0
+		late = 0
+		assignments.each do |a|
+			if a.fecha_entrega != 0 && a.entrega_alumno <= a.fecha_entrega
+				ontime +=1 #tarea entregada a tiempo
+			elsif a.fecha_entrega != 0 && a.entrega_alumno > a.fecha_entrega
+				late +=1 #tarea entregada tarde
+			else #a.fecha_entrega == 0
+				#no se definio una fecha de entrega
+				#por lo tanto la tarea fue entregada a tiempo
+				ontime +=1
+			end
+		end
+
+		if ontime != 0 || late != 0 
+			ontime_pct = ontime*100/(late+ontime)
+		else
+			ontime_pct = -1 #no hay entregas registradas
+		end
+
+		return ontime_pct.round(2)
+	end
+
+	def get_last_access(user_id, course_id)
+		query = "select
+					from_unixtime(timeaccess) as last_access
+				from mdl_user_lastaccess
+				where
+					courseid = #{course_id}
+					and userid = #{user_id}"
+
+		last_access = User.find_by_sql(query)
+
+		if last_access.first().nil?
+			return "No hay accesos al curso registrados."
+		else
+			return last_access.first().last_access
+		end
+	end
+	
+	def get_resp_info(user_id, course_id)
+		query = "select
+					att_log.studentid as userid,
+					att_log.inclasswork as inclasswork,
+					att_log.attitude as attitude,
+					att_log.remarks as remarks
+				from mdl_attendance_log as att_log
+				inner join mdl_attendance_sessions as att_sess
+					on att_log.sessionid = att_sess.id
+					and att_sess.attendanceid in (select id from mdl_attforblock where course = #{course_id})
+					and att_sess.lasttaken is not null
+				where
+					att_log.inclasswork != 0
+					and att_log.attitude != 0
+					and att_log.studentid = #{user_id}"
+
+		resp_info = User.find_by_sql(query)
+	end
+
 	def get_att_sessions(course_id)
-		att_sessions = AttendanceSession.find_by_sql("	select
-															count(*) as sessions
-														from mdl_attendance_sessions
-														where
-															attendanceid in(select id from mdl_attforblock where course = #{course_id})")
+
+		query = "select count(*) as sessions
+				from mdl_attendance_sessions
+				where attendanceid in(select id from mdl_attforblock where course = #{course_id})"
+
+		att_sessions = AttendanceSession.find_by_sql(query)
 		return att_sessions.first().sessions
 	end
 
 	def user_att_info(user_id, course_id)
-		att_taken = Attforblock.find_by_sql("	select
-													count(distinct date) as clases_dictadas,
-													sum(case when acronym = 'P' then 1 else 0 end) as presente,
-													sum(case when acronym = 'A' then 1 else 0 end) as ausente,
-													sum(case when acronym = 'T' then 1 else 0 end) as tarde
-												from(
-												select
-													att_stat.acronym as acronym,
-													att_stat.description as description,
-													from_unixtime(att_log.timetaken) as date
-												from mdl_attendance_log as att_log
-												inner join mdl_attendance_statuses as att_stat
-													on att_log.statusid = att_stat.id
+		query = "select
+					count(distinct date) as clases_dictadas,
+					sum(case when acronym = 'P' then 1 else 0 end) as presente,
+					sum(case when acronym = 'A' then 1 else 0 end) as ausente,
+					sum(case when acronym = 'T' then 1 else 0 end) as tarde
+				from(
+				select
+					att_stat.acronym as acronym,
+					att_stat.description as description,
+					from_unixtime(att_log.timetaken) as date
+				from mdl_attendance_log as att_log
+				inner join mdl_attendance_statuses as att_stat
+					on att_log.statusid = att_stat.id
+				where
+					att_log.studentid = #{user_id}
+					and att_log.sessionid in (	select id
+												from mdl_attendance_sessions
 												where
-													att_log.studentid = #{user_id}
-													and att_log.sessionid in (	select
-																					id
-																				from mdl_attendance_sessions
-																				where
-																					lasttakenby != 0 
-																					and attendanceid in(select id from mdl_attforblock where course = #{course_id}))) as t")
+													lasttakenby != 0 
+													and attendanceid in(select id from mdl_attforblock where course = #{course_id}))) as t"
+
+		att_taken = Attforblock.find_by_sql(query)
 		return att_taken.first()
 	end
 

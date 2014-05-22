@@ -1,4 +1,4 @@
-class DocumentPdf < Prawn::Document
+class StudentReportPdf < Prawn::Document
 	include ReportsHelper
 
 	def initialize(params,view_context)
@@ -27,10 +27,11 @@ class DocumentPdf < Prawn::Document
 		curso = Course.where(:id => params[:course_id])
 		data = [["<b>Nombre</b>",usuario.first().firstname+' '+usuario.first().lastname],
 				["<b>Empresa</b>",usuario.first().institution],
+				["<b>Departamento</b>",usuario.first().department],
 				["<b>Curso</b>",curso.first().fullname],
 				["<b>Fecha</b>", Date.today()]]
 
-		table(data, :column_widths => {0 => 80, 1 => 300}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
+		table(data, :column_widths => {0 => 90, 1 => 300}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
 	end
 
 	def attendance(params)
@@ -114,7 +115,7 @@ class DocumentPdf < Prawn::Document
 	def indicadores_academicos(params)
 		grades = find_grades(params[:user_id],params[:course_id])
 
-		move_down 20
+		move_down 15
 		font "Helvetica", :style => :bold
 		text "2. Indicadores Academicos"
 		font "Helvetica", :style => :normal
@@ -136,15 +137,22 @@ class DocumentPdf < Prawn::Document
 		end
 	end
 
-	def responsabilidad(contenido)
-		move_down 20
+	def responsabilidad(params)
+		assignment_value = get_user_assignments(params[:user_id],params[:course_id])
+		if assignment_value != -1
+			assignment_txt = assignment_value+"% de las tareas entregadas a tiempo"
+		else
+			assignment_txt = "No hay entregas de tareas registradas a la fecha."
+		end
+
+		move_down 15
 		font "Helvetica", :style => :bold
 		text "3. Indicadores de Responsabilidad"
 		font "Helvetica", :style => :normal
 		move_down 10
 		data = []
 		data << ["<b>Trabajo en Clases</b>","<b>Entrega de Tareas Evaluadas</b>", "<b>Último acceso al Sitio Web Longbourn</b>"]
-		data << ["Suficiente, pero se recomienda mejorar", "90,0% de las tareas entregadas a tiempo", "1 vez por semana"]
+		data << ["Suficiente, pero se recomienda mejorar", assignment_txt, get_last_access(params[:user_id], params[:course_id])]
 		table(data, :column_widths => {0 => 166, 1 => 166, 2 => 166},
 			:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 			:position => :center) do
