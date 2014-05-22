@@ -75,33 +75,13 @@ class ReportsController < ApplicationController
 
 	def generate_bulk_reports
 		members = find_members(params[:institution], params[:fullname], params[:filter])
-
-		tmp_reports_path = "tmp_reports"
-
+		
 		filename = params[:institution]+"_"+params[:fullname]+"_"+Date.today().to_s+".zip"
-		temp_file_zip = Tempfile.new(filename)
 
-		begin
-			Zip::OutputStream.open(temp_file_zip) { |zos| }
+		zip_data = generate_reports_folder(members, filename)
+		
+		send_data(zip_data, :type => 'application/zip', :filename => filename)
 
-			Zip::File.open(temp_file_zip.path, Zip::File::CREATE) do |zip|
-				members.each do |member|
-					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+".pdf"
-					params = {:user_id => member.userid, :course_id => member.courseid}
-					pdf = StudentReportPdf.new(params,view_context)
-					pdf.render_file(tmp_reports_path+"/"+pdf_filename)
-					zip.add(pdf_filename, Rails.root.join(tmp_reports_path,pdf_filename))
-				end
-			end
-
-			zip_data = File.read(temp_file_zip.path)
-
-			send_data(zip_data, :type => 'application/zip', :filename => filename)
-		ensure
-			temp_file_zip.close
-			temp_file_zip.unlink
-		end
-		FileUtils.rm_rf(Dir.glob(Rails.root.join(tmp_reports_path,"*")))
 	end
 
 	def generate_report
@@ -117,4 +97,33 @@ class ReportsController < ApplicationController
 		end
 	end
 
+	private
+
+	def generate_reports_folder(members, filename)
+		
+		tmp_reports_path = "tmp_reports"
+		temp_file_zip = Tempfile.new(filename)
+
+		begin
+			Zip::OutputStream.open(temp_file_zip) { |zos| }
+
+			Zip::File.open(temp_file_zip.path, Zip::File::CREATE) do |zip|
+				members.each do |member|
+					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+".pdf"
+					params = {:user_id => member.userid, :course_id => member.courseid}
+					pdf = StudentReportPdf.new(params,view_context)
+					pdf.render_file(tmp_reports_path+"/"+pdf_filename)
+					zip.add(pdf_filename, Rails.root.join(tmp_reports_path,pdf_filename))
+				end
+			end
+
+			zip_data = File.read(temp_file_zip.path)			
+		ensure
+			temp_file_zip.close
+			temp_file_zip.unlink
+		end
+		FileUtils.rm_rf(Dir.glob(Rails.root.join(tmp_reports_path,"*")))
+
+		return zip_data
+	end
 end
