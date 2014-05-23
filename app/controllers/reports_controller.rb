@@ -1,7 +1,8 @@
 class ReportsController < ApplicationController
-	require 'zip'
+	before_filter :check_authentication
 	protect_from_forgery
 	include ReportsHelper
+	require 'zip'
 	
 	def index
 		if !session[:user_id].nil?
@@ -98,6 +99,12 @@ class ReportsController < ApplicationController
 	end
 
 	private
+
+	def check_authentication
+	    if session[:user_id].nil?
+	      redirect_to :controller => "main", :action => "index"
+	    end
+	end
 
 	def generate_reports_folder(members, filename)
 		

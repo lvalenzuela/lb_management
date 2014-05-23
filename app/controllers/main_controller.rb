@@ -1,5 +1,7 @@
 class MainController < ApplicationController
   protect_from_forgery
+  require 'bcrypt'
+
   def index
     if !session[:user_id].nil?
       redirect_to :action => 'control_panel'
@@ -7,14 +9,25 @@ class MainController < ApplicationController
   end
 
   def login
-    user = ManagementUser.where(:username => params[:username], :password => Digest::MD5.hexdigest(params[:password]))
+    user = User.where(:username => params[:username]).first()
     if user.blank?
-      flash[:notice] = "Datos incorrectos, por favor vuelve a intentarlo."
-      redirect_to :action => 'index'
+      flash[:notice] = "Nombre de usuario incorrecto, por favor vuelve a intentarlo"
+      redirect_to :action => "index"
+    elsif !user.username.end_with?("@longbourn.cl")
+      flash[:notice] = "Usuario no autorizado para ingresar al sistema"
+      redirect_to :action => "index" 
     else
-      session[:user_id] = user.first().id
-      session[:username] = user.first().username
-      redirect_to :action => 'control_panel'
+      fixed_pass = user.password
+      fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
+      password = BCrypt::Password.new(user.password)
+      if password == params[:password]
+        session[:user_id] = user.id
+        session[:username] = user.username
+        redirect_to :action => 'control_panel'
+      else
+        flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
+        redirect_to :action => "index"
+      end
     end
   end
 

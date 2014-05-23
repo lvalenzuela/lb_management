@@ -1,15 +1,15 @@
-    <div class="container" id="login-container">
+<div class="container" id="login-container">
 
-      <%=form_tag('/main/login', class: 'form-signin') do %>
-        <h2 class="form-signin-heading">Login Admins</h2>
-        <%=text_field_tag "username", nil, class: "form-control", placeholder: "Nombre de Usuario"%>
-        <%=password_field_tag "password", nil, class: "form-control", placeholder: "Password"%> 
-        <label class="checkbox">
-         <!-- <input type="checkbox" value="remember-me"> Remember me -->
-        </label>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-          <%if flash[:notice]%>
-            <p class="error-msg"><%=flash[:notice]%></p>
-          <%end%>
+  <%=form_tag('/main/login', class: 'form-signin') do %>
+    <h2 class="form-signin-heading">Login Admins</h2>
+    <%=text_field_tag "username", nil, class: "form-control", placeholder: "Nombre de Usuario"%>
+    <%=password_field_tag "password", nil, class: "form-control", placeholder: "Password"%> 
+    <label class="checkbox">
+     <!-- <input type="checkbox" value="remember-me"> Remember me -->
+    </label>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+      <%if flash[:notice]%>
+        <p class="error-msg"><%=flash[:notice]%></p>
       <%end%>
-    </div> <!-- /container -->
+  <%end%>
+</div> <!-- /container -->
