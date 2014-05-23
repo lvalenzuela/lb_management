@@ -1,15 +1,41 @@
-<div class="container" id="login-container">
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Please Sign In</h3>
+                </div>
+                <div class="panel-body">
+                    <%=form_tag('/main/login', role: 'form') do %>
+                        <fieldset>
+                            <div class="form-group">
+                                <%=text_field_tag "username", nil, class: "form-control", placeholder: "Nombre de Usuario"%>
+                            </div>
+                            <div class="form-group">
+                                <%=password_field_tag "password", nil, class: "form-control", placeholder: "Password"%>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                </label>
+                            </div>
+                            <!-- Change this to a button or input when using this as a form -->
+                            <button class="btn btn-lg btn-success btn-block" type="submit">Login</button>
+                            <%if flash[:notice]%>
+                              <p class="error-msg"><%=flash[:notice]%></p>
+                            <%end%>
+                        </fieldset>
+                    <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-  <%=form_tag('/main/login', class: 'form-signin') do %>
-    <h2 class="form-signin-heading">Login Admins</h2>
-    <%=text_field_tag "username", nil, class: "form-control", placeholder: "Nombre de Usuario"%>
-    <%=password_field_tag "password", nil, class: "form-control", placeholder: "Password"%> 
-    <label class="checkbox">
-     <!-- <input type="checkbox" value="remember-me"> Remember me -->
-    </label>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-      <%if flash[:notice]%>
-        <p class="error-msg"><%=flash[:notice]%></p>
-      <%end%>
-  <%end%>
-</div> <!-- /container -->
+<!-- Core Scripts - Include with every page -->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+<!-- SB Admin Scripts - Include with every page -->
+<script src="js/sb-admin.js"></script>

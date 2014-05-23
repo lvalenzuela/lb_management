@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root 'main#index'
   resources :main do
     collection do
+      get 'user_profile'
       get 'index'
       get 'control_panel'
       get 'horarios'
@@ -13,6 +14,7 @@ Rails.application.routes.draw do
 
   resources :reports do
     collection do
+      get 'index'
       get 'clients'
       get 'courses'
       get 'members'

@@ -1,6 +1,7 @@
 class MainController < ApplicationController
   protect_from_forgery
   require 'bcrypt'
+  layout "dashboard"
 
   def index
     if !session[:user_id].nil?
@@ -38,6 +39,9 @@ class MainController < ApplicationController
 
   def control_panel
     
+  end
+
+  def user_profile
   end
 
   def under_construction

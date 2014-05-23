@@ -1,6 +1,7 @@
 class ReportsController < ApplicationController
 	before_filter :check_authentication
 	protect_from_forgery
+	layout "dashboard", except:[:index]
 	include ReportsHelper
 	require 'zip'
 	
@@ -21,8 +22,8 @@ class ReportsController < ApplicationController
 	end
 
 	def courses
-		@courses = find_course_by_institution(params[:course_filter][:institution], params[:course_filter][:value])
-		@selected = params[:course_filter][:value]
+		@courses = find_course_by_institution(params[:institution], params[:course_filter])
+		@selected = params[:course_filter]
 	end
 
 	def members
