@@ -191,7 +191,8 @@ module ReportsHelper
 
 	def get_user_assignments(user_id, course_id)
 		query = "select
-					from_unixtime(assign_sub.timemarked) as entrega_alumno,
+					user.id as userid,
+					(case when assign_sub.timemarked != 0 then from_unixtime(assign_sub.timemarked) else 0 end) as entrega_alumno,
 					(case when assign.timedue != 0 then from_unixtime(assign.timedue) else 0 end) as fecha_entrega,
 					(case when assign.timeavailable != 0 then from_unixtime(assign.timeavailable) else 0 end) as fecha_habilitada,
 					assign_sub.grade as nota
@@ -207,15 +208,17 @@ module ReportsHelper
 
 		ontime = 0
 		late = 0
-		assignments.each do |a|
-			if a.fecha_entrega != 0 && a.entrega_alumno <= a.fecha_entrega
-				ontime +=1 #tarea entregada a tiempo
-			elsif a.fecha_entrega != 0 && a.entrega_alumno > a.fecha_entrega
-				late +=1 #tarea entregada tarde
-			else #a.fecha_entrega == 0
-				#no se definio una fecha de entrega
-				#por lo tanto la tarea fue entregada a tiempo
-				ontime +=1
+		if !assignments.empty?
+			assignments.each do |a|
+				if a.fecha_entrega != 0 && a.entrega_alumno <= a.fecha_entrega
+					ontime +=1 #tarea entregada a tiempo
+				elsif a.fecha_entrega != 0 && a.entrega_alumno > a.fecha_entrega
+					late +=1 #tarea entregada tarde
+				else #a.fecha_entrega == 0
+					#no se definio una fecha de entrega
+					#por lo tanto la tarea fue entregada a tiempo
+					ontime +=1
+				end
 			end
 		end
 

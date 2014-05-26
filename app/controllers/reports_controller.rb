@@ -66,15 +66,14 @@ class ReportsController < ApplicationController
 	end
 
 	def user_report
-		user = User.where(:id => params[:user_id])
+		user = User.where(:id => params[:user_id]).first()
 
 		respond_to do |format|
 			format.html
 			format.pdf do
 				pdf = StudentReportPdf.new(params,view_context)
-	  			send_data pdf.render, filename: user.first().firstname+"_"+user.first().lastname+"_"+Date.today().to_s+".pdf",
-					                   type:"application/pdf",
-					                   disposition: "inline"
+	  			send_data pdf.render, filename: user.firstname+"_"+user.lastname+"_"+Date.today().to_s+".pdf",
+	  								 type: "application/pdf"
 			end
 		end
 	end
@@ -110,7 +109,7 @@ class ReportsController < ApplicationController
 
 			Zip::File.open(temp_file_zip.path, Zip::File::CREATE) do |zip|
 				members.each do |member|
-					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+".pdf"
+					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+"_"+Time.now().to_s+".pdf"
 					temp_files << pdf_filename
 					params = {:user_id => member.userid, :course_id => member.courseid}
 					pdf = StudentReportPdf.new(params,view_context)

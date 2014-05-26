@@ -23,8 +23,8 @@
                             <thead>
                                 <tr>
 									<th>Empresa</th>
-									<th># Cursos Impartidos</th>
-									<th># Alumnos</th>
+									<th style="text-align: center"># Cursos Impartidos</th>
+									<th style="text-align: center"># Alumnos</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,8 +37,8 @@
 	                            	<%end%>
 									<tr class="<%=row_class%> gradeA">
 										<td><%=link_to client.institution, :controller => 'reports', :action => 'courses', :params => {:group_filter => "1", :institution => client.institution}%></td>
-										<td><%=client.cursos%></td>
-										<td><%=client.alumnos%></td>
+										<td style="text-align: center"><%=client.cursos%></td>
+										<td style="text-align: center"><%=client.alumnos%></td>
 									</tr>
 									<%row_counter +=1%>
                             	<%end%>
