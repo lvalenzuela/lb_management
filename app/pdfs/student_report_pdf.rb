@@ -4,22 +4,33 @@ class StudentReportPdf < Prawn::Document
 	def initialize(params,view_context)
 		super(:margin => 50)
 		font "Helvetica"
-		header
-		move_down 20
-		general_data(params)
-		attendance(params)
-		indicadores_academicos(params)
-		#responsabilidad(params)
-		footer
+		repeat :all do
+			bounding_box [bounds.left, bounds.top + 30], :width  => bounds.width do
+				header
+			end
+
+			bounding_box [bounds.left, bounds.bottom], :width  => bounds.width do
+				footer
+			end
+		end
+
+		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 60) do
+			font "Helvetica", :size => 12
+			general_data(params)
+			attendance(params)
+			indicadores_academicos(params)
+			responsabilidad(params)
+		end
+
+		number_pages "<page> de <total>",:at => [480, 0], size:9
 	end
 	#para definir templates ver la seccion de "repeatable_content" del manual
 
 	def header
 		logo_path = Rails.root.join('app','assets','images','longbourn_logo.png')
-		image logo_path, :width => 70, :height => 45, :at => [0,720]
-		move_down 10
-		draw_text "Informe de Desempeño de Alumnos", :at => [100, 700], size:12
-		draw_text "Longbourn Institute", :at => [100, 685], size:12
+		image logo_path, :width => 70, :height => 45
+		draw_text "Informe de Desempeño de Alumnos", :at => [100,25], size:12
+		draw_text "Longbourn Institute", :at => [100,10], size:12
 	end
 
 	def general_data(params)
@@ -39,17 +50,16 @@ class StudentReportPdf < Prawn::Document
 		user_att = user_att_info(params[:user_id],params[:course_id])
 
 		att_pct = user_att.presente.to_f*100/user_att.clases_dictadas.to_f
-
 		att_pct = att_pct.round(2)
 
-		move_down 20
+		move_down 10
 		font "Helvetica", :style => :bold
 		text "1. Indicadores de Asistencia"
 		font "Helvetica", :style => :normal
 		move_down 10
 		data = []	#datos de la tabla
 		data << ["<b>Clases Presente</b>", "<b>Clases Ausente</b>", "<b>Atrasos<br>(Sobre 15 minutos)</b>", "<b>Clases Realizadas</b>", "<b>Porcentaje de Asistencia<b>"]	#encabezado de la tabla
-		data << [user_att.presente.to_s, user_att.ausente.to_s, user_att.tarde.to_s, user_att.presente.to_s+" de "+att_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+		data << [user_att.presente.to_s, user_att.ausente.to_s, user_att.tarde.to_s, user_att.clases_dictadas.to_s+" de "+att_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 100, 3 => 100, 4 => 100}, 
 					:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
@@ -91,7 +101,11 @@ class StudentReportPdf < Prawn::Document
 		end
 
 		inatt_limit = att_sessions/4
-		inatt_total = (user_att.ausente+user_att.tarde)
+		if !user_att.ausente.nil? && !user_att.tarde.nil?
+			inatt_total = (user_att.ausente+user_att.tarde)
+		else
+			inat_total = 0
+		end
 
 		move_down 20
 		font "Helvetica", :style => :bold
@@ -101,13 +115,15 @@ class StudentReportPdf < Prawn::Document
 			text "Para hacer uso de la Franquicia Sence, al final del curso la suma de porcentaje de inasistencias y atrasos debe ser menor o igual al 25%(<b>"+inatt_limit.to_s+" clases</b> en el caso de este curso de ingles).", :inline_format => true
 		end
 		move_down 10
-		if inatt_total < inatt_limit
-			indent(60) do
-				text "Si el alumno se ausenta o se atrasa <b>"+(inatt_limit - inatt_total).to_s+" veces</b> en lo que resta del curso, no cumplirá con el 75% de asistencia exigido por la Franquicia Sence", :inline_format => true
-			end
-		else
-			indent(60) do
-				text "El alumno actualmente no cumple con el mínimo de 75% de asistencia exigido por la Franquicia Sence (<b>"+inatt_total.to_s+"</b> inasistencias y atrasos)", :inline_format => true
+		if !inatt_total.nil? && !inatt_limit.nil?
+			if inatt_total < inatt_limit
+				indent(60) do
+					text "Si el alumno se ausenta o se atrasa <b>"+(inatt_limit - inatt_total).to_s+" veces</b> en lo que resta del curso, no cumplirá con el 75% de asistencia exigido por la Franquicia Sence", :inline_format => true
+				end
+			else
+				indent(60) do
+					text "El alumno actualmente no cumple con el mínimo de 75% de asistencia exigido por la Franquicia Sence (<b>"+inatt_total.to_s+"</b> inasistencias y atrasos)", :inline_format => true
+				end
 			end
 		end
 	end
@@ -140,7 +156,7 @@ class StudentReportPdf < Prawn::Document
 	def responsabilidad(params)
 		assignment_value = get_user_assignments(params[:user_id],params[:course_id])
 		if assignment_value != -1
-			assignment_txt = assignment_value+"% de las tareas entregadas a tiempo"
+			assignment_txt = assignment_value.round(2).to_s+"% de las tareas entregadas a tiempo"
 		else
 			assignment_txt = "No hay entregas de tareas registradas a la fecha."
 		end
@@ -152,7 +168,7 @@ class StudentReportPdf < Prawn::Document
 		move_down 10
 		data = []
 		data << ["<b>Trabajo en Clases</b>","<b>Entrega de Tareas Evaluadas</b>", "<b>Último acceso al Sitio Web Longbourn</b>"]
-		data << ["Suficiente, pero se recomienda mejorar", assignment_txt, get_last_access(params[:user_id], params[:course_id])]
+		data << [get_resp_info(params[:user_id], params[:course_id]), assignment_txt, get_last_access(params[:user_id], params[:course_id])]
 		table(data, :column_widths => {0 => 166, 1 => 166, 2 => 166},
 			:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 			:position => :center) do

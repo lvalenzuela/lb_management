@@ -225,7 +225,7 @@ module ReportsHelper
 			ontime_pct = -1 #no hay entregas registradas
 		end
 
-		return ontime_pct.round(2)
+		return ontime_pct
 	end
 
 	def get_last_access(user_id, course_id)
@@ -238,10 +238,10 @@ module ReportsHelper
 
 		last_access = User.find_by_sql(query)
 
-		if last_access.first().nil?
+		if last_access.empty?
 			return "No hay accesos al curso registrados."
 		else
-			return last_access.first().last_access
+			return last_access.first().last_access.strftime("%d/%m/%Y %I:%M %p")
 		end
 	end
 	
@@ -262,6 +262,37 @@ module ReportsHelper
 					and att_log.studentid = #{user_id}"
 
 		resp_info = User.find_by_sql(query)
+
+		avg_count = 0
+		raw_inclasswork = 0
+		#se eliminan los 0, dado que son inasistencias o datos faltantes
+		resp_info.each do |resp|
+			if resp.inclasswork != 0
+				raw_inclasswork += resp.inclasswork
+				avg_count +=1
+			end
+		end
+
+		if avg_count == 0
+			return "No hay datos suficientes registrados a la fecha"
+		else
+			inclasswork = raw_inclasswork/avg_count
+			case inclasswork.round
+			when 1
+				return "Mal trabajo en clases"
+			when 2
+				return "Insuficiente"
+			when 3
+				return "Suficiente, pero se recomienda mejorar"
+			when 4
+				return "Buen trabajo en clases"
+			when 5
+				return "Excelente trabajo en clases"
+			end
+		end
+		
+
+
 	end
 
 	def get_att_sessions(course_id)
@@ -304,7 +335,7 @@ module ReportsHelper
 		#transforma notas desde una escala de 0 a 61 a la escala chilena
 		scale = ['1,0','1,1','1,2','1,3','1,4','1,5','1,6','1,7','1,8','1,9','2,0','2,1','2,2','2,3','2,4','2,5','2,6','2,7','2,8','2,9','3,0','3,1','3,2','3,3','3,4','3,5','3,6','3,7','3,8','3,9','4,0','4,1','4,2','4,3','4,4','4,5','4,6','4,7','4,8','4,9','5,0','5,1','5,2','5,3','5,4','5,5','5,6','5,7','5,8','5,9','6,0','6,1','6,2','6,3','6,4','6,5','6,6','6,7','6,8','6,9','7,0']
 		if grade.nil?
-			return "Aún no se han realizado."
+			return "-"
 		else
 			if grade >= 0 && grade <= 61
 				scale[grade-1]

@@ -14,7 +14,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-files-o fa-fw"></i> <%=@courses.first().institution%>
+                    <i class="fa fa-files-o fa-fw"></i> <%=@groups.first().institution%>
                     <div class="pull-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -22,9 +22,9 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu pull-right" role="menu">
-                                <li><%=link_to "Filtrar por Curso", :controller => "reports", :action => "courses", :params => {:institution => @courses.first().institution, :course_filter => "1"}%>
+                                <li><%=link_to "Filtrar por Curso", :controller => "reports", :action => "courses", :params => {:institution => @groups.first().institution, :group_filter => "1"}%>
                                 </li>
-                                <li><%=link_to "Filtrar por Departamento", :controller => "reports", :action => "courses", :params => {:institution => @courses.first().institution, :course_filter => "2"}%>
+                                <li><%=link_to "Filtrar por Departamento", :controller => "reports", :action => "courses", :params => {:institution => @groups.first().institution, :group_filter => "2"}%>
                                 </li>
                             </ul>
                         </div>
@@ -37,22 +37,24 @@
                             <thead>
                                 <tr>
 									<th>Nombre</th>
-									<th>Cliente</th>
-									<th># Alumnos</th>
+									<th style="text-align: center">Cliente</th>
+									<th style="text-align: center"># Alumnos</th>
+                                    <th style="text-align: center">Reporte</th>
                                 </tr>
                             </thead>
                             <tbody>
 			                    <%row_counter = 1%>
-								<%@courses.each do |course|%>
+								<%@groups.each do |group|%>
 				                	<%if row_counter%2 == 1%>
 				                		<%row_class = "odd"%>
 				                	<%else%>
 				                		<%row_class = "even"%>
 				                	<%end%>
 									<tr class="<%=row_class%> gradeA">
-										<td><%=link_to course.fullname, :controller => "reports", :action => "members", :params => {:filter => @selected, :fullname => course.fullname, :institution => course.institution} %></td>
-										<td><%=course.institution%></td>
-										<td><%=course.alumnos%></td>
+										<td><%=link_to group.fullname, :controller => "reports", :action => "members", :params => {:filter => @selected, :fullname => group.fullname, :institution => group.institution} %></td>
+										<td style="text-align: center"><%=group.institution%></td>
+										<td style="text-align: center"><%=group.alumnos%></td>
+                                        <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), :controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.fullname, :filter => @selected, :format => "pdf"}%></td>
 									</tr>
 									<%row_counter +=1%>
 								<%end%>

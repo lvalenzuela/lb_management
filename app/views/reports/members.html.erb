@@ -22,12 +22,11 @@
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
-									<th>ID Usuario</th>
 									<th>Nombre</th>
-									<th>Empresa</th>
-									<th>Departamento</th>
+									<th style="text-align: center">Empresa</th>
+									<th style="text-align: center">Departamento</th>
 									<th>Curso</th>
-									<th>Reporte</th>
+									<th style="text-align: center">Reporte</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,12 +38,11 @@
 				                		<%row_class = "even"%>
 				                	<%end%>
 									<tr class="<%=row_class%> gradeA">
-										<td style="text-align: center"><%=member.userid%></td>
 										<td><%=member.firstname+" "+member.lastname%></td>
-										<td><%=member.institution%></td>
-										<td><%=member.department%></td>
+										<td style="text-align: center"><%=member.institution%></td>
+										<td style="text-align: center"><%=member.department%></td>
 										<td><%=member.course_fullname%></td>
-										<td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), :controller => "reports", :action => "generate_report", :params => {:user_id => member.userid, :course_id => member.courseid, :format => "pdf"}%></td>
+										<td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), :controller => "reports", :action => "user_report", :params => {:user_id => member.userid, :course_id => member.courseid, :format => "pdf"}%></td>
 									</tr>
 									<%row_counter +=1%>
 								<%end%>
@@ -52,7 +50,7 @@
                         </table>
                     </div>
                     <div class="well">
-						<%=link_to 'Descargar Todos', {:controller => "reports", :action => "generate_bulk_reports", :params => {:institution => @group[:institution], :fullname => @group[:fullname], :filter => @group[:filter]}}, :class => "btn btn-default btn-lg btn-block", :target => "_blank"%>
+						<%=link_to 'Descargar Todos', {:controller => "reports", :action => "bulk_user_reports", :params => {:institution => @group[:institution], :fullname => @group[:fullname], :filter => @group[:filter]}}, :class => "btn btn-default btn-lg btn-block", :target => "_blank"%>
                     </div>
                 </div>
                 <!-- /.panel-body -->

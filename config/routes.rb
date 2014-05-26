@@ -19,8 +19,9 @@ Rails.application.routes.draw do
       get 'courses'
       get 'members'
       get 'reporte_preliminar'
-      get 'generate_report'
-      get 'generate_bulk_reports'
+      get 'user_report'
+      get 'bulk_user_reports'
+      get 'group_report'
       get 'show'
     end
   end
