@@ -42,6 +42,7 @@ class MainController < ApplicationController
   end
 
   def user_profile
+    
   end
 
   def under_construction
@@ -49,15 +50,6 @@ class MainController < ApplicationController
   end
 
   def show
-  	@texto = 'hola mundo.'
-  	respond_to do |format|
-  		format.html
-  		format.pdf do
-  			pdf = DocumentPdf.new(@texto,view_context)
-  			send_data pdf.render,  filename:"test_pdf_document.pdf",
-                               type:"application/pdf", 
-                               disposition:"inline"
-  		end
-  	end
+
   end
 end

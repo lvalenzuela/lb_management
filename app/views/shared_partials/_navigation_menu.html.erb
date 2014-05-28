@@ -131,9 +131,20 @@
                 <li>
                     <%=link_to "<i class='fa fa-files-o fa-fw'></i> Reportes".html_safe, :controller => "reports", :action => "clients"%>
                 </li>
-                    <li>
-                        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Extras<span class="fa arrow"></span></a>
-                    </li>
+                <li>
+                    <%=link_to "<i class='fa fa-bell fa-fw'></i> Solicitudes".html_safe, :controller => "requests", :action => "index"%>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Extras<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="#">Placeholder 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Placeholder 2</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
             <!-- /#side-menu -->
         </div>

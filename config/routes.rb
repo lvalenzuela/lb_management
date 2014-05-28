@@ -26,6 +26,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :requests do
+    collection do
+      get 'index'
+    end
+  end
+
   resources :users do
     collection do 
       get 'index'
