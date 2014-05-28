@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140528150020) do
+ActiveRecord::Schema.define(version: 20140528222838) do
 
   create_table "adodb_logsql", force: true do |t|
     t.datetime "created",                                                    null: false
@@ -57,6 +57,20 @@ ActiveRecord::Schema.define(version: 20140528150020) do
     t.datetime "updated_at"
   end
 
+  create_table "management_request_statuses", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "management_requests", force: true do |t|
+    t.integer  "userid"
+    t.string   "subject",    limit: 100
+    t.integer  "priority"
+    t.text     "request"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "management_user_reports", force: true do |t|
     t.integer  "userid"
     t.string   "firstname",           limit: 45
@@ -82,10 +96,8 @@ ActiveRecord::Schema.define(version: 20140528150020) do
     t.float    "grade_tests_teg"
     t.float    "grade_tests"
     t.float    "grade_oral_tests"
-    t.datetime "entrega_alumno"
-    t.datetime "duedate"
-    t.datetime "enabled_date"
-    t.float    "nota"
+    t.integer  "assignments_ontime"
+    t.integer  "total_assignments"
     t.datetime "created_at"
   end
 

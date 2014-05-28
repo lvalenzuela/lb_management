@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   resources :requests do
     collection do
       get 'index'
+      post 'create_request'
+      get 'new_request'
     end
   end
 
