@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140515183348) do
+ActiveRecord::Schema.define(version: 20140528150020) do
 
   create_table "adodb_logsql", force: true do |t|
     t.datetime "created",                                                    null: false
@@ -55,6 +55,38 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   create_table "grade_grades", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "management_user_reports", force: true do |t|
+    t.integer  "userid"
+    t.string   "firstname",           limit: 45
+    t.string   "lastname",            limit: 45
+    t.string   "institution",         limit: 45
+    t.string   "department",          limit: 45
+    t.string   "username",            limit: 45
+    t.integer  "courseid"
+    t.string   "coursename",          limit: 45
+    t.integer  "roleid"
+    t.string   "rolename",            limit: 20
+    t.datetime "lastaccess"
+    t.integer  "total_sessions"
+    t.integer  "current_sessions"
+    t.integer  "p_sessions"
+    t.integer  "a_sessions"
+    t.integer  "t_sessions"
+    t.integer  "avg_inclasswork"
+    t.integer  "avg_attitude"
+    t.float    "grade_assistance"
+    t.float    "grade_homework"
+    t.float    "grade_writing_tests"
+    t.float    "grade_tests_teg"
+    t.float    "grade_tests"
+    t.float    "grade_oral_tests"
+    t.datetime "entrega_alumno"
+    t.datetime "duedate"
+    t.datetime "enabled_date"
+    t.float    "nota"
+    t.datetime "created_at"
   end
 
   create_table "management_users", force: true do |t|
@@ -237,6 +269,45 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   add_index "mdl_assignfeedback_comments", ["assignment"], name: "mdl_assicomm_ass_ix", using: :btree
   add_index "mdl_assignfeedback_comments", ["grade"], name: "mdl_assicomm_gra_ix", using: :btree
 
+  create_table "mdl_assignfeedback_editpdf_annot", force: true do |t|
+    t.integer "gradeid", limit: 8,          default: 0,       null: false
+    t.integer "pageno",  limit: 8,          default: 0,       null: false
+    t.integer "x",       limit: 8,          default: 0
+    t.integer "y",       limit: 8,          default: 0
+    t.integer "endx",    limit: 8,          default: 0
+    t.integer "endy",    limit: 8,          default: 0
+    t.text    "path",    limit: 2147483647
+    t.string  "type",    limit: 10,         default: "line"
+    t.string  "colour",  limit: 10,         default: "black"
+    t.integer "draft",   limit: 1,          default: 1,       null: false
+  end
+
+  add_index "mdl_assignfeedback_editpdf_annot", ["gradeid", "pageno"], name: "mdl_assieditanno_grapag_ix", using: :btree
+  add_index "mdl_assignfeedback_editpdf_annot", ["gradeid"], name: "mdl_assieditanno_gra_ix", using: :btree
+
+  create_table "mdl_assignfeedback_editpdf_cmnt", force: true do |t|
+    t.integer "gradeid", limit: 8,          default: 0,       null: false
+    t.integer "x",       limit: 8,          default: 0
+    t.integer "y",       limit: 8,          default: 0
+    t.integer "width",   limit: 8,          default: 120
+    t.text    "rawtext", limit: 2147483647
+    t.integer "pageno",  limit: 8,          default: 0,       null: false
+    t.string  "colour",  limit: 10,         default: "black"
+    t.integer "draft",   limit: 1,          default: 1,       null: false
+  end
+
+  add_index "mdl_assignfeedback_editpdf_cmnt", ["gradeid", "pageno"], name: "mdl_assieditcmnt_grapag_ix", using: :btree
+  add_index "mdl_assignfeedback_editpdf_cmnt", ["gradeid"], name: "mdl_assieditcmnt_gra_ix", using: :btree
+
+  create_table "mdl_assignfeedback_editpdf_quick", force: true do |t|
+    t.integer "userid",  limit: 8,          default: 0,        null: false
+    t.text    "rawtext", limit: 2147483647,                    null: false
+    t.integer "width",   limit: 8,          default: 120,      null: false
+    t.string  "colour",  limit: 10,         default: "yellow"
+  end
+
+  add_index "mdl_assignfeedback_editpdf_quick", ["userid"], name: "mdl_assieditquic_use_ix", using: :btree
+
   create_table "mdl_assignfeedback_file", force: true do |t|
     t.integer "assignment", limit: 8, default: 0, null: false
     t.integer "grade",      limit: 8, default: 0, null: false
@@ -310,12 +381,14 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   add_index "mdl_assignsubmission_onlinetext", ["submission"], name: "mdl_assionli_sub_ix", using: :btree
 
   create_table "mdl_attendance_log", force: true do |t|
-    t.integer "sessionid", limit: 8,   default: 0, null: false
-    t.integer "studentid", limit: 8,   default: 0, null: false
-    t.integer "statusid",  limit: 8,   default: 0, null: false
-    t.string  "statusset", limit: 100
-    t.integer "timetaken", limit: 8,   default: 0, null: false
-    t.integer "takenby",   limit: 8,   default: 0, null: false
+    t.integer "sessionid",   limit: 8,   default: 0, null: false
+    t.integer "studentid",   limit: 8,   default: 0, null: false
+    t.integer "statusid",    limit: 8,   default: 0, null: false
+    t.string  "statusset",   limit: 100
+    t.integer "inclasswork", limit: 8,   default: 0, null: false
+    t.integer "attitude",    limit: 8,   default: 0, null: false
+    t.integer "timetaken",   limit: 8,   default: 0, null: false
+    t.integer "takenby",     limit: 8,   default: 0, null: false
     t.string  "remarks"
   end
 
@@ -333,6 +406,7 @@ ActiveRecord::Schema.define(version: 20140515183348) do
     t.integer "timemodified",      limit: 8
     t.text    "description",       limit: 2147483647,             null: false
     t.integer "descriptionformat", limit: 2,          default: 0, null: false
+    t.integer "pagenum",           limit: 8,          default: 0, null: false
   end
 
   add_index "mdl_attendance_sessions", ["attendanceid"], name: "mdl_attesess_att_ix", using: :btree
@@ -3431,34 +3505,6 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   add_index "mdl_quiz_question_instances", ["question"], name: "mdl_quizquesinst_que_ix", using: :btree
   add_index "mdl_quiz_question_instances", ["quiz"], name: "mdl_quizquesinst_qui_ix", using: :btree
 
-  create_table "mdl_quiz_question_response_stats", force: true do |t|
-    t.integer "quizstatisticsid", limit: 8,                                                null: false
-    t.integer "questionid",       limit: 8,                                                null: false
-    t.string  "subqid",           limit: 100,                                 default: "", null: false
-    t.string  "aid",              limit: 100
-    t.text    "response",         limit: 2147483647
-    t.integer "rcount",           limit: 8
-    t.decimal "credit",                              precision: 15, scale: 5,              null: false
-  end
-
-  create_table "mdl_quiz_question_statistics", force: true do |t|
-    t.integer "quizstatisticsid",         limit: 8,                                                null: false
-    t.integer "questionid",               limit: 8,                                                null: false
-    t.integer "slot",                     limit: 8
-    t.integer "subquestion",              limit: 2,                                                null: false
-    t.integer "s",                        limit: 8,                                    default: 0, null: false
-    t.decimal "effectiveweight",                             precision: 15, scale: 5
-    t.integer "negcovar",                 limit: 1,                                    default: 0, null: false
-    t.decimal "discriminationindex",                         precision: 15, scale: 5
-    t.decimal "discriminativeefficiency",                    precision: 15, scale: 5
-    t.decimal "sd",                                          precision: 15, scale: 10
-    t.decimal "facility",                                    precision: 15, scale: 10
-    t.text    "subquestions",             limit: 2147483647
-    t.decimal "maxmark",                                     precision: 12, scale: 7
-    t.text    "positions",                limit: 2147483647
-    t.decimal "randomguessscore",                            precision: 12, scale: 7
-  end
-
   create_table "mdl_quiz_reports", force: true do |t|
     t.string  "name"
     t.integer "displayorder", limit: 8, null: false
@@ -3468,21 +3514,24 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   add_index "mdl_quiz_reports", ["name"], name: "mdl_quizrepo_nam_uix", unique: true, using: :btree
 
   create_table "mdl_quiz_statistics", force: true do |t|
-    t.integer "quizid",             limit: 8,                           null: false
-    t.integer "groupid",            limit: 8,                           null: false
-    t.integer "allattempts",        limit: 2,                           null: false
-    t.integer "timemodified",       limit: 8,                           null: false
-    t.integer "firstattemptscount", limit: 8,                           null: false
-    t.integer "allattemptscount",   limit: 8,                           null: false
-    t.decimal "firstattemptsavg",             precision: 15, scale: 5
-    t.decimal "allattemptsavg",               precision: 15, scale: 5
-    t.decimal "median",                       precision: 15, scale: 5
-    t.decimal "standarddeviation",            precision: 15, scale: 5
-    t.decimal "skewness",                     precision: 15, scale: 10
-    t.decimal "kurtosis",                     precision: 15, scale: 5
-    t.decimal "cic",                          precision: 15, scale: 10
-    t.decimal "errorratio",                   precision: 15, scale: 10
-    t.decimal "standarderror",                precision: 15, scale: 10
+    t.string  "hashcode",             limit: 40,                           default: "", null: false
+    t.integer "whichattempts",        limit: 2,                                         null: false
+    t.integer "timemodified",         limit: 8,                                         null: false
+    t.integer "firstattemptscount",   limit: 8,                                         null: false
+    t.integer "highestattemptscount", limit: 8,                                         null: false
+    t.integer "lastattemptscount",    limit: 8,                                         null: false
+    t.integer "allattemptscount",     limit: 8,                                         null: false
+    t.decimal "firstattemptsavg",                precision: 15, scale: 5
+    t.decimal "highestattemptsavg",              precision: 15, scale: 5
+    t.decimal "lastattemptsavg",                 precision: 15, scale: 5
+    t.decimal "allattemptsavg",                  precision: 15, scale: 5
+    t.decimal "median",                          precision: 15, scale: 5
+    t.decimal "standarddeviation",               precision: 15, scale: 5
+    t.decimal "skewness",                        precision: 15, scale: 10
+    t.decimal "kurtosis",                        precision: 15, scale: 5
+    t.decimal "cic",                             precision: 15, scale: 10
+    t.decimal "errorratio",                      precision: 15, scale: 10
+    t.decimal "standarderror",                   precision: 15, scale: 10
   end
 
   create_table "mdl_rating", force: true do |t|
@@ -4763,6 +4812,11 @@ ActiveRecord::Schema.define(version: 20140515183348) do
   end
 
   add_index "mdl_workshopform_rubric_levels", ["dimensionid"], name: "mdl_workrubrleve_dim_ix", using: :btree
+
+  create_table "user_reports", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "username",   limit: 45

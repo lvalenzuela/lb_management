@@ -71,7 +71,7 @@ class ReportsController < ApplicationController
 		respond_to do |format|
 			format.html
 			format.pdf do
-				pdf = StudentReportPdf.new(params,view_context)
+				pdf = StudentReportPdf.new(params[:user_id],params[:course_id],view_context)
 	  			send_data pdf.render, filename: user.firstname+"_"+user.lastname+"_"+Date.today().to_s+".pdf",
 	  								 type: "application/pdf"
 			end
