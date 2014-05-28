@@ -82,13 +82,19 @@ class GroupReportPdf < Prawn::Document
 			end
 			
 			total_sence = member_data.total_sessions/4
-			
+			r_sence = total_sence-a_sessions
+			if r_sence < 0
+				sence = "No Aplica"
+			else
+				sence = r_sence
+			end
+
 			if filter.to_i == 1
 				member_group = member_data.department
 			else
 				member_group = member_data.coursename
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_group, member_data.p_sessions.to_s, a_sessions.to_s, total_sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, member_group, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
@@ -102,7 +108,7 @@ class GroupReportPdf < Prawn::Document
 			end
 		end
 		move_down 10
-		text "<b>(*)</b> Máximo de clases a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence.", size:9, :inline_format => true
+		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence.", size:9, :inline_format => true
 	end
 
 	def indicadores_academicos(members, filter)
