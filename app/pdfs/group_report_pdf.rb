@@ -70,18 +70,25 @@ class GroupReportPdf < Prawn::Document
 		end
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>", "<b>Presente</b>", "<b>Ausente</b>", "<b>Atrasos</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
-			att_sessions = get_att_sessions(member.courseid)
-			user_att = user_att_info(member.userid, member.courseid)
-			att_pct = (user_att.presente.to_f*100/user_att.clases_dictadas.to_f).round(2)
-
-			if filter.to_i == 1
-				member_group = member.department
+			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
+			
+			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil?
+				a_sessions = member_data.a_sessions + member_data.t_sessions
 			else
-				member_group = member.course_fullname
+				a_sessions = 0
 			end
-			data << [member.firstname+" "+member.lastname, member_group, user_att.presente.to_s, user_att.ausente.to_s, user_att.tarde.to_s, user_att.clases_dictadas.to_s+" de "+att_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			
+			total_sence = member_data.total_sessions/4
+			
+			if filter.to_i == 1
+				member_group = member_data.department
+			else
+				member_group = member_data.coursename
+			end
+			data << [member_data.firstname+" "+member_data.lastname, member_group, member_data.p_sessions.to_s, a_sessions.to_s, total_sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
@@ -94,6 +101,8 @@ class GroupReportPdf < Prawn::Document
 				end
 			end
 		end
+		move_down 10
+		text "<b>(*)</b> Máximo de clases a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence.", size:9, :inline_format => true
 	end
 
 	def indicadores_academicos(members, filter)
@@ -112,13 +121,14 @@ class GroupReportPdf < Prawn::Document
 		data = []
 		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
 		members.each do |member|
-			grades = find_grades(member.userid ,member.courseid)
+			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			promedio = grade_promedio(member_data.grade_homework,member_data.grade_writing_tests,member_data.grade_tests_teg,member_data.grade_tests,member_data.grade_oral_tests)
 			if filter.to_i == 1
-				member_group = member.department
+				member_group = member_data.department
 			else
-				member_group = member.course_fullname
+				member_group = member_data.coursename
 			end
-			data << [member.firstname+" "+member.lastname, member_group, grade_parser(grades.homework), grade_parser(grades.writing_test), grade_parser(grades.tests_teg), grade_parser(grades.tests), grade_parser(grades.oral_tests), "<b>"+grade_promedio(grades).to_s+"</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, member_group, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+promedio+"</b>"]
 		end
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 

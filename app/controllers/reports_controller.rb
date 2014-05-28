@@ -111,8 +111,7 @@ class ReportsController < ApplicationController
 				members.each do |member|
 					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+"_"+Time.now().to_s+".pdf"
 					temp_files << pdf_filename
-					params = {:user_id => member.userid, :course_id => member.courseid}
-					pdf = StudentReportPdf.new(params,view_context)
+					pdf = StudentReportPdf.new(member.userid, member.courseid,view_context)
 					pdf.render_file(tmp_reports_path+"/"+pdf_filename)
 					zip.add(pdf_filename, Rails.root.join(tmp_reports_path,pdf_filename))
 				end

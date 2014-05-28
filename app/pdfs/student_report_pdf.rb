@@ -92,7 +92,11 @@ class StudentReportPdf < Prawn::Document
 		end
 
 		inatt_limit = report_data.total_sessions/4	
-		inatt_total = (report_data.a_sessions+report_data.t_sessions)
+		if !report_data.a_sessions.nil? || !report_data.t_sessions.nil?
+			inatt_total = (report_data.a_sessions+report_data.t_sessions)
+		else
+			inatt_total = 0
+		end
 
 		move_down 20
 		font "Helvetica", :style => :bold
