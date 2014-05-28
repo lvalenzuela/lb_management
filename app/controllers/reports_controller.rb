@@ -112,8 +112,8 @@ class ReportsController < ApplicationController
 					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+"_"+Time.now().to_s+".pdf"
 					temp_files << pdf_filename
 					pdf = StudentReportPdf.new(member.userid, member.courseid,view_context)
-					pdf.render_file(tmp_reports_path+"/"+pdf_filename)
-					zip.add(pdf_filename, Rails.root.join(tmp_reports_path,pdf_filename))
+					pdf.render_file(Rails.root.join("app","assets",tmp_reports_path,pdf_filename))
+					zip.add(pdf_filename, Rails.root.join("app","assets",tmp_reports_path,pdf_filename))
 				end
 			end
 
@@ -124,7 +124,7 @@ class ReportsController < ApplicationController
 		end
 		#Eliminar los archivos generados
 		temp_files.each do |filename|
-			File.delete(Rails.root.join(tmp_reports_path,filename)) if File.exists?(Rails.root.join(tmp_reports_path,filename))
+			File.delete(Rails.root.join("app","assets",tmp_reports_path,filename)) if File.exists?(Rails.root.join("app","assets",tmp_reports_path,filename))
 		end
 		return zip_data
 	end
