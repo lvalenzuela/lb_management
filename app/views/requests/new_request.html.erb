@@ -28,6 +28,9 @@
                                 <%=f.text_field :subject, :class => "form-control" %>
                             </div>
                             <div class="form-group">
+                                <%=f.select :target_user, options_for_select(@target_users.collect{|u| [u.firstname+" "+u.lastname+" ("+u.username+")",u.id]}), {}, {:class => "form-control"}%>
+                            </div>
+                            <div class="form-group">
                                 <label>Prioridad:</label>
                                 <%=f.select :priority, options_for_select([["Urgente",1],["Importante",2],["Regular",3]], 3), {},{:class =>"form-control"}%>
                             </div>

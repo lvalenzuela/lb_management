@@ -54,7 +54,7 @@
 										<td><%=link_to group.fullname, :controller => "reports", :action => "members", :params => {:filter => @selected, :fullname => group.fullname, :institution => group.institution} %></td>
 										<td style="text-align: center"><%=group.institution%></td>
 										<td style="text-align: center"><%=group.alumnos%></td>
-                                        <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), :controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.fullname, :filter => @selected, :format => "pdf"}%></td>
+                                        <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.fullname, :filter => @selected, :format => "pdf"}}, :target => "_blank"%></td>
 									</tr>
 									<%row_counter +=1%>
 								<%end%>

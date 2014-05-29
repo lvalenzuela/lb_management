@@ -45,7 +45,21 @@ class StudentReportPdf < Prawn::Document
 	end
 
 	def attendance(report_data)
-		att_pct = (report_data.p_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+		if !report_data.p_sessions.nil? && !report_data.current_sessions.nil? && !report_data.a_sessions.nil? && !report_data.t_sessions.nil?
+			att_pct = (report_data.p_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			inatt_pct = (report_data.a_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			late_pct = (report_data.t_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			inatt_late_pct = (inatt_pct + late_pct).round(2)
+		else
+			att_pct = 0
+			report_data.p_sessions = 0
+			report_data.current_sessions = 0
+			report_data.a_sessions = 0
+			report_data.t_sessions = 0
+			inatt_pct = 0
+			late_pct = 0
+			inatt_late_pct = 0
+		end
 
 		move_down 10
 		font "Helvetica", :style => :bold
@@ -68,10 +82,6 @@ class StudentReportPdf < Prawn::Document
 				end
 			end
 		end
-
-		inatt_pct = (report_data.a_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
-		late_pct = (report_data.t_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
-		inatt_late_pct = (inatt_pct + late_pct).round(2)
 
 		move_down 10
 		data = [] #datos para la segunda tabla
@@ -151,6 +161,12 @@ class StudentReportPdf < Prawn::Document
 			assignment_txt = "No hay entregas de tareas registradas a la fecha."
 		end
 
+		if !report_data.lastaccess.nil?
+			lastaccess = report_data.lastaccess.strftime("%d-%m-%Y %I:%M %p")
+		else
+			lastaccess = "-"
+		end
+
 		move_down 15
 		font "Helvetica", :style => :bold
 		text "3. Indicadores de Responsabilidad"
@@ -158,7 +174,7 @@ class StudentReportPdf < Prawn::Document
 		move_down 10
 		data = []
 		data << ["<b>Trabajo en Clases</b>","<b>Entrega de Tareas Evaluadas</b>", "<b>Último acceso al Sitio Web Longbourn</b>"]
-		data << [get_resp_info(report_data.avg_inclasswork), assignment_txt, report_data.lastaccess.strftime("%d-%m-%Y %I:%M %p")]
+		data << [get_resp_info(report_data.avg_inclasswork), assignment_txt, lastaccess]
 		table(data, :column_widths => {0 => 166, 1 => 166, 2 => 166},
 			:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 			:position => :center) do

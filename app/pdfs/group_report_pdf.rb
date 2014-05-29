@@ -75,10 +75,13 @@ class GroupReportPdf < Prawn::Document
 			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
 			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
 			
-			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil?
+			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil? && !member_data.p_sessions.nil?
 				a_sessions = member_data.a_sessions + member_data.t_sessions
 			else
 				a_sessions = 0
+				member_data.p_sessions = 0
+				member_data.current_sessions = 0
+				att_pct = 0
 			end
 			
 			total_sence = member_data.total_sessions/4
