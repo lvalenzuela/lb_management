@@ -23,6 +23,8 @@ Rails.application.routes.draw do
       get 'bulk_user_reports'
       get 'group_report'
       get 'show'
+      get 'historical'
+      post 'get_reports_for_course'
     end
   end
 

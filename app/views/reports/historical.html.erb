@@ -1,0 +1,36 @@
+ <!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Reportes Historicos</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Seleccionar Curso
+                    </div>
+            		<%=form_for(:courses, :url => {:controller => "reports", :action => "get_reports_for_course"}, :remote => true, :html => {:id => "courses-form"}) do |f|%>
+						<%=f.select :courseid, options_for_select(@course_list.collect{|c| [c.coursename, c.courseid]}), {}, {:class => "form-control", :onchange => "$('#courses-form').submit();"}%>
+					<%end%>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Listado de Reportes por Curso
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                    	<%=render :partial => "historical_reports"%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

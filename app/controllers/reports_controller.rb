@@ -44,7 +44,28 @@ class ReportsController < ApplicationController
 				:filter => params[:filter]}
 		end
 	end
-	
+
+	def historical
+		if params[:course_hint].nil?
+			@course_list = UserReport.select("distinct(courseid), coursename")
+			@reports = UserReport.all()
+		else
+			@course_list = UserReport.select("distinct(courseid), coursename").where("coursename like '%#{params[:course_hint]}%'")
+			@reports = UserReport.all()
+		end
+	end	
+
+	def get_reports_for_course
+		if params[:courses][:courseid].nil?
+			@reports = UserReport.all()		
+		else
+			@reports = UserReport.where(:courseid => params[:courses][:courseid])
+		end
+
+		respond_to do |format|
+			format.js
+		end
+	end
 
 	def reporte_preliminar
 
