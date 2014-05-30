@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       get 'index'
       post 'create_request'
       get 'new_request'
+      get 'show'
+      delete 'destroy'
     end
   end
 

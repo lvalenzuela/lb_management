@@ -32,7 +32,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
-                                <%=f.select :priority, options_for_select([["Urgente",1],["Importante",2],["Regular",3]], 3), {},{:class =>"form-control"}%>
+                                <%=f.select :priority, options_for_select(@priorities.collect{|p| [p.shortname, p.id]}), {},{:class =>"form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Solicitud:</label>

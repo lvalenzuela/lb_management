@@ -129,7 +129,7 @@ class StudentReportPdf < Prawn::Document
 
 	def indicadores_academicos(report_data)
 
-		promedio_parcial = grade_promedio(report_data.grade_homework,report_data.grade_writing_tests,report_data.grade_tests_teg,report_data.grade_tests,report_data.grade_oral_tests)
+		
 
 		move_down 15
 		font "Helvetica", :style => :bold
@@ -138,7 +138,7 @@ class StudentReportPdf < Prawn::Document
 		move_down 10
 		data = [] #datos para la tabla
 		data << ["<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
-		data << [grade_parser(report_data.grade_homework), grade_parser(report_data.grade_writing_tests), grade_parser(report_data.grade_tests_teg), grade_parser(report_data.grade_tests), grade_parser(report_data.grade_oral_tests), "<b>"+promedio_parcial+"</b>"]
+		data << [grade_parser(report_data.grade_homework), grade_parser(report_data.grade_writing_tests), grade_parser(report_data.grade_tests_teg), grade_parser(report_data.grade_tests), grade_parser(report_data.grade_oral_tests), "<b>"+grade_parser(report_data.grade_course)+"</b>"]
 		table(data, :column_widths => {0 => 83, 1 => 83, 2 => 83, 3 => 83, 4 => 83, 5 => 83},
 			:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 			:position => :center) do

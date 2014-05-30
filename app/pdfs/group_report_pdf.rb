@@ -111,7 +111,7 @@ class GroupReportPdf < Prawn::Document
 			end
 		end
 		move_down 10
-		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence.", size:9, :inline_format => true
+		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence (Máximo 25% del total).", size:9, :inline_format => true
 	end
 
 	def indicadores_academicos(members, filter)
@@ -131,13 +131,12 @@ class GroupReportPdf < Prawn::Document
 		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
 		members.each do |member|
 			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
-			promedio = grade_promedio(member_data.grade_homework,member_data.grade_writing_tests,member_data.grade_tests_teg,member_data.grade_tests,member_data.grade_oral_tests)
 			if filter.to_i == 1
 				member_group = member_data.department
 			else
 				member_group = member_data.coursename
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_group, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+promedio+"</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, member_group, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_course)+"</b>"]
 		end
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 

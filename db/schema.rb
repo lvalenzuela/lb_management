@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140528222838) do
+ActiveRecord::Schema.define(version: 20140529144451) do
 
   create_table "adodb_logsql", force: true do |t|
     t.datetime "created",                                                    null: false
@@ -57,15 +57,23 @@ ActiveRecord::Schema.define(version: 20140528222838) do
     t.datetime "updated_at"
   end
 
+  create_table "management_request_priorities", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "management_request_statuses", force: true do |t|
+    t.string   "description", limit: 45
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "management_requests", force: true do |t|
     t.integer  "userid"
-    t.string   "subject",    limit: 100
+    t.string   "subject",     limit: 100
+    t.integer  "target_user"
     t.integer  "priority"
+    t.integer  "status"
     t.text     "request"
     t.datetime "created_at"
     t.datetime "updated_at"
