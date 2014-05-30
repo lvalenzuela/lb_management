@@ -129,7 +129,15 @@
                     <%=link_to "<i class='fa fa-dashboard fa-fw'></i> Dashboard".html_safe, :controller => "main", :action => "index" %>
                 </li>
                 <li>
-                    <%=link_to "<i class='fa fa-files-o fa-fw'></i> Reportes".html_safe, :controller => "reports", :action => "clients"%>
+                    <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <%=link_to "Reportes Actuales", :controller => "reports", :action => "clients"%>
+                        </li>
+                        <li>
+                            <%=link_to "Reportes Historicos"%>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bell fa-fw"></i> Solicitudes<span class="fa arrow"></span></a>
@@ -160,6 +168,7 @@
     </div>
     <!-- /.navbar-static-side -->
 </nav>
+
 <script>
 $(function() {
 
@@ -180,3 +189,4 @@ $(function() {
     })
 })
 </script>
+
