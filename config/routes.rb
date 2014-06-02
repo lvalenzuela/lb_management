@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       get 'show'
       get 'historical'
       post 'get_reports_for_course'
+      post 'hist_select_options'
     end
   end
 
