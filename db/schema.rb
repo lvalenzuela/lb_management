@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140529144451) do
+ActiveRecord::Schema.define(version: 20140602223537) do
 
   create_table "adodb_logsql", force: true do |t|
     t.datetime "created",                                                    null: false
@@ -57,7 +57,20 @@ ActiveRecord::Schema.define(version: 20140529144451) do
     t.datetime "updated_at"
   end
 
+  create_table "management_notifications", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "management_request_areas", force: true do |t|
+    t.string   "area_name",           limit: 45
+    t.string   "area_representative", limit: 45
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "management_request_priorities", force: true do |t|
+    t.string   "shortname",  limit: 45
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -72,9 +85,18 @@ ActiveRecord::Schema.define(version: 20140529144451) do
     t.integer  "userid"
     t.string   "subject",     limit: 100
     t.integer  "target_user"
+    t.integer  "target_area"
     t.integer  "priority"
     t.integer  "status"
     t.text     "request"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "management_user_permissions", force: true do |t|
+    t.integer  "userid"
+    t.string   "username",        limit: 45
+    t.integer  "permission_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -98,7 +120,7 @@ ActiveRecord::Schema.define(version: 20140529144451) do
     t.integer  "t_sessions"
     t.integer  "avg_inclasswork"
     t.integer  "avg_attitude"
-    t.float    "grade_assistance"
+    t.float    "grade_course"
     t.float    "grade_homework"
     t.float    "grade_writing_tests"
     t.float    "grade_tests_teg"
@@ -110,6 +132,12 @@ ActiveRecord::Schema.define(version: 20140529144451) do
   end
 
   create_table "management_users", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "management_usertypes", force: true do |t|
+    t.string   "description", limit: 45
     t.datetime "created_at"
     t.datetime "updated_at"
   end

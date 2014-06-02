@@ -14,14 +14,15 @@ class MainController < ApplicationController
     if user.blank?
       flash[:notice] = "Nombre de usuario incorrecto, por favor vuelve a intentarlo"
       redirect_to :action => "index"
-    elsif !user.username.end_with?("@longbourn.cl")
+    elsif !user.username.end_with?("@longbourn.cl") 
       flash[:notice] = "Usuario no autorizado para ingresar al sistema"
       redirect_to :action => "index" 
     else
       fixed_pass = user.password
       fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
       password = BCrypt::Password.new(user.password)
-      if password == params[:password]
+      usertype = ManagementUserPermission.where(:userid => user.id).first().permission_type
+      if password == params[:password] && usertype <= 2 #permitir solo administradores
         session[:user_id] = user.id
         session[:username] = user.username
         redirect_to :action => 'control_panel'

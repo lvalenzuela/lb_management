@@ -50,30 +50,6 @@ class ReportsController < ApplicationController
 		@reports = UserReport.select("*, count(distinct userid) as alumnos").group("courseid, created_at")
 	end	
 
-	def hist_select_options
-		if params[:courses][:name].nil?
-			@course_list = UserReport.select("distinct(courseid), coursename")
-		else
-			@course_list = UserReport.select("distinct(courseid), coursename").where("coursename like '%#{params[:courses][:name]}%'")
-		end
-
-		respond_to do |format|
-			format.js
-		end
-	end
-
-	def get_reports_for_course
-		if params[:courses][:courseid].nil?
-			@reports = UserReport.select("*, count(distinct courseid) as alumnos").group("courseid, created_at").group("courseid, created_at")
-		else
-			@reports = UserReport.select("*, count(distinct courseid) as alumnos").where(:courseid => params[:courses][:courseid]).group("courseid, created_at")
-		end
-
-		respond_to do |format|
-			format.js
-		end
-	end
-
 	def reporte_preliminar
 
 	end

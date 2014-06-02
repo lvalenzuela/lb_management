@@ -5,16 +5,28 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def index
-		if params[:own_requests].nil?
-			@requests = get_pending_requests()
+		if params[:r_filter]
+			@requests = requests_for_user(params[:r_filter][:target_area],params[:r_filter][:status],params[:r_filter][:priority])
 		else
-			@requests = ManagementRequest.where(:target_user => session[:user_id], :status => 1)
+			@requests = requests_for_user(nil,nil,nil)
+		end
+	end
+
+	def filter_requests
+		if params[:r_filter]
+			@requests = requests_for_user(params[:r_filter][:t_area],params[:r_filter][:status],params[:r_filter][:priority])
+		else
+			@requests = requests_for_user(nil,nil,nil)
+		end
+		
+		respond_to do |format|
+			format.js
 		end
 	end
 
 	def new_request
 		@user = User.where(:id => session[:user_id]).first()
-		@target_users = User.where("username like '%@longbourn.cl' and deleted = 0")
+		@target_area = ManagementRequestArea.all()
 		@priorities = ManagementRequestPriority.all()
 	end
 
@@ -53,6 +65,6 @@ class RequestsController < ApplicationController
 	end
 
 	def management_request_params
-		params.require(:request).permit(:userid, :subject, :target_user, :priority, :status, :request)
+		params.require(:request).permit(:userid, :subject, :target_area, :priority, :status, :request)
 	end
 end

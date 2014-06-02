@@ -24,8 +24,6 @@ Rails.application.routes.draw do
       get 'group_report'
       get 'show'
       get 'historical'
-      post 'get_reports_for_course'
-      post 'hist_select_options'
     end
   end
 
@@ -33,6 +31,7 @@ Rails.application.routes.draw do
     collection do
       get 'index'
       post 'create_request'
+      post 'filter_requests'
       get 'new_request'
       get 'show'
       delete 'destroy'
