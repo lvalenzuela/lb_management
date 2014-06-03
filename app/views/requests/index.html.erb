@@ -30,7 +30,7 @@
                                         <%get_area_list().each do |area|%>
                                             <div class="checkbox">
                                                 <label>
-                                                    <%=f.check_box :t_area, {:multiple => true, :onchange => "$('#request-filter-form').submit();"}, area.id, nil%>
+                                                    <%=f.check_box :r_area, {:multiple => true, :onchange => "$('#request-filter-form').submit();"}, area.id, nil%>
                                                     <%=area.area_name%>
                                                 </label>
                                             </div>

@@ -11,6 +11,34 @@
     <!-- /.navbar-header -->
 
     <ul class="nav navbar-top-links navbar-right">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-messages">
+                <%get_notifications(session[:user_id]).each do |notification|%>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong><%=notification.subject%></strong>
+                                <span class="pull-right text-muted">
+                                    <em><%=notification.created_at.strftime("%d-%m-%Y")%></em>
+                                </span>
+                            </div>
+                            <div><%=notification.notification%></div>
+                        </a>
+                    </li>
+                    <li class="divider"></li> 
+                <%end%>
+                <li>
+                    <a class="text-center" href="#">
+                        <strong>Read All Messages</strong>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- /.dropdown-messages -->
+        </li>
         <!-- /.dropdown -->
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -143,7 +171,10 @@
                     <a href="#"><i class="fa fa-bell fa-fw"></i> Solicitudes<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <%=link_to "Ver Solicitudes".html_safe, :controller => "requests", :action => "index"%>
+                            <%=link_to "Solicitudes Enviadas".html_safe, :controller => "requests", :action => "sent_requests"%>
+                        </li>
+                        <li>
+                            <%=link_to "Mis Solicitudes".html_safe, :controller => "requests", :action => "index"%>
                         </li>
                         <li>
                             <%=link_to "Crear Solicitud".html_safe, :controller => "requests", :action => "new_request"%>

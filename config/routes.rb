@@ -32,6 +32,8 @@ Rails.application.routes.draw do
       get 'index'
       post 'create_request'
       post 'filter_requests'
+      post 'update_request'
+      get 'sent_requests'
       get 'new_request'
       get 'show'
       delete 'destroy'

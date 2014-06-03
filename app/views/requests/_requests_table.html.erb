@@ -6,45 +6,25 @@
                 <th>Usuario Solicitante</th>
                 <th>Área de Destino</th>
                 <th style="text-align: center;">Prioridad</th>
-                <th style="text-align: center;">Acciones</th>
+                <th style="text-align: center;">Fecha de Solicitud</th>
+                <th style="text-align: center;">Fecha Límite</th>
             </tr>
         </thead>
         <tbody>
             <%if @requests.empty?%>
                 <tr class="warning">
-                    <td colspan="5">No hay solicitudes para mostrar</td>
+                    <td colspan="6">No hay solicitudes para mostrar</td>
                 </tr>
             <%else%>
                 <%@requests.each do |request|%>                                       
                     <tr>
-                        <td><%=request.subject%></td>
+                        <td><%=link_to request.subject, :controller => "requests", :action => "show", :params => {:id => request.id}%></td>
                         <td><%=request.solicitante%></td>
                         <td><%=request.t_areaname%></td>
                         <td style="text-align: center;"><%=request.p_shortname%></td>
-                        <td style="text-align: center;"><button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalRequest<%=request.id%>">Ver</button>
-                            <%=link_to "Eliminar", {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}, :class => "btn btn-primary btn-sm"%></td>
+                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
+                        <td style="text-align: center;"><%=request.duedate%></td>
                     </tr>
-                    <!-- Modal -->
-                    <div class="modal fade" id="modalRequest<%=request.id%>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="myModalLabel"><%=request.subject%></h4>
-                                    <h5><b>Enviada por:</b></h5><%=request.solicitante%>
-                                </div>
-                                <div class="modal-body">
-                                    <%=simple_format request.request%>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
                 <%end%>
             <%end%>
         </tbody>

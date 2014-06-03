@@ -6,7 +6,7 @@ class RequestsController < ApplicationController
 
 	def index
 		if params[:r_filter]
-			@requests = requests_for_user(params[:r_filter][:target_area],params[:r_filter][:status],params[:r_filter][:priority])
+			@requests = requests_for_user(params[:r_filter][:r_area],params[:r_filter][:status],params[:r_filter][:priority])
 		else
 			@requests = requests_for_user(nil,nil,nil)
 		end
@@ -14,7 +14,7 @@ class RequestsController < ApplicationController
 
 	def filter_requests
 		if params[:r_filter]
-			@requests = requests_for_user(params[:r_filter][:t_area],params[:r_filter][:status],params[:r_filter][:priority])
+			@requests = requests_for_user(params[:r_filter][:r_area],params[:r_filter][:status],params[:r_filter][:priority])
 		else
 			@requests = requests_for_user(nil,nil,nil)
 		end
@@ -24,15 +24,31 @@ class RequestsController < ApplicationController
 		end
 	end
 
+	def sent_requests
+
+	end
+
 	def new_request
+		@request = ManagementRequest.new()
 		@user = User.where(:id => session[:user_id]).first()
-		@target_area = ManagementRequestArea.all()
+		@lb_areas = ManagementRequestArea.all()
 		@priorities = ManagementRequestPriority.all()
 	end
 
+	def update_request
+		request = ManagementRequest.find(params[:management_request][:id])
+		if request.update_attributes(request_params)
+			flash[:notice] = "Estado de la solicitud modificado."
+			redirect_to :action => "index"
+		else
+			flash[:notice] = "No se pudo modificar el estado de la solicitud."
+			redirect_to :action => "index"
+		end
+	end
+
 	def create_request
-		if params[:request]
-			ManagementRequest.create(management_request_params)
+		@request = ManagementRequest.create(request_params)
+		if @request.valid?
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "index"
 		else
@@ -42,7 +58,7 @@ class RequestsController < ApplicationController
 	end
 
 	def show
-		@request = get_request(params[:requestid])
+		@request = get_request(params[:id])
 	end
 
 	def destroy
@@ -64,7 +80,7 @@ class RequestsController < ApplicationController
 	    end
 	end
 
-	def management_request_params
-		params.require(:request).permit(:userid, :subject, :target_area, :priority, :status, :request)
+	def request_params
+		params.require(:management_request).permit(:userid, :subject, :receiverid, :receiverarea, :priority, :status, :request, :duedate)
 	end
 end

@@ -17,8 +17,18 @@
                     Formulario de Generacion de Solicitudes
                 </div>
                 <div class="panel-body">
+                    <%if @request.errors.any?%>
+                        <div class="alert alert-warning">
+                            <%=pluralize(@request.errors.count,"error")%> no permitieron llevar a cabo la operacion 
+                            <ul>
+                                <%@request.errors.full_messages.each do |msg|%>
+                                    <li><%= msg %></li>
+                                <%end%>
+                            </ul>
+                        </div>
+                    <%end%>
                     <div class="col-lg-8">
-                        <%=form_for(:request, :url => {:controller => "requests", :action => "create_request"}) do |f|%>
+                        <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}) do |f|%>
                             <div class="form-group">
                                 <%=f.hidden_field :userid, :value =>@user.id%>
                                 <%=f.hidden_field :status, :value => "1"%>
@@ -28,11 +38,17 @@
                                 <%=f.text_field :subject, :class => "form-control" %>
                             </div>
                             <div class="form-group">
-                                <%=f.select :target_area, options_for_select(@target_area.collect{|u| [u.area_name ,u.id]}), {}, {:class => "form-control"}%>
+                                <%=f.select :receiverarea, options_for_select(@lb_areas.collect{|u| [u.area_name ,u.id]}), {}, {:class => "form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
                                 <%=f.select :priority, options_for_select(@priorities.collect{|p| [p.shortname, p.id]}), {},{:class =>"form-control"}%>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha Límite</label>
+                                <div class="input-group">
+                                    <%=f.text_field :duedate ,:class => "form-control", data: { behaviour: "datepicker" }%>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>Solicitud:</label>
@@ -48,3 +64,8 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('[data-behaviour~=datepicker]').datepicker();
+  })
+</script>
