@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <%if @request.errors.any?%>
                         <div class="alert alert-warning">
-                            <%=pluralize(@request.errors.count,"error")%> no permitieron llevar a cabo la operacion 
+                            <%=pluralize(@request.errors.count,"error")%> en la operación 
                             <ul>
                                 <%@request.errors.full_messages.each do |msg|%>
                                     <li><%= msg %></li>
@@ -28,10 +28,11 @@
                         </div>
                     <%end%>
                     <div class="col-lg-8">
-                        <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}) do |f|%>
+                        <%=form_for(@request, :url => {:controller => "requests", :action => "update"}) do |f|%>
                             <div class="form-group">
+                                <%=f.hidden_field :id%>
                                 <%=f.hidden_field :userid, :value =>@user.id%>
-                                <%=f.hidden_field :status, :value => "1"%>
+                                <%=f.hidden_field :status%>
                             </div>
                             <div class="form-group">
                                 <label>Subject:</label>
@@ -58,7 +59,7 @@
                                 <%=f.text_area :request, :class => "form-control", size: "60x12"%>
                             </div>
                             <div class="form-group">
-                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-default"%>
+                                <%=f.submit :value=> "Modificar Solicitud", :class => "btn btn-default"%>
                             </div>
                         <%end%>
                     </div>

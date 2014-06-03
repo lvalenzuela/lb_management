@@ -23,6 +23,16 @@
                             <div class="modal-body">
                                 <%=simple_format @request.request%>
                             </div>
+                            <div class="modal-footer">
+                                <%=form_for(:request, :url => {:controller => "requests", :action => "update"}, :html =>{:id => "request-status-form"}) do |f|%>
+                                <div class="col-md-9">
+                                    <%=f.select :status, options_for_select(get_status_list.collect{|s| [s.description, s.id]}), {:selected => @request.status}, {:class => "form-control"}%>
+                                </div>
+                                <div class="col-md-3">
+                                    <%=f.submit :value => "Modificar Estado",:class => "btn btn-default"%>
+                                </div>
+                                <%end%>
+                            </div>
                         </div>
                     </div>
                 </div>

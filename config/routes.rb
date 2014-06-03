@@ -32,9 +32,11 @@ Rails.application.routes.draw do
       get 'index'
       post 'create_request'
       post 'filter_requests'
-      post 'update_request'
+      post 'update'
       get 'sent_requests'
+      get 'all_requests'
       get 'new_request'
+      get 'edit_request'
       get 'show'
       delete 'destroy'
     end
