@@ -12,6 +12,11 @@ module RequestsHelper
 		ManagementRequestArea.all()
 	end
 
+	def get_receiver_list(area_id)
+		area = ManagementRequestArea.find(area_id)
+		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.area_name) 
+	end
+
 	def get_request(id)
 		query = "select 
 						request.*,

@@ -17,11 +17,6 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <%if !flash[:notice].nil?%>
-                            <div class="alert alert-success">
-                                <%=flash[:notice]%>
-                            </div>
-                        <%end%>
                         <div class="form-group">
                             <%=form_for(:r_filter, :url=>{:controller => "requests", :action => "filter_requests"}, :remote => true, :html =>{:id => "request-filter-form"}) do |f|%>
                                 <div class="col-md-3 col-md-offset-1">

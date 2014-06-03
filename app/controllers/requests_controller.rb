@@ -47,6 +47,10 @@ class RequestsController < ApplicationController
 	def update
 		@request = ManagementRequest.find(params[:management_request][:id])
 		if @request.update_attributes(request_params)
+			#Notificar al usuario a quien esta asignada la solicitud
+			#if !@request.receiverid.nil?
+			#	notify_user(@request.receiverid,"Solicitudes","Una solicitud le ha sido asignada.")
+			#end
 			flash[:notice] = "La solicitud ha sido modificada."
 			redirect_to :action => "sent_requests"
 		else
@@ -94,5 +98,13 @@ class RequestsController < ApplicationController
 
 	def request_params
 		params.require(:management_request).permit(:userid, :subject, :receiverid, :receiverarea, :priority, :status, :request, :duedate)
+	end
+
+	def notification_params
+		params.require(:management_notification).permit(:userid, :subject, :notification, :read)
+	end
+
+	def notify_user(userid, subject, message)
+		notification = ManagementNotification.new()
 	end
 end
