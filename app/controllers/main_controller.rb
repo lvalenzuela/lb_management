@@ -1,5 +1,4 @@
 class MainController < ApplicationController
-  before_filter :check_authentication
   protect_from_forgery
   protect_from_forgery
   require 'bcrypt'
@@ -59,9 +58,4 @@ class MainController < ApplicationController
 
   private
 
-  def check_authentication
-    if session[:user_id].nil?
-      render "index"
-    end
-  end
 end
