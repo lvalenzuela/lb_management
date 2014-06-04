@@ -23,6 +23,7 @@ class MainController < ApplicationController
       password = BCrypt::Password.new(user.password)
       usertype = ManagementUserPermission.where(:userid => user.id).first().permission_type
       if password == params[:password] && usertype <= 2 #permitir solo administradores
+        session[:usertype] = usertype
         session[:user_id] = user.id
         session[:username] = user.username
         redirect_to :action => 'control_panel'

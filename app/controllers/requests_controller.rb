@@ -5,7 +5,7 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def index
-		@requests = requests_for_user(session[:user_id])
+		@requests = ManagementRequest.where(:receiverid => session[:user_id])
 		@user = User.find(session[:user_id])
 	end
 
@@ -31,7 +31,7 @@ class RequestsController < ApplicationController
 
 	def sent_requests
 		@user = User.find(session[:user_id])
-		@requests = requests_list(nil,nil,nil,session[:userid])
+		@requests = ManagementRequest.where(:userid => session[:user_id])
 	end
 
 	def new_request
@@ -46,11 +46,11 @@ class RequestsController < ApplicationController
 
 	def update
 		@request = ManagementRequest.find(params[:management_request][:id])
+		old_receiverid = @request.receiverid
 		if @request.update_attributes(request_params)
-			#Notificar al usuario a quien esta asignada la solicitud
-			#if !@request.receiverid.nil?
-			#	notify_user(@request.receiverid,"Solicitudes","Una solicitud le ha sido asignada.")
-			#end
+			if !@request.receiverid.nil? && old_receiverid != @request.receiverid
+				notify_user(@request.receiverid,"Solicitudes","Una solicitud le ha sido asignada.")
+			end
 			flash[:notice] = "La solicitud ha sido modificada."
 			redirect_to :action => "sent_requests"
 		else
@@ -73,7 +73,7 @@ class RequestsController < ApplicationController
 	end
 
 	def show
-		@request = get_request(params[:id])
+		@request = ManagementRequest.find(params[:id])
 	end
 
 	def destroy
@@ -105,6 +105,7 @@ class RequestsController < ApplicationController
 	end
 
 	def notify_user(userid, subject, message)
-		notification = ManagementNotification.new()
+		params[:management_notification] = { :userid => userid, :subject => subject, :notification => message, :read => 0 }
+		ManagementNotification.create(notification_params)
 	end
 end

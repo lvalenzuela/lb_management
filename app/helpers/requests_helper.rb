@@ -17,53 +17,22 @@ module RequestsHelper
 		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.area_name) 
 	end
 
-	def get_request(id)
-		query = "select 
-						request.*,
-						concat(user.firstname, ' ', user.lastname) as solicitante,
-						area.id as t_areaid,
-						area.area_name as t_areaname,
-						r_priority.id as priority_id,
-						r_priority.shortname as p_shortname,
-						r_status.description
-					from management_requests as request
-					inner join mdl_user as user
-						on request.userid = user.id
-					inner join management_request_areas as area
-						on request.receiverarea = area.id
-					left join management_request_statuses as r_status
-						on request.status = r_status.id
-					inner join management_request_priorities as r_priority
-						on request.priority = r_priority.id
-					where
-						request.id = #{id}
-					order by priority_id ASC"
-		ManagementRequest.find_by_sql(query).first()
+	def request_areaname(receiverarea)
+		ManagementRequestArea.find(receiverarea).area_name
 	end
 
-	def requests_for_user(receiver)
-			query = "select 
-						request.*,
-						concat(user.firstname, ' ', user.lastname) as solicitante,
-						area.id as t_areaid,
-						area.area_name as t_areaname,
-						r_priority.id as priority_id,
-						r_priority.shortname as p_shortname,
-						r_status.description
-					from management_requests as request
-					inner join mdl_user as user
-						on request.userid = user.id
-					inner join management_request_areas as area
-						on request.receiverarea = area.id
-					left join management_request_statuses as r_status
-						on request.status = r_status.id
-					inner join management_request_priorities as r_priority
-						on request.priority = r_priority.id
-					where
-						request.receiverid = #{receiver}
-					order by priority_id ASC"
+	def request_priority_desc(priority)
+		ManagementRequestPriority.find(priority).shortname
+	end
 
-		ManagementRequest.find_by_sql(query)
+	def request_status_desc(status)
+		ManagementRequestStatus.find(status).description
+	end
+
+	def get_username(userid)
+		user = User.find(userid)
+
+		username = user.firstname+" "+user.lastname
 	end
 
 	def requests_list(t_areas,status_values,priority_values,userid)

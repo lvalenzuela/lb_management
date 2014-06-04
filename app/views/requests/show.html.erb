@@ -24,17 +24,17 @@
                                 <%=simple_format @request.request%>
                             </div>
                             <div class="modal-footer">
-                                <%=form_for(:management_request, :url => {:controller => "requests", :action => "update"}, :html =>{:id => "request-status-form"}) do |f|%>
-                                <%=f.hidden_field :id, :value => @request.id%>
-                                <div class="col-md-4">
-                                    <%=f.select :receiverid, options_for_select(get_receiver_list(@request.receiverarea).collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:selected => @request.receiverid, :include_blank => true}, {:class => "form-control"}%>
-                                </div>
-                                <div class="col-md-4">
-                                    <%=f.select :status, options_for_select(get_status_list.collect{|s| [s.description, s.id]}), {:selected => @request.status}, {:class => "form-control"}%>
-                                </div>
-                                <div class="col-md-3">
-                                    <%=f.submit :value => "Modificar Solicitud",:class => "btn btn-default"%>
-                                </div>
+                                <%=form_for(@request, :url => {:controller => "requests", :action => "update"}) do |f|%>
+                                    <%=f.hidden_field :id%>
+                                    <div class="col-md-4">
+                                        <%=f.select :receiverid, options_for_select(get_receiver_list(@request.receiverarea).collect{|u| [u.firstname+" "+u.lastname, u.id]}, @request.receiverid), {:include_blank => true}, {:class => "form-control"}%>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <%=f.select :status, options_for_select(get_status_list.collect{|s| [s.description, s.id]}), {}, {:class => "form-control"}%>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <%=f.submit :value => "Modificar Solicitud",:class => "btn btn-default"%>
+                                    </div>
                                 <%end%>
                             </div>
                         </div>
