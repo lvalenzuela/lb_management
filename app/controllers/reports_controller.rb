@@ -66,7 +66,7 @@ class ReportsController < ApplicationController
 	end
 
 	def user_report
-		user = User.where(:id => params[:user_id]).first()
+		user = UserReport.where(:userid => params[:user_id]).first()
 
 		respond_to do |format|
 			format.html

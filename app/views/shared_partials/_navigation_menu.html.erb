@@ -17,7 +17,7 @@
             </a>
             <ul class="dropdown-menu dropdown-messages">
                 <%get_notifications(session[:user_id]).each do |notification|%>
-                    <li <%=read_notifications(notification.id)%>>
+                    <li <%=seen_notifications(notification.id)%>>
                         <a href="#">
                             <div>
                                 <strong><%=notification.subject%></strong>
@@ -25,7 +25,7 @@
                                     <em><%=notification.created_at.strftime("%d-%m-%Y")%></em>
                                 </span>
                             </div>
-                            <div><%=notification.notification%></div>
+                            <div><%=notification.message%></div>
                         </a>
                     </li>
                     <li class="divider"></li> 

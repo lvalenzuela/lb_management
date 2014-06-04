@@ -22,9 +22,8 @@ class MainController < ApplicationController
       fixed_pass = user.password
       fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
       password = BCrypt::Password.new(user.password)
-      usertype = ManagementUserPermission.where(:userid => user.id).first().permission_type
-      if password == params[:password] && usertype <= 2 #permitir solo administradores
-        session[:usertype] = usertype
+      if password == params[:password] && user.permissionid <= 2 #permitir solo administradores
+        session[:usertype] = user.permissionid
         session[:user_id] = user.id
         session[:username] = user.username
         redirect_to :action => 'control_panel'

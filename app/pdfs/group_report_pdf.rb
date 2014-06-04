@@ -4,7 +4,7 @@ class GroupReportPdf < Prawn::Document
 	def initialize(institution, group_name, filter, view_context)
 		super(:margin => 50)
 		font "Helvetica"
-		members = find_members(institution, group_name, filter)
+		members = find_group_members(institution, group_name, filter)
 		repeat :all do
 			bounding_box [bounds.left, bounds.top + 30], :width  => bounds.width do
 				header

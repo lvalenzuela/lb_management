@@ -1,32 +1,32 @@
 module RequestsHelper
 
 	def get_priority_list
-		ManagementRequestPriority.all()
+		RequestPriority.all()
 	end
 
 	def get_status_list
-		ManagementRequestStatus.all()
+		RequestStatus.all()
 	end
 
 	def get_area_list
-		ManagementRequestArea.all()
+		RequestArea.all()
 	end
 
 	def get_receiver_list(area_id)
-		area = ManagementRequestArea.find(area_id)
-		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.area_name) 
+		area = RequestArea.find(area_id)
+		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.areaname) 
 	end
 
 	def request_areaname(receiverarea)
-		ManagementRequestArea.find(receiverarea).area_name
+		RequestArea.find(receiverarea).areaname
 	end
 
 	def request_priority_desc(priority)
-		ManagementRequestPriority.find(priority).shortname
+		RequestPriority.find(priority).description
 	end
 
 	def request_status_desc(status)
-		ManagementRequestStatus.find(status).description
+		RequestStatus.find(status).description
 	end
 
 	def get_username(userid)
@@ -141,7 +141,7 @@ module RequestsHelper
 					order by priority_id ASC"
 		end
 						
-		ManagementRequest.find_by_sql(query)
+		Request.find_by_sql(query)
 	end
 
 	def priority_class(priority)

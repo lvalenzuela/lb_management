@@ -5,7 +5,7 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def index
-		@requests = ManagementRequest.where(:receiverid => session[:user_id])
+		@requests = Request.where(:receiverid => session[:user_id])
 		@user = User.find(session[:user_id])
 	end
 
@@ -31,21 +31,21 @@ class RequestsController < ApplicationController
 
 	def sent_requests
 		@user = User.find(session[:user_id])
-		@requests = ManagementRequest.where(:userid => session[:user_id])
+		@requests = Request.where(:userid => session[:user_id])
 	end
 
 	def new_request
-		@request = ManagementRequest.new()
+		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()
 	end
 
 	def edit_request
-		@request = ManagementRequest.find(params[:id])
+		@request = Request.find(params[:id])
 		@user = User.find(session[:user_id])
 	end
 
 	def update
-		@request = ManagementRequest.find(params[:management_request][:id])
+		@request = Request.find(params[:request][:id])
 		old_receiverid = @request.receiverid
 		if @request.update_attributes(request_params)
 			if !@request.receiverid.nil? && old_receiverid != @request.receiverid
@@ -61,7 +61,7 @@ class RequestsController < ApplicationController
 	end
 
 	def create_request
-		@request = ManagementRequest.create(request_params)
+		@request = Request.create(request_params)
 		if @request.valid?
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
@@ -73,11 +73,11 @@ class RequestsController < ApplicationController
 	end
 
 	def show
-		@request = ManagementRequest.find(params[:id])
+		@request = Request.find(params[:id])
 	end
 
 	def destroy
-		request = ManagementRequest.find(params[:id])
+		request = Request.find(params[:id])
 		if request.userid == session[:user_id]
 			request.destroy
 			flash[:notice] = "La solicitud fue eliminada de forma exitosa."
@@ -97,15 +97,15 @@ class RequestsController < ApplicationController
 	end
 
 	def request_params
-		params.require(:management_request).permit(:userid, :subject, :receiverid, :receiverarea, :priority, :status, :request, :duedate)
+		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request, :duedate)
 	end
 
 	def notification_params
-		params.require(:management_notification).permit(:userid, :subject, :notification, :read)
+		params.require(:notification).permit(:userid, :subject, :message, :seen)
 	end
 
 	def notify_user(userid, subject, message)
-		params[:management_notification] = { :userid => userid, :subject => subject, :notification => message, :read => 0 }
+		params[:notification] = { :userid => userid, :subject => subject, :message => message, :seen => 0 }
 		ManagementNotification.create(notification_params)
 	end
 end

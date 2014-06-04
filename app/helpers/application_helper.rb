@@ -6,13 +6,13 @@ module ApplicationHelper
 	end
 
 	def get_notifications(userid)
-		ManagementNotification.all().order("created_at DESC").first(5)
+		Notification.all().order("created_at DESC").first(5)
 	end
 
-	def read_notifications(id)
-		notification = ManagementNotification.find(id)
+	def seen_notifications(id)
+		notification = Notification.find(id)
 
-		if notification.read == 0
+		if notification.seen == 0
 			"style='background-color: #0075b0;'".html_safe
 		else
 			"style =''"
