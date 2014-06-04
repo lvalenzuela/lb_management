@@ -1,172 +1,70 @@
 module ReportsHelper
 
-	def find_members(institution,group,filter)
-		if filter == "1" || filter.nil? #Curso
-			query = "select
-						course.id as courseid,
-						course.fullname as course_fullname,
-						user.id as userid,
-						user.firstname as firstname,
-						user.lastname as lastname,
-						user.institution as institution,
-						user.department as department
-					from mdl_user as user
-					left join(
-						select
-							r_assign.userid,
-							context.instanceid
-						from mdl_role_assignments as r_assign
-						inner join mdl_context as context
-							on r_assign.contextid = context.id and contextlevel = 50
-						where
-							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
-						on user.id = t.userid
-					left join mdl_course as course
-						on course.id = t.instanceid
-					where
-						user.institution is not null
-						and user.institution != ''
-						and user.institution like '%#{institution}%'
-						and user.deleted != 1
-						and course.fullname is not null
-						and course.fullname != ''
-						and course.fullname = '#{group}'
-					group by user.id"
-		elsif filter == "2" #Departamento
-			query = "select
-						course.id as courseid,
-						course.fullname as course_fullname,
-						user.id as userid,
-						user.firstname as firstname,
-						user.lastname as lastname,
-						user.institution as institution,
-						user.department as department
-					from mdl_user as user
-					left join(
-						select
-							r_assign.userid,
-							context.instanceid
-						from mdl_role_assignments as r_assign
-						inner join mdl_context as context
-							on r_assign.contextid = context.id and contextlevel = 50
-						where
-							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
-						on user.id = t.userid
-					left join mdl_course as course
-						on course.id = t.instanceid
-					where
-						user.institution is not null
-						and user.institution != ''
-						and user.institution like '%experian%'
-						and user.department = '#{group}'
-						and user.deleted != 1
-						and course.fullname is not null
-						and course.fullname != ''
-					group by user.id;"
-		end
-
-		members = User.find_by_sql(query)
-	end
-
-	def find_course_by_institution(institution, filter)
-		if filter == "1" || filter.nil? #Por Curso
-			query = "select
-						distinct(course.id) as id,
-						course.fullname as fullname,
-						user.institution as institution,
-						count(distinct(user.id)) as alumnos,
-						count(distinct(user.department)) as departments
-					from mdl_user as user
-					left join(
-						select
-							r_assign.userid,
-							context.instanceid
-						from mdl_role_assignments as r_assign
-						inner join mdl_context as context
-							on r_assign.contextid = context.id and contextlevel = 50
-						where
-							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
-						on user.id = t.userid
-					left join mdl_course as course
-						on course.id = t.instanceid
-					where
-						user.institution is not null
-						and user.institution != ''
-						and user.institution like '%#{institution}%'
-						and user.deleted != 1
-						and course.fullname is not null
-						and course.fullname != ''
-					group by course.id"
-		elsif filter == "2" #Por Departamento
-			query = "select
-						distinct(user.department) as fullname,
-						count(distinct(user.id)) as alumnos,
-						user.institution
-					from mdl_user as user
-					left join(
-						select
-							r_assign.userid,
-							context.instanceid
-						from mdl_role_assignments as r_assign
-						inner join mdl_context as context
-							on r_assign.contextid = context.id and contextlevel = 50
-						where
-							r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
-						on user.id = t.userid
-					left join mdl_course as course
-						on course.id = t.instanceid
-					where
-						user.institution is not null
-						and user.institution != ''
-						and user.institution like '%#{institution}%'
-						and user.deleted != 1
-						and course.fullname is not null
-						and course.fullname != ''
-					group by user.department"
-		end
-		
-		course = Course.find_by_sql(query)
-	end
-
-	def find_institutions(institution_name)
-
-		if institution_name.nil?
-			query_conditions = ""
+	def get_client_list(institution)
+		if institution.nil?
+			@clients = UserReport.select("institution, 
+										count(distinct department) as departments, 
+										count(distinct courseid) as courses, 
+										count(distinct userid) as users").where("institution <> '' and institution is not null").group(:institution)
 		else
-			query_conditions = "and user.institution like '%#{institution_name}%'"
+			@clients = UserReport.select("institution, 
+										count(distinct department) as departments, 
+										count(distinct courseid) as courses, 
+										count(distinct userid) as users").where("institution like '%#{institution}%'").group(:institution)
 		end
-
-		query = "select
-					user.institution as institution,
-					count(distinct(user.department)) as departments,
-					count(distinct(course.id)) as cursos,
-					count(distinct(user.id)) as alumnos
-				from mdl_user as user
-				left join(
-					select
-						r_assign.userid,
-						context.instanceid
-					from mdl_role_assignments as r_assign
-					inner join mdl_context as context
-						on r_assign.contextid = context.id and contextlevel = 50
-					where
-						r_assign.roleid in (select id from mdl_role where shortname = 'student')) as t
-					on user.id = t.userid
-				left join mdl_course as course
-					on course.id = t.instanceid
-				where
-					user.institution is not null
-					and user.institution != ''
-					#{query_conditions}
-					and user.deleted != 1
-					and course.fullname is not null
-					and course.fullname != ''
-				group by user.institution"
-		
-
-		institutions = User.find_by_sql(query)
 	end
 
+	def find_course_by_institution(institution,filter)
+		if filter.to_i == 1 || filter.nil?
+			@groups = UserReport.select("
+							distinct(courseid), 
+							coursename as fullname,
+							institution,
+							count(distinct userid) as alumnos,
+							count(distinct department) as departments").where("
+							institution <> '' and 
+							institution is not null and
+							institution like '%#{institution}%' and
+							coursename is not null and
+							coursename <> ''").group("courseid")
+		else #filter.to_i == 2
+			@groups = UserReport.select("
+							distinct(department) as fullname,
+							count(distinct userid) as alumnos,
+							institution").where("
+							institution <> '' and
+							institution is not null and
+							institution like '%#{institution}%' and
+							coursename is not null and
+							coursename <> ''").group("department")
+		end	
+	end
+
+	def find_group_members(institution,group,filter)
+		if filter.to_i == 1 || filter.nil? #miembros de cursos
+			UserReport.select("
+							courseid,
+							coursename,
+							userid,
+							firstname,
+							lastname,
+							institution,
+							department").where("
+							institution = '#{institution}' and
+							coursename = '#{group}'").group("userid")
+		else #filter.to_i == 2
+			UserReport.select("
+							courseid,
+							coursename,
+							userid,
+							firstname,
+							lastname,
+							institution,
+							department").where("
+							institution = '#{institution}' and
+							department = '#{group}'").group("userid")
+		end
+	end
 	
 	def get_resp_info(inclasswork)
 

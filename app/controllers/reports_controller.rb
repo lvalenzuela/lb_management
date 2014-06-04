@@ -14,31 +14,27 @@ class ReportsController < ApplicationController
 	end
 
 	def clients
-		if params[:institution_name].nil?
-			@clients = find_institutions(nil)
-		else
-			@clients = find_institutions(params[:institution_name])
-		end
+		@clients = get_client_list(params[:institution_name])
 	end
 
 	def courses
-		@groups = find_course_by_institution(params[:institution], params[:group_filter])
+		@groups = find_course_by_institution(params[:institution],params[:group_filter])
 		@selected = params[:group_filter]
 	end
 
 	def members
-		@members = find_members(params[:institution], params[:fullname], params[:filter])
-		
+		@members = find_group_members(params[:institution],params[:fullname],params[:filter])
+
 		@group = {}
-		if params[:filter] == "2"
+		if params[:filter].to_i == 2
 			@group = {:type => "Departamento", 
 				:name => @members.first().department, 
 				:institution => params[:institution], 
 				:fullname => params[:fullname],
 				:filter => params[:filter]}
-		elsif params[:filter] == "1"
+		elsif params[:filter].to_i == 1
 			@group = {:type => "Curso", 
-				:name => @members.first().course_fullname,
+				:name => @members.first().coursename,
 				:institution => params[:institution], 
 				:fullname => params[:fullname],
 				:filter => params[:filter]}
@@ -59,7 +55,7 @@ class ReportsController < ApplicationController
 	end
 
 	def bulk_user_reports
-		members = find_members(params[:institution], params[:fullname], params[:filter])
+		members = find_group_members(params[:institution], params[:fullname], params[:filter])
 		
 		filename = params[:institution]+"_"+params[:fullname]+"_"+Date.today().to_s+".zip"
 

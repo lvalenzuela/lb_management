@@ -28,19 +28,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            	<%row_counter = 1%>
                             	<%@clients.each do |client|%>
-	                            	<%if row_counter%2 == 1%>
-	                            		<%row_class = "odd"%>
-	                            	<%else%>
-	                            		<%row_class = "even"%>
-	                            	<%end%>
-									<tr class="<%=row_class%> gradeA">
+									<tr>
 										<td><%=link_to client.institution, :controller => 'reports', :action => 'courses', :params => {:group_filter => "1", :institution => client.institution}%></td>
-										<td style="text-align: center"><%=client.cursos%></td>
-										<td style="text-align: center"><%=client.alumnos%></td>
+										<td style="text-align: center"><%=client.courses%></td>
+										<td style="text-align: center"><%=client.users%></td>
 									</tr>
-									<%row_counter +=1%>
                             	<%end%>
                             </tbody>
                         </table>
