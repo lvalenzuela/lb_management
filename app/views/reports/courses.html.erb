@@ -33,7 +33,7 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-bordered table-hover" id="courses-table">
                             <thead>
                                 <tr>
 									<th>Nombre</th>
@@ -63,3 +63,9 @@
     </div>
 </div>
 <!-- /#page-wrapper -->
+
+<script>
+$(document).ready(function() {
+    $('#courses-table').dataTable();
+});
+</script>
