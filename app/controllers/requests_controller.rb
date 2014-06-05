@@ -106,6 +106,6 @@ class RequestsController < ApplicationController
 
 	def notify_user(userid, subject, message)
 		params[:notification] = { :userid => userid, :subject => subject, :message => message, :seen => 0 }
-		ManagementNotification.create(notification_params)
+		Notification.create(notification_params)
 	end
 end

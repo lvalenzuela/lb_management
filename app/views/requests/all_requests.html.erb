@@ -26,7 +26,7 @@
                                             <div class="checkbox">
                                                 <label>
                                                     <%=f.check_box :r_area, {:multiple => true, :onchange => "$('#request-filter-form').submit();"}, area.id, nil%>
-                                                    <%=area.area_name%>
+                                                    <%=area.areaname%>
                                                 </label>
                                             </div>
                                         <%end%>                                      
@@ -52,7 +52,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <%=f.check_box :priority, {:multiple => true, :onchange => "$('#request-filter-form').submit();"}, p.id, nil%>
-                                                        <%=p.shortname%>
+                                                        <%=p.description%>
                                                     </label>
                                                 </div>
                                             </end>

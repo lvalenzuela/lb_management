@@ -20,10 +20,10 @@
                     <tr>
                         <td><%=link_to request.subject, :controller => "requests", :action => "show", :params => {:id => request.id}%></td>
                         <td><%=get_username(request.userid)%></td>
-                        <td><%=request_areaname(request.receiverarea)%></td>
-                        <td style="text-align: center;"><%=request_priority_desc(request.priority)%></td>
+                        <td><%=request_areaname(request.areaid)%></td>
+                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                         <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                        <td style="text-align: center;"><%=request.duedate%></td>
+                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
                     </tr>
                 <%end%>
             <%end%>

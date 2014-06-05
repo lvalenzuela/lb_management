@@ -38,7 +38,7 @@ module RequestsHelper
 	def requests_list(t_areas,status_values,priority_values,userid)
 		
 		if !t_areas.nil?
-			areas = "request.receiverarea in ("
+			areas = "areaid in ("
 			t_areas.each do |a|
 				if a != t_areas.last
 					areas = areas + a.to_s + ","
@@ -52,9 +52,9 @@ module RequestsHelper
 
 		if !status_values.nil?
 			if !t_areas.nil?
-				statuses = "and request.status in ("
+				statuses = "and statusid in ("
 			else
-				statuses = "request.status in ("
+				statuses = "statusid in ("
 			end
 			status_values.each do |s|
 				if s != status_values.last
@@ -69,9 +69,9 @@ module RequestsHelper
 
 		if !priority_values.nil?
 			if !t_areas.nil? || !status_values.nil?
-				priorities = "and request.priority in ("
+				priorities = "and priorityid in ("
 			else
-				priorities = "request.priority in ("
+				priorities = "priorityid in ("
 			end
 			priority_values.each do |p|
 				if p != priority_values.last
@@ -86,9 +86,9 @@ module RequestsHelper
 
 		if !userid.nil?
 			if !t_areas.nil? || !status_values.nil? || !priority_values.nil?
-				user_str = "and request.userid = "+userid.to_s
+				user_str = "and userid = "+userid.to_s
 			else
-				user_str = "request.userid = "+userid.to_s
+				user_str = "userid = "+userid.to_s
 			end
 		else
 			user_str = ""
@@ -96,52 +96,10 @@ module RequestsHelper
 
 
 		if !t_areas.nil? || !status_values.nil? || !priority_values.nil? || !userid.nil?
-			query = "select 
-						request.*,
-						concat(user.firstname, ' ', user.lastname) as solicitante,
-						area.id as t_areaid,
-						area.area_name as t_areaname,
-						r_priority.id as priority_id,
-						r_priority.shortname as p_shortname,
-						r_status.description
-					from management_requests as request
-					inner join mdl_user as user
-						on request.userid = user.id
-					inner join management_request_areas as area
-						on request.receiverarea = area.id
-					left join management_request_statuses as r_status
-						on request.status = r_status.id
-					inner join management_request_priorities as r_priority
-						on request.priority = r_priority.id
-					where
-						#{areas}
-						#{statuses}
-						#{priorities}
-						#{user_str}
-					order by priority_id ASC"
-
+			Request.where("#{areas} #{statuses} #{priorities} #{user_str}").order("priorityid ASC")
 		else #todas las solicitudes
-			query = "select 
-						request.*,
-						concat(user.firstname, ' ', user.lastname) as solicitante,
-						area.id as t_areaid,
-						area.area_name as t_areaname,
-						r_priority.id as priority_id,
-						r_priority.shortname as p_shortname,
-						r_status.description
-					from management_requests as request
-					inner join mdl_user as user
-						on request.userid = user.id
-					inner join management_request_areas as area
-						on request.receiverarea = area.id
-					left join management_request_statuses as r_status
-						on request.status = r_status.id
-					inner join management_request_priorities as r_priority
-						on request.priority = r_priority.id
-					order by priority_id ASC"
+			Request.all().order("priorityid ASC")
 		end
-						
-		Request.find_by_sql(query)
 	end
 
 	def priority_class(priority)

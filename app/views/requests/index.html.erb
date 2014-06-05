@@ -29,11 +29,11 @@
 					                <%@requests.each do |request|%>                                       
 					                    <tr>
 					                        <td><%=request.subject%></td>
-					                        <td><%=request_areaname(request.receiverarea)%></td>
-					                        <td style="text-align: center;"><%=request_priority_desc(request.priority)%></td>
-					                        <td style="text-align: center;"><%=request_status_desc(request.status)%></td>
+					                        <td><%=request_areaname(request.areaid)%></td>
+					                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+					                        <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
 					                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-					                        <td style="text-align: center;"><%=request.duedate%></td>
+					                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
 					                    </tr>
 						            <%end%>
 						        </tbody>
