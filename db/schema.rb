@@ -131,6 +131,8 @@ ActiveRecord::Schema.define(version: 20140604223359) do
   end
 
   create_table "users", force: true do |t|
+    t.string   "firstname",    limit: 45
+    t.string   "lastname",     limit: 45
     t.string   "username",     limit: 45
     t.integer  "permissionid"
     t.string   "password"
