@@ -95,7 +95,7 @@ class ReportsController < ApplicationController
 
 	def check_authentication
 	    if session[:user_id].nil?
-	      redirect_to :controller => "main", :action => "index"
+	      redirect_to :controller => "users", :action => "index"
 	    end
 	end
 

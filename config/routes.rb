@@ -1,14 +1,11 @@
 Rails.application.routes.draw do
-  root 'main#index'
+  root 'users#index'
+ 
   resources :main do
     collection do
-      get 'user_profile'
-      get 'index'
       get 'control_panel'
       get 'horarios'
       get 'extras'
-      post 'login'
-      get 'logout'
     end
   end
 
@@ -46,6 +43,8 @@ Rails.application.routes.draw do
     collection do 
       get 'index'
       get 'course_members'
+      post 'login'
+      get 'logout'
     end
   end
 
