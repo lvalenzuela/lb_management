@@ -18,21 +18,21 @@
             <ul class="dropdown-menu dropdown-messages">
                 <%get_notifications(session[:user_id]).each do |notification|%>
                     <li <%=seen_notifications(notification.id)%>>
-                        <a href="#">
+                        <%=link_to :controller => "notifications", :action =>"index", :params => {:selected => notification.id} do%>
                             <div>
                                 <strong><%=notification.subject%></strong>
                                 <span class="pull-right text-muted">
                                     <em><%=notification.created_at.strftime("%d-%m-%Y")%></em>
                                 </span>
                             </div>
-                            <div><%=notification.message%></div>
-                        </a>
+                            <div><%=truncate(notification.message, :length => 70, :separator => ' ')%></div>
+                        <%end%>
                     </li>
                     <li class="divider"></li> 
                 <%end%>
                 <li>
                     <a class="text-center" href="#">
-                        <strong>Read All Messages</strong>
+                        <strong>Leer Todas</strong>
                         <i class="fa fa-angle-right"></i>
                     </a>
                 </li>
@@ -185,6 +185,9 @@
                             </li>
                         <%end%>
                     </ul>
+                </li>
+                <li>
+                    <%=link_to "<i class='fa fa-envelope fa-fw'></i>  Notificaciones".html_safe, :controller => "notifications", :action => "index" %>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Extras<span class="fa arrow"></span></a>

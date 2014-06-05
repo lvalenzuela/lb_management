@@ -1,0 +1,16 @@
+<div class="panel panel-default" id="notification-visualizer">
+    <div class="panel-heading">
+        Visualización de Notificaciones
+    </div>
+    <div class="panel-body">
+        <%if @selected_notification.nil?%>
+            <h3>Seleccione alguna de sus notificaciones</h3>
+            <div style="text-align:center;">
+                <%=image_tag("notif_inbox.png")%>
+            </div>
+        <%else%>
+            <h3><%=@selected_notification.subject%></h3>
+            <p><%=simple_format @selected_notification.message%></p>
+        <%end%>
+    </div>
+</div>

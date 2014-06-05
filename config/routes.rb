@@ -9,6 +9,17 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :notifications do
+    collection do
+      get 'index'
+      get 'new'
+      delete 'destroy'
+      get 'edit'
+      get 'read_notification'
+      get 'show'
+    end
+  end
+
   resources :reports do
     collection do
       get 'index'
