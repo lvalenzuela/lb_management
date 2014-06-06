@@ -56,5 +56,5 @@ end
 
 #after "deploy", "deploy:symlink_config_files"
 #after "deploy", "deploy:precompile_assets"
-after "deploy", "deploy:restart"
+#after "deploy", "deploy:restart"
 after "deploy", "deploy:cleanup"

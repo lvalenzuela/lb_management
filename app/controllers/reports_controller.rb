@@ -42,9 +42,17 @@ class ReportsController < ApplicationController
 	end
 
 	def historical
-		@course_list = UserReport.select("distinct(courseid), coursename")
-		@reports = UserReport.select("*, count(distinct userid) as alumnos").group("courseid, created_at")
+		@courses = UserReport.select("courseid, coursename, count(distinct created_at) as reportnum").group("courseid")
+		@reports = nil #UserReport.select("*, count(distinct userid) as alumnos").group("courseid, created_at")
 	end	
+
+	def reports_for_course
+		@reports = UserReport.select("coursename, courseid, institution, created_at, count(distinct userid) as alumnos").where(:courseid => params[:id]).group("courseid, created_at").order("created_at DESC")
+
+		respond_to do |format|
+			format.js
+		end
+	end
 
 	def reporte_preliminar
 

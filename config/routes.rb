@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get 'group_report'
       get 'show'
       get 'historical'
+      get 'reports_for_course'
     end
   end
 
