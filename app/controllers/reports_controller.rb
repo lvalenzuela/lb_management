@@ -93,7 +93,7 @@ class ReportsController < ApplicationController
 			format.html
 			format.pdf do
 				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter],view_context)
-	  			send_data pdf.render, filename: courses.first().institution+"_"+Date.today().to_s+".pdf",
+	  			send_data pdf.render, filename: courses.first().institution+" - "+params[:fullname]+" - "+Date.today().to_s+".pdf",
 					                   type:"application/pdf"
 			end
 		end
