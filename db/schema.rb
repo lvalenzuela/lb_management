@@ -11,47 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140604223359) do
-
-  create_table "management_notifications", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_request_areas", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_request_priorities", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_request_statuses", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_requests", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_user_permissions", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_users", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "management_usertypes", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(version: 20140610185714) do
 
   create_table "notifications", force: true do |t|
     t.integer  "userid"
@@ -81,6 +41,11 @@ ActiveRecord::Schema.define(version: 20140604223359) do
     t.datetime "updated_at"
   end
 
+  create_table "request_tags", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "requests", force: true do |t|
     t.integer  "userid"
     t.string   "subject",    limit: 100
@@ -89,7 +54,7 @@ ActiveRecord::Schema.define(version: 20140604223359) do
     t.integer  "priorityid"
     t.integer  "statusid"
     t.text     "request",    limit: 2147483647
-    t.datetime "duedate"
+    t.date     "duedate"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

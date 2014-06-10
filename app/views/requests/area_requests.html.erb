@@ -1,0 +1,36 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Solicitudes Sin Asignar Realizadas al <%=@area.areaname%></h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Listado de Solicitudes
+                    </div>
+                    <div class="panel-body">
+                        <%=form_tag assign_requests_requests_path, :remote => true, :id => "select-request-form" do %>
+                            <%=render :partial => "area_requests_table"%>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <%=select_tag :receiverid, options_for_select(get_receiver_list(@area.id).collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:include_blank => true, :class => "form-control"}%>
+                                </div>
+                                <div class="col-md-3">
+                                    <%=button_tag "Asignar a usuario",:class => "btn btn-default", :onclick => "$('#select-request-form').submit();"%>
+                                </div>
+                                <div class="col-md-5">
+                                    <%= paginate @requests %>
+                                </div>
+                            </div>
+                        <%end%> <!-- end form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

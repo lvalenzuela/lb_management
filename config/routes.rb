@@ -47,6 +47,8 @@ Rails.application.routes.draw do
       get 'new_request'
       get 'edit_request'
       get 'show'
+      get 'area_requests'
+      post 'assign_requests'
       delete 'destroy'
     end
   end

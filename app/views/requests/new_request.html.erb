@@ -31,7 +31,7 @@
                         <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}) do |f|%>
                             <div class="form-group">
                                 <%=f.hidden_field :userid, :value =>@user.id%>
-                                <%=f.hidden_field :status, :value => "1"%>
+                                <%=f.hidden_field :statusid, :value => "1"%>
                             </div>
                             <div class="form-group">
                                 <label>Subject:</label>

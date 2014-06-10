@@ -15,34 +15,7 @@
                     </div>
                     <div class="panel-body">
 						<div class="table-responsive">
-						    <table class="table table-striped table-bordered table-hover" id="my-requests-table">
-						        <thead>
-						            <tr>
-						                <th>Tema</th>
-						                <th>Área de Destino</th>
-						                <th style="text-align: center;">Prioridad</th>
-						                <th style="text-align: center;">Estado</th>
-						                <th style="text-align: center;">Fecha de Solicitud</th>
-						                <th style="text-align: center;">Fecha Límite</th>
-						                <th style="text-align: center;">Editar</th>
-						                <th style="text-align: center;">Eliminar</th>
-						            </tr>
-						        </thead>
-						        <tbody>
-					                <%@requests.each do |request|%>                                       
-					                    <tr>
-					                        <td><%=request.subject%></td>
-					                        <td><%=request_areaname(request.areaid)%></td>
-					                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
-					                        <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-					                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-					                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
-					                        <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
-					                        <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>
-					                    </tr>
-						            <%end%>
-						        </tbody>
-						    </table>
+							<%=render :partial => "requests_table"%>
 						</div>
 						<div class="well">
 							<%=link_to 'Nueva Solicitud', {:controller => "requests", :action => "new_request"}, :class => "btn btn-default btn-lg btn-block"%>

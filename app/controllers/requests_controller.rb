@@ -72,6 +72,30 @@ class RequestsController < ApplicationController
 		end
 	end
 
+	def area_requests
+		@area = RequestArea.where(:area_manager => session[:user_id]).first()
+		if !@area.nil?
+			@requests = Request.where(:areaid => @area.id, :receiverid => nil).order("created_at DESC").page(params[:page]).per(5)
+		else
+			@requests = nil
+		end
+	end
+
+	def assign_requests
+		#asignar requests a las personas seleccionadas 
+		params[:requests].each do |r|
+			request = Request.find(r)
+			request.update!(params.permit(:receiverid))
+		end
+
+		@area = RequestArea.where(:area_manager => session[:user_id]).first()
+		@requests = Request.where(:areaid => @area.id, :receiverid => nil).order("created_at DESC").page(params[:page]).per(5)
+		
+		respond_to do |format|
+			format.js
+		end
+	end
+
 	def show
 		@request = Request.find(params[:id])
 	end

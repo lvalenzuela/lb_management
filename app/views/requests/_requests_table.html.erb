@@ -1,32 +1,32 @@
-<div class="table-responsive" id="requests-table">
-    <table class="table table-striped table-bordered table-hover" id="general-requests-table">
-        <thead>
-            <tr>
-                <th>Tema</th>
-                <th>Usuario Solicitante</th>
-                <th>Área de Destino</th>
-                <th style="text-align: center;">Prioridad</th>
-                <th style="text-align: center;">Fecha de Solicitud</th>
-                <th style="text-align: center;">Fecha Límite</th>
-            </tr>
-        </thead>
-        <tbody>
-            <%if @requests.empty?%>
-                <tr class="warning">
-                    <td colspan="6">No hay solicitudes para mostrar</td>
-                </tr>
-            <%else%>
-                <%@requests.each do |request|%>                                       
-                    <tr>
-                        <td><%=link_to request.subject, :controller => "requests", :action => "show", :params => {:id => request.id}%></td>
-                        <td><%=get_username(request.userid)%></td>
-                        <td><%=request_areaname(request.areaid)%></td>
-                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
-                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
-                    </tr>
-                <%end%>
+<table class="table table-striped table-bordered table-hover" id="my-requests-table">
+    <thead>
+        <tr>
+            <th>Tema</th>
+            <th>Área de Destino</th>
+            <th style="text-align: center;">Prioridad</th>
+            <th style="text-align: center;">Estado</th>
+            <th style="text-align: center;">Fecha de Solicitud</th>
+            <th style="text-align: center;">Fecha Límite</th>
+            <%if action_name == "sent_requests"%>
+            	<th style="text-align: center;">Editar</th>
+            	<th style="text-align: center;">Eliminar</th>
             <%end%>
-        </tbody>
-    </table>
-</div>
+        </tr>
+    </thead>
+    <tbody>
+        <%@requests.each do |request|%>                                       
+            <tr>
+                <td><%=request.subject%></td>
+                <td><%=request_areaname(request.areaid)%></td>
+                <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+                <%if action_name == "sent_requests"%>
+	                <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
+	                <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>
+	            <%end%>
+            </tr>
+        <%end%>
+    </tbody>
+</table>

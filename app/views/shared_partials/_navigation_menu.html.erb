@@ -179,6 +179,11 @@
                         <li>
                             <%=link_to "Crear Solicitud".html_safe, :controller => "requests", :action => "new_request"%>
                         </li>
+                        <%if session[:usertype] <= 2%>
+                            <li>
+                                <%=link_to "Solicitudes de Área".html_safe, :controller => "requests", :action => "area_requests"%>
+                            </li>
+                        <%end%>
                         <%if session[:usertype] <= 1%>
                             <li>
                                 <%=link_to "Todas las Solicitudes".html_safe, :controller => "requests", :action => "all_requests"%>

@@ -31,8 +31,8 @@
                         <%=form_for(@request, :url => {:controller => "requests", :action => "update"}) do |f|%>
                             <div class="form-group">
                                 <%=f.hidden_field :id%>
-                                <%=f.hidden_field :userid, :value =>@user.id%>
-                                <%=f.hidden_field :status%>
+                                <%=f.hidden_field :userid%>
+                                <%=f.hidden_field :statusid%>
                             </div>
                             <div class="form-group">
                                 <label>Subject:</label>
@@ -40,11 +40,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Area:</label>
-                                <%=f.select :receiverarea, options_for_select(get_area_list().collect{|u| [u.area_name ,u.id]}), {}, {:class => "form-control"}%>
+                                <%=f.select :areaid, options_for_select(get_area_list().collect{|u| [u.areaname ,u.id]}), {}, {:class => "form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
-                                <%=f.select :priority, options_for_select(get_priority_list().collect{|p| [p.shortname, p.id]}), {},{:class =>"form-control"}%>
+                                <%=f.select :priorityid, options_for_select(get_priority_list().collect{|p| [p.description, p.id]}), {},{:class =>"form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Fecha Límite</label>
