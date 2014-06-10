@@ -26,7 +26,8 @@ module ReportsHelper
 							institution is not null and
 							institution like '%#{institution}%' and
 							coursename is not null and
-							coursename <> ''").group("courseid")
+							coursename <> '' and
+							created_at = (select max(created_at) from user_reports)").group("courseid")
 		else #filter.to_i == 2
 			@groups = UserReport.select("
 							distinct(department) as fullname,
@@ -36,7 +37,8 @@ module ReportsHelper
 							institution is not null and
 							institution like '%#{institution}%' and
 							coursename is not null and
-							coursename <> ''").group("department")
+							coursename <> '' and
+							created_at = (select max(created_at) from user_reports)").group("department")
 		end	
 	end
 
