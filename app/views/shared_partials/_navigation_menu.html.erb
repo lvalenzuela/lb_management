@@ -179,9 +179,16 @@
                         <li>
                             <%=link_to "Crear Solicitud".html_safe, :controller => "requests", :action => "new_request"%>
                         </li>
-                        <%if session[:usertype] <= 2%>
+                        <%if session[:usertype] <= 2 && is_area_manager(session[:user_id]) == true%>
                             <li>
-                                <%=link_to "Solicitudes de Área".html_safe, :controller => "requests", :action => "area_requests"%>
+                                <a href="#">Solicitudes de Área<span class="fa arrow"></span></a>
+                                <%areas_for_user().each do |area|%>
+                                    <ul class="nav nav-third-level">
+                                        <li>
+                                            <%=link_to area.areaname, :controller => "requests", :action => "area_requests", :id => area.id%>
+                                        </li>
+                                    </ul>
+                                <%end%>
                             </li>
                         <%end%>
                         <%if session[:usertype] <= 1%>

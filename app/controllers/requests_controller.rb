@@ -73,9 +73,10 @@ class RequestsController < ApplicationController
 	end
 
 	def area_requests
-		@area = RequestArea.where(:area_manager => session[:user_id]).first()
+		@area = RequestArea.find(params[:id])
 		if !@area.nil?
-			@requests = Request.where(:areaid => @area.id, :receiverid => nil).order("created_at DESC").page(params[:page]).per(5)
+			#mostrar todas las solicitudes pendientes del área
+			@requests = Request.where(:areaid => @area.id, :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		else
 			@requests = nil
 		end
@@ -88,8 +89,9 @@ class RequestsController < ApplicationController
 			request.update!(params.permit(:receiverid))
 		end
 
-		@area = RequestArea.where(:area_manager => session[:user_id]).first()
-		@requests = Request.where(:areaid => @area.id, :receiverid => nil).order("created_at DESC").page(params[:page]).per(5)
+		@area = RequestArea.find(params[:areaid][:id])
+		#mostrar todas las solicitudes pendientes del área
+		@requests = Request.where(:areaid => @area.id, :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		
 		respond_to do |format|
 			format.js

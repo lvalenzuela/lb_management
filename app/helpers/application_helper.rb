@@ -18,4 +18,17 @@ module ApplicationHelper
 			"style =''"
 		end
 	end
+
+	def is_area_manager(userid)
+		requests = RequestArea.where(:area_manager => userid)
+		if requests.nil? || requests.empty?
+			false
+		else
+			true
+		end
+	end
+
+	def areas_for_user
+		areas = RequestArea.where(:area_manager => session[:user_id])
+	end
 end

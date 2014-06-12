@@ -30,9 +30,12 @@ module RequestsHelper
 	end
 
 	def get_username(userid)
-		user = User.find(userid)
-
-		username = user.firstname+" "+user.lastname
+		if userid.nil?
+			nil
+		else
+			user = User.find(userid)
+			username = user.firstname+" "+user.lastname
+		end
 	end
 
 	def requests_list(t_areas,status_values,priority_values,userid)
