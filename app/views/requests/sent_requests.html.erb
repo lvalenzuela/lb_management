@@ -12,14 +12,16 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Listado de Solicitudes
+                        <div class="pull-right">
+                            <div class="btn-group">
+                                <%=link_to "Nueva Solicitud", {:controller => "requests", :action => "new_request"}, :class => "btn btn-default btn-xs"%>
+                            </div>
+                        </div>
                     </div>
                     <div class="panel-body">
 						<div class="table-responsive">
 							<%=render :partial => "requests_table"%>
 						</div>
-						<div class="well">
-							<%=link_to 'Nueva Solicitud', {:controller => "requests", :action => "new_request"}, :class => "btn btn-default btn-lg btn-block"%>
-	                    </div>
                     </div>
                 </div>
             </div>

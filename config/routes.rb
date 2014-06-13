@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   resources :requests do
     collection do
       get 'index'
+      post 'mark_as_resolved'
       post 'create_request'
       post 'filter_requests'
       post 'update'

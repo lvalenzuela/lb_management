@@ -1,5 +1,13 @@
 module RequestsHelper
 
+	def display_sent_requests
+		if action_name == "sent_requests"
+			"display: block;"
+		else
+			"display: none;"
+		end
+	end
+
 	def get_priority_list
 		RequestPriority.all()
 	end

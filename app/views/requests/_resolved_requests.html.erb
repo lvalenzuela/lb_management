@@ -1,0 +1,24 @@
+<table class="table table-striped table-bordered table-hover" id="resolved-requests-table">
+    <thead>
+        <tr>
+            <th>Tema</th>
+            <th style="text-align: center;">Estado</th>
+            <th style="text-align: center;">Fecha Límite</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%@resolved_requests.each do |request|%>                                       
+            <tr>
+                <td><%=request.subject%></td>
+                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+            </tr>
+        <%end%>
+    </tbody>
+</table>
+
+<script>
+$(document).ready(function() {
+    $('#resolved-requests-table').dataTable();
+});
+</script>

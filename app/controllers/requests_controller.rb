@@ -5,8 +5,23 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def index
-		@requests = Request.where(:receiverid => session[:user_id])
+		#solicitudes pendientes
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		#solocitudes resueltas o canceladas
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC")
 		@user = User.find(session[:user_id])
+	end
+
+	def mark_as_resolved
+		params[:requests].each do |r|
+			request = Request.find(r)
+			request.update!(params.permit(:statusid))
+		end
+
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		respond_to do |format|
+			format.js
+		end
 	end
 
 	def all_requests

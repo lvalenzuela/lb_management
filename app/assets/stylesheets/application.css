@@ -11,11 +11,20 @@
  * file per style scope.
  *
  *= require font-awesome
+ *= require redactor-rails
  *= require_tree .
  *= require bootstrap-datetimepicker
  *= require_self
  */
 
+
+.pagination-block{
+  float: right;
+}
+
+.redactor_box{
+  min-height: 200px;
+}
 
 /*
  * Base structure

@@ -7,24 +7,40 @@
             <h1 class="page-header">Solicitudes Realizadas a <%=@user.firstname+" "+@user.lastname%></h1>
         </div>
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Listado de Solicitudes
+                        Solicitudes Pendientes
                     </div>
                     <div class="panel-body">
-						<div class="table-responsive">
-							<%=render :partial => "requests_table"%>
-						</div>
+                        <%=form_tag mark_as_resolved_requests_path, :remote => true, :id => "pending-requests-form" do%>
+                            <div class="input-group">
+                                    <%=hidden_field_tag :statusid, 2%>
+                                    <%=button_tag "Marcar como Resueltas >>",:class => "btn btn-default", :onclick => "$('#pending-requests-form').submit();"%>
+                                
+                            </div>
+    						<div class="table-responsive">
+    							<%=render :partial => "pending_requests"%>
+    						</div>
+                        <%end%>
+                        <div class="pagination-block">
+                            <%= paginate @requests %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Solicitudes Resueltas / Canceladas
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <%=render :partial => "resolved_requests"%>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('#my-requests-table').dataTable();
-});
-</script>
