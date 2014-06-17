@@ -44,6 +44,38 @@ class RequestsController < ApplicationController
 		end
 	end
 
+	def filter_by_tag
+
+		respond_to do |format|
+			format.js
+		end
+	end
+
+	def mark_with_tag
+		#actualizar campo correspondiente al tag en la solicitud
+		params[:requests].each do |r|
+			request = Request.find(r)
+			request.update!(params.permit(:tagid))
+		end
+		#refrescar las solicitudes pendientes
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		
+		respond_to do |format|
+			format.js
+		end
+	end
+
+	def create_tag
+		tag = Tag.create(tag_params)
+		if tag.valid?
+			flash[:notice] = "La etiqueta fue creada con éxito."
+			redirect_to :action => "index"
+		else
+			flash[:notice] = "No se pudo crear la etiqueta."
+			redirect_to :action => "index"
+		end
+	end
+
 	def sent_requests
 		@user = User.find(session[:user_id])
 		@requests = Request.where(:userid => session[:user_id])
@@ -135,6 +167,10 @@ class RequestsController < ApplicationController
 	    if session[:user_id].nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
+	end
+
+	def tag_params
+		params.require(:tag).permit(:userid, :tagname)
 	end
 
 	def request_params

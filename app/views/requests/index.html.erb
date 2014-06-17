@@ -7,29 +7,54 @@
             <h1 class="page-header">Solicitudes Realizadas a <%=@user.firstname+" "+@user.lastname%></h1>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Solicitudes Pendientes
                     </div>
                     <div class="panel-body">
-                        <%=form_tag mark_as_resolved_requests_path, :remote => true, :id => "pending-requests-form" do%>
-                            <div class="input-group">
-                                    <%=hidden_field_tag :statusid, 2%>
-                                    <%=button_tag "Marcar como Resueltas >>",:class => "btn btn-default", :onclick => "$('#pending-requests-form').submit();"%>
-                                
+                            <div class="request-options-wrapper">
+                                <div class="col-md-4">
+                                    <%=form_for :tag, :url => {:controller => "requests", :action => "create_tag"}, :html =>{:id => "crate-tag-form"} do |f|%>
+                                    <div class="input-group">
+                                        <%=f.text_field :tagname, :class => "form-control", :placeholder => "Crear Tag"%>
+                                        <span class="input-group-btn">
+                                        <%=button_tag "<i class='fa fa-plus'></i>".html_safe, :class => "btn btn-default", :onclick => "$('#crate-tag-form').submit();"%>
+                                        </span>
+                                        <%=f.hidden_field :userid, :value => session[:user_id]%>
+                                    </div>
+                                    <%end%>
+                                </div>
+                                <div class="col-md-4">
+                                    <%=form_tag filter_by_tag_requests_path, :remote => true, :id => "tag-filter-form" do%>
+                                    <div class="form-group">
+                                        <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:include_blank => true, :prompt => "Filtrar por Tag", :class => "form-control"}%>
+                                    </div> 
+                                    <%end%>
+                                </div>
+                        <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <%=select_tag :tagid, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}.insert(0,"Borrar Tag")), {:include_blank => true, :prompt => "Asignar Tags", :class => "form-control"}%>
+                                        <span class="input-group-btn">
+                                            <%=button_tag "<i class='fa fa-plus'></i>".html_safe, :class => "btn btn-default", :onclick => "$('#tag-marker-form').submit();"%>
+                                        </span>                                     
+                                    </div>
+                                </div>
                             </div>
     						<div class="table-responsive">
     							<%=render :partial => "pending_requests"%>
     						</div>
-                        <%end%>
+                        <%end%> <!-- tag-marker-form -->
                         <div class="pagination-block">
                             <%= paginate @requests %>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Solicitudes Resueltas / Canceladas

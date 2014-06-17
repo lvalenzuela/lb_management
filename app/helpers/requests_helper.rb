@@ -1,5 +1,22 @@
 module RequestsHelper
 
+	def get_tagname(id)
+		if !id.nil?
+			tagname = Tag.find(id).tagname
+		else
+			"-"
+		end
+	end
+
+	def get_user_tags
+		tags = Tag.where(:userid => session[:user_id])
+		if tags.nil? || tags.empty?
+			{}
+		else
+			tags
+		end
+	end
+
 	def display_sent_requests
 		if action_name == "sent_requests"
 			"display: block;"

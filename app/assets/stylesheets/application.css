@@ -18,6 +18,8 @@
  */
 
 
+/* Requests*/
+
 .pagination-block{
   float: right;
 }
@@ -25,6 +27,7 @@
 .redactor_box{
   min-height: 200px;
 }
+
 
 /*
  * Base structure
