@@ -22,7 +22,7 @@
                                     <tr>
                                         <th>Subject</th>
                                         <th>Fecha</th>
-                                        <th>Estado</th>
+                                        <th style="text-align: center;">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,9 +31,9 @@
                                             <td><%=link_to note.subject, {:controller => "notifications", :action => "read_notification", :params => {:id => note.id, :notification => {:seen => 1}}}, :remote => true%></td>
                                             <td><%=note.created_at.strftime("%d-%m-%Y")%></td>
                                             <%if note.seen == 0%>
-                                                <td>No Leido</td>
+                                                <td style="text-align: center;"><i class="fa fa-eye-slash"></i></td>
                                             <%else%>
-                                                <td>Leido</td>
+                                                <td style="text-align: center;"><i class="fa fa-eye"></i></td>
                                             <%end%>
                                         </tr>
                                     <%end%>

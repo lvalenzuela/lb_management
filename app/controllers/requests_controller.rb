@@ -8,7 +8,7 @@ class RequestsController < ApplicationController
 		#solicitudes pendientes
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC")
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
 	end
 
@@ -17,7 +17,7 @@ class RequestsController < ApplicationController
 		r.update!(params.permit(:statusid))
 
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC")		
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
 
 		
 		respond_to do |format|

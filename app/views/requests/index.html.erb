@@ -72,6 +72,9 @@
                         <div class="table-responsive">
                             <%=render :partial => "resolved_requests"%>
                         </div>
+                        <div class="pagination-block">
+                            <%= paginate @resolved_requests%>
+                        </div>
                     </div>
                 </div>
             </div>

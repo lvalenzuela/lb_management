@@ -7,13 +7,13 @@
             <th style="text-align: center;">Prioridad</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
-            <th style="text-align: center;">Resuelta</th>
+            <th style="text-align: center;">Marcar como Resuelta</th>
         </tr>
     </thead>
     <tbody>
         <%if @requests.nil? || @requests.empty?%>
             <tr class="warning">
-                <td colspan="6">No hay solicitudes pendientes asignadas al usuario</td>
+                <td colspan="7">No hay solicitudes pendientes asignadas al usuario</td>
             </tr>
         <%else%>
             <%@requests.each do |request|%>                                
