@@ -12,13 +12,14 @@ class RequestsController < ApplicationController
 		@user = User.find(session[:user_id])
 	end
 
-	def mark_as_resolved
-		params[:requests].each do |r|
-			request = Request.find(r)
-			request.update!(params.permit(:statusid))
-		end
+	def change_status
+		r = Request.find(params[:id])
+		r.update!(params.permit(:statusid))
 
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC")		
+
+		
 		respond_to do |format|
 			format.js
 		end
@@ -44,7 +45,12 @@ class RequestsController < ApplicationController
 		end
 	end
 
-	def filter_by_tag
+	def filter_pending
+		if params[:tag] != ""
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1, :tagid => params[:tag]).order("created_at DESC").page(params[:page]).per(5)
+		else
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		end
 
 		respond_to do |format|
 			format.js

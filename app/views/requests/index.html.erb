@@ -26,16 +26,16 @@
                                     <%end%>
                                 </div>
                                 <div class="col-md-4">
-                                    <%=form_tag filter_by_tag_requests_path, :remote => true, :id => "tag-filter-form" do%>
+                                    <%=form_tag filter_pending_requests_path, :remote => true, :id => "tag-filter-form" do%>
                                     <div class="form-group">
-                                        <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:include_blank => true, :prompt => "Filtrar por Tag", :class => "form-control"}%>
+                                        <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#tag-filter-form').submit();"}%>
                                     </div> 
                                     <%end%>
                                 </div>
                         <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
                                 <div class="col-md-4">
                                     <div class="input-group">
-                                        <%=select_tag :tagid, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}.insert(0,"Borrar Tag")), {:include_blank => true, :prompt => "Asignar Tags", :class => "form-control"}%>
+                                        <%=select_tag :tagid, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}.insert(0,"--Borrar Tag--")), { :prompt => "Asignar Tags", :class => "form-control"}%>
                                         <span class="input-group-btn">
                                             <%=button_tag "<i class='fa fa-plus'></i>".html_safe, :class => "btn btn-default", :onclick => "$('#tag-marker-form').submit();"%>
                                         </span>                                     
@@ -60,6 +60,15 @@
                         Solicitudes Resueltas / Canceladas
                     </div>
                     <div class="panel-body">
+                        <div class="request-options-wrapper">
+                            <div class="col-md-4">
+                                <%=form_tag filter_resolved_requests_path, :remote => true, :id => "resolved-filter-form" do%>
+                                <div class="form-group">
+                                     <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#resolved-filter-form').submit();"}%>
+                                </div>
+                                <%end%>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <%=render :partial => "resolved_requests"%>
                         </div>

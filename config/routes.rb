@@ -39,11 +39,12 @@ Rails.application.routes.draw do
   resources :requests do
     collection do
       get 'index'
-      post 'mark_as_resolved'
+      get 'change_status'
       post 'create_request'
       post 'filter_requests'
       post 'update'
-      post 'filter_by_tag'
+      post 'filter_pending'
+      post 'filter_resolved'
       post 'mark_with_tag'
       post 'create_tag'
       get 'sent_requests'

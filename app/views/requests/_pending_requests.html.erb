@@ -7,7 +7,7 @@
             <th style="text-align: center;">Prioridad</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
-
+            <th style="text-align: center;">Resuelta</th>
         </tr>
     </thead>
     <tbody>
@@ -24,6 +24,7 @@
                     <td><%=request_priority_desc(request.priorityid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                     <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "change_status" ,:params => {:id => request.id, :statusid => 2}}, {:remote => true, :class => "btn btn-default btn-circle"} %></td>
                 </tr>
                 <%=render :partial => "modal_request", :locals => {:request => request}%>
             <%end%>
