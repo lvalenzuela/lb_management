@@ -1,11 +1,9 @@
 <table class="table table-striped table-bordered table-hover" id="pending-requests-table">
     <thead>
         <tr>
-            <th></th>
             <th>Tema</th>
             <th>Tag</th>
             <th style="text-align: center;">Prioridad</th>
-            <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
             <th style="text-align: center;">Marcar como Resuelta</th>
         </tr>
@@ -13,16 +11,14 @@
     <tbody>
         <%if @requests.nil? || @requests.empty?%>
             <tr class="warning">
-                <td colspan="7">No hay solicitudes pendientes asignadas al usuario</td>
+                <td colspan="5">No hay solicitudes pendientes asignadas al usuario</td>
             </tr>
         <%else%>
-            <%@requests.each do |request|%>                                
+            <%@requests.each do |request|%>
                 <tr>
-                    <td style="text-align: center;"><%=check_box_tag "requests[]",request.id%></td>
                     <td><%=link_to request.subject, "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-                    <td><%=get_tagname(request.tagid)%></td>
-                    <td><%=request_priority_desc(request.priorityid)%></td>
-                    <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                    <td><%=select_tag :r_tagid, options_for_select(get_user_tags().collect{|t| [t.tagname, request.id.to_s+";"+t.id.to_s]}, request.id.to_s+";"+request.tagid.to_s), {:include_blank => true, :class => "form-control", :onchange => "$('#tag-marker-form').submit();"}%></td>
+                    <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                     <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
                     <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "change_status" ,:params => {:id => request.id, :statusid => 2}}, {:remote => true, :class => "btn btn-default btn-circle"} %></td>
                 </tr>

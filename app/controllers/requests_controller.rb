@@ -57,12 +57,31 @@ class RequestsController < ApplicationController
 		end
 	end
 
+	def filter_resolved
+		if params[:tag] != ""
+			@resolved_requests = Request.where(:receiverid => session[:user_id], :tagid => params[:tag], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+		else
+			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+		end
+
+		respond_to do |format|
+			format.js
+		end
+	end
+
 	def mark_with_tag
 		#actualizar campo correspondiente al tag en la solicitud
-		params[:requests].each do |r|
-			request = Request.find(r)
-			request.update!(params.permit(:tagid))
+		data = params[:r_tagid].split(";") #data(1) = id de la solicitud, data(2) = id del tag
+		if data != ""
+			request = Request.find(data[0].to_i)
+			request.update_attribute("tagid", data[1].to_i)
+			request.save()
+		else
+			request = Request.find(params[:r_tagid])
+			request.update_attribute("tagid", nil)
+			request.save()
 		end
+
 		#refrescar las solicitudes pendientes
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		

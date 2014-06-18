@@ -15,6 +15,13 @@
                     <div class="panel-body">
                             <div class="request-options-wrapper">
                                 <div class="col-md-4">
+                                    <%=form_tag filter_pending_requests_path, :remote => true, :id => "tag-filter-form" do%>
+                                    <div class="form-group">
+                                        <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#tag-filter-form').submit();"}%>
+                                    </div> 
+                                    <%end%>
+                                </div>
+                                <div class="col-md-4 col-md-offset-4">
                                     <%=form_for :tag, :url => {:controller => "requests", :action => "create_tag"}, :html =>{:id => "crate-tag-form"} do |f|%>
                                     <div class="input-group">
                                         <%=f.text_field :tagname, :class => "form-control", :placeholder => "Crear Tag"%>
@@ -24,28 +31,13 @@
                                         <%=f.hidden_field :userid, :value => session[:user_id]%>
                                     </div>
                                     <%end%>
-                                </div>
-                                <div class="col-md-4">
-                                    <%=form_tag filter_pending_requests_path, :remote => true, :id => "tag-filter-form" do%>
-                                    <div class="form-group">
-                                        <%=select_tag :tag, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#tag-filter-form').submit();"}%>
-                                    </div> 
-                                    <%end%>
-                                </div>
-                        <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
-                                <div class="col-md-4">
-                                    <div class="input-group">
-                                        <%=select_tag :tagid, options_for_select(get_user_tags().collect{|t| [t.tagname, t.id]}.insert(0,"--Borrar Tag--")), { :prompt => "Asignar Tags", :class => "form-control"}%>
-                                        <span class="input-group-btn">
-                                            <%=button_tag "<i class='fa fa-plus'></i>".html_safe, :class => "btn btn-default", :onclick => "$('#tag-marker-form').submit();"%>
-                                        </span>                                     
-                                    </div>
-                                </div>
+                                </div>                        
                             </div>
     						<div class="table-responsive">
-    							<%=render :partial => "pending_requests"%>
+                                <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
+                                    <%=render :partial => "pending_requests"%>
+                                <%end%> <!-- tag-marker-form -->
     						</div>
-                        <%end%> <!-- tag-marker-form -->
                         <div class="pagination-block">
                             <%= paginate @requests %>
                         </div>

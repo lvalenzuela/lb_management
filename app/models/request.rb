@@ -9,7 +9,7 @@ class Request < ActiveRecord::Base
 	end
 
 	def empty_tag
-		if self.tagid == 0
+		if self.tagid == ""
 			self.tagid = nil
 		end
 	end
