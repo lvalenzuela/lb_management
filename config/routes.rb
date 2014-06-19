@@ -15,7 +15,8 @@ Rails.application.routes.draw do
       get 'new'
       delete 'destroy'
       get 'edit'
-      get 'read_notification'
+      get 'read'
+      post 'search'
       get 'show'
     end
   end

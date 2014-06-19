@@ -13,12 +13,20 @@ class NotificationsController < ApplicationController
 		end
 	end
 
-	def read_notification
+	def read
 		@selected_notification = Notification.find(params[:id])
 		if @selected_notification.seen == 0
 			 @selected_notification.update_attributes(:seen => 1)
 		end
 		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
+		respond_to do |format|
+			format.js
+		end
+	end
+
+	def search
+		@notifications = Notification.where("userid = #{session[:user_id]} and subject like '%#{params[:find][:subject]}%'").order("id DESC").page(params[:page]).per(5)
+
 		respond_to do |format|
 			format.js
 		end

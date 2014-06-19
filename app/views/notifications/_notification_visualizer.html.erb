@@ -6,7 +6,7 @@
         <%if @selected_notification.nil?%>
             <h3>Seleccione alguna de sus notificaciones</h3>
             <div style="text-align:center;">
-                <%=image_tag("notif_inbox.png")%>
+                <%=image_tag("notif_inbox.png", :size => "250x250")%>
             </div>
         <%else%>
             <h3><%=@selected_notification.subject%></h3>

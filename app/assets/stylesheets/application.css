@@ -17,6 +17,13 @@
  *= require_self
  */
 
+/*Tablas en general*/
+
+.table-options-wrapper{
+  min-height: 20px;
+  margin-bottom: 5px;
+  margin-left: -13px;
+}
 
 /* Requests*/
 

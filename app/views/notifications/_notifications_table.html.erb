@@ -9,7 +9,7 @@
     <tbody>
         <%@notifications.each do |note|%>
             <tr>
-                <td><%=link_to note.subject, {:controller => "notifications", :action => "read_notification", :params => {:id => note.id, :notification => {:seen => 1}}}, :remote => true%></td>
+                <td><%=link_to note.subject, {:controller => "notifications", :action => "read", :params => {:id => note.id, :notification => {:seen => 1}}}, :remote => true%></td>
                 <td><%=note.created_at.strftime("%d-%m-%Y")%></td>
                 <%if note.seen == 0%>
                     <td style="text-align: center;"><i class="fa fa-warning"></i></td>

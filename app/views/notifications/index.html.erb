@@ -16,6 +16,18 @@
                         Listado de Notificaciones
                     </div>
                     <div class="panel-body">
+                        <div class="table-options-wrapper">
+                            <div class="col-lg-8">
+                                <%=form_for :find, :url => {:controller => "notifications", :action =>"search"}, :html => {:id => "search-notification-form"}, :remote => true do |f|%>
+                                    <div class="input-group">
+                                        <%=f.text_field :subject, :placeholder => "Buscar", :class => "form-control" %>
+                                        <span class="input-group-btn">
+                                        <%=button_tag "<i class='fa fa-search'></i>".html_safe, :class => "btn btn-default", :onclick => "$('#search-notification-form').submit();"%>
+                                        </span>
+                                    </div>
+                                <%end%>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <%= render :partial => "notifications_table"%>
                         </div>
