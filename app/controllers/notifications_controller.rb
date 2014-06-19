@@ -4,7 +4,7 @@ class NotificationsController < ApplicationController
 	layout "dashboard"
 
 	def index
-		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC")
+		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
 		if params[:selected].nil?
 			@selected_notification = nil
@@ -16,8 +16,9 @@ class NotificationsController < ApplicationController
 	def read_notification
 		@selected_notification = Notification.find(params[:id])
 		if @selected_notification.seen == 0
-			 @selected_notification.update_attributes(notification_params)
+			 @selected_notification.update_attributes(:seen => 1)
 		end
+		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
 		respond_to do |format|
 			format.js
 		end
@@ -52,9 +53,5 @@ class NotificationsController < ApplicationController
 	    if session[:user_id].nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
-	end
-
-	def notification_params
-		params.require(:notification).permit(:userid, :subject, :message, :seen)
 	end
 end

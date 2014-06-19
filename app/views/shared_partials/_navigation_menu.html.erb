@@ -17,9 +17,10 @@
             </a>
             <ul class="dropdown-menu dropdown-messages">
                 <%get_notifications(session[:user_id]).each do |notification|%>
-                    <li <%=seen_notifications(notification.id)%>>
+                    <li>
                         <%=link_to :controller => "notifications", :action =>"index", :params => {:selected => notification.id} do%>
                             <div>
+                                <%=seen_notification(notification.seen).html_safe%>
                                 <strong><%=notification.subject%></strong>
                                 <span class="pull-right text-muted">
                                     <em><%=notification.created_at.strftime("%d-%m-%Y")%></em>
@@ -31,10 +32,10 @@
                     <li class="divider"></li> 
                 <%end%>
                 <li>
-                    <a class="text-center" href="#">
+                    <%=link_to notifications_path, :class => "text-center" do%>
                         <strong>Leer Todas</strong>
                         <i class="fa fa-angle-right"></i>
-                    </a>
+                    <%end%>
                 </li>
             </ul>
             <!-- /.dropdown-messages -->

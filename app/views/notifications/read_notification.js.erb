@@ -1,1 +1,2 @@
 $("#notification-visualizer").replaceWith("<%= escape_javascript(render(:partial => 'notification_visualizer', :object => @selected_notification))%>");
+$("#notifications-table").replaceWith("<%= escape_javascript(render(:partial => 'notifications_table', :object => @notifications))%>");

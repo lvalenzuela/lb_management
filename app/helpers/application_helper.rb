@@ -9,13 +9,11 @@ module ApplicationHelper
 		Notification.where(:userid => userid).order("id DESC").first(5)
 	end
 
-	def seen_notifications(id)
-		notification = Notification.find(id)
-
-		if notification.seen == 0
-			"style='background-color: #C0C0C0;'".html_safe
-		else
-			"style =''"
+	def seen_notification(seen)
+		if seen == 0 #notificacion vista
+			"<i class='fa fa-caret-right'></i>"
+		else	#notificacion sin ver
+			""
 		end
 	end
 
