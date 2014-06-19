@@ -71,15 +71,12 @@ class RequestsController < ApplicationController
 
 	def mark_with_tag
 		#actualizar campo correspondiente al tag en la solicitud
-		data = params[:r_tagid].split(";") #data(1) = id de la solicitud, data(2) = id del tag
-		if data != ""
-			request = Request.find(data[0].to_i)
-			request.update_attribute("tagid", data[1].to_i)
-			request.save()
-		else
-			request = Request.find(params[:r_tagid])
-			request.update_attribute("tagid", nil)
-			request.save()
+		#data(1) = id de la solicitud, data(2) = id del tag
+		params[:r_tagid].each do |rt|
+			if rt != ""
+				data = rt.split(";") 
+				Request.find(data[0].to_i).update_attributes(:tagid => data[1].to_i)
+			end
 		end
 
 		#refrescar las solicitudes pendientes

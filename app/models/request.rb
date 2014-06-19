@@ -1,16 +1,11 @@
 class Request < ActiveRecord::Base
-	before_create :set_default_receiver
-	before_update :empty_tag
+	before_create :set_defaults
 	validates :userid, :statusid, :subject, :areaid, :priorityid, :statusid, :duedate, presence: true
 
-	def set_default_receiver
+	def set_defaults
 		#Asigna solicitudes de forma automatica al encargado del área al que fueron realizadas
 		self.receiverid = RequestArea.find(self.areaid).area_manager
-	end
-
-	def empty_tag
-		if self.tagid == ""
-			self.tagid = nil
-		end
+		#Asigna un tag vacio a la solicitud
+		self.tagid = 0
 	end
 end

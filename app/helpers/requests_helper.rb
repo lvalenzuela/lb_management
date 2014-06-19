@@ -9,7 +9,7 @@ module RequestsHelper
 	end
 
 	def get_user_tags
-		tags = Tag.where(:userid => session[:user_id])
+		tags = Tag.where(:userid => [session[:user_id],0])
 		if tags.nil? || tags.empty?
 			{}
 		else
