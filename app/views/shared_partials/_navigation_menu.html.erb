@@ -157,7 +157,7 @@
                 <li>
                     <%=link_to "<i class='fa fa-dashboard fa-fw'></i> Dashboard".html_safe, :controller => "main", :action => "index" %>
                 </li>
-                <li>
+                <li <%=activate_menu_item(controller_name,"reports")%>>
                     <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
@@ -168,7 +168,7 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li <%=activate_menu_item(controller_name,"requests")%>>
                     <a href="#"><i class="fa fa-bell fa-fw"></i> Solicitudes<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
@@ -199,7 +199,7 @@
                         <%end%>
                     </ul>
                 </li>
-                <li>
+                <li <%=activate_menu_item(controller_name,"notifications")%>>
                     <%=link_to "<i class='fa fa-envelope fa-fw'></i>  Notificaciones".html_safe, :controller => "notifications", :action => "index" %>
                 </li>
                 <li>
