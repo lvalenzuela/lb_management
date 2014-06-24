@@ -33,8 +33,12 @@ module RequestsHelper
 		RequestStatus.all()
 	end
 
-	def get_area_list
-		RequestArea.all()
+	def get_area_list(id_list)
+		if id_list.nil? || id_list == ""
+			RequestArea.all()
+		else
+			RequestArea.where(:id => id_list)
+		end
 	end
 
 	def get_receiver_list(area_id)

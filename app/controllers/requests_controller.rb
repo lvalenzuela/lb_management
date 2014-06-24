@@ -8,16 +8,17 @@ class RequestsController < ApplicationController
 		#solicitudes pendientes
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
 	end
 
 	def change_status
 		r = Request.find(params[:id])
-		r.update!(params.permit(:statusid))
+		#se marca la solicitud como esperando confirmacion
+		r.update_attributes(:statusid => params[:statusid])
 
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 
 		
 		respond_to do |format|
@@ -61,7 +62,7 @@ class RequestsController < ApplicationController
 		if params[:tag] != ""
 			@resolved_requests = Request.where(:receiverid => session[:user_id], :tagid => params[:tag], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
 		else
-			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 		end
 
 		respond_to do |format|
@@ -196,7 +197,7 @@ class RequestsController < ApplicationController
 	end
 
 	def request_params
-		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request, :duedate)
+		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request)
 	end
 
 	def notification_params

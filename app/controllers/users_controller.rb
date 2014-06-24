@@ -23,14 +23,19 @@ class UsersController < ApplicationController
 	      fixed_pass = user.password
 	      fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
 	      password = BCrypt::Password.new(user.password)
-	      if password == params[:password] && user.permissionid <= 2 #permitir solo administradores
-	        session[:usertype] = user.permissionid
-	        session[:user_id] = user.id
-	        session[:username] = user.username
-	        redirect_to :controller => "main", :action => 'index'
-	      else
-	        flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
-	        redirect_to :action => "index"
+	      if user.permissionid <= 2 #permitir solo administradores
+		      if password == params[:password] 
+		        session[:usertype] = user.permissionid
+		        session[:user_id] = user.id
+		        session[:username] = user.username
+		        redirect_to root_path
+		      else
+		        flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
+		        redirect_to :action => "index"
+		    end
+		  else
+		  	flash[:notice] = "Usuario no autorizado."
+		  	redirect_to :action => "index"
 	      end
 	    end
 	end

@@ -157,6 +157,7 @@
                 <li>
                     <%=link_to "<i class='fa fa-dashboard fa-fw'></i> Dashboard".html_safe, :controller => "main", :action => "index" %>
                 </li>
+                <%if session[:usertype] <= 2 %>
                 <li <%=activate_menu_item(controller_name,"reports")%>>
                     <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -168,6 +169,7 @@
                         </li>
                     </ul>
                 </li>
+                <%end%>
                 <li <%=activate_menu_item(controller_name,"requests")%>>
                     <a href="#"><i class="fa fa-bell fa-fw"></i> Solicitudes<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">

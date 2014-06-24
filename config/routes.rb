@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root 'users#index'
+  root 'notifications#index'
  
   resources :main do
     collection do

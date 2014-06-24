@@ -26,10 +26,8 @@
                             <%=render :partial => "area_requests_table"%>
 
                             <div class="row">
-                                <div class="col-md-offset-7 col-md-5">
-                                    <div class="pagination-block">
-                                        <%= paginate @requests %>
-                                    </div>
+                                <div class="pagination-block">
+                                    <%= paginate @requests %>
                                 </div>
                             </div>
                         <%end%> <!-- end form -->

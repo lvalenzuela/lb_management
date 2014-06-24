@@ -34,24 +34,16 @@
                                 <%=f.hidden_field :statusid, :value => "1"%>
                             </div>
                             <div class="form-group">
-                                <label>Subject:</label>
+                                <label>Título:</label>
                                 <%=f.text_field :subject, :class => "form-control" %>
                             </div>
                             <div class="form-group">
                                 <label>Area:</label>
-                                <%=f.select :areaid, options_for_select(get_area_list().collect{|u| [u.areaname ,u.id]}), {}, {:class => "form-control"}%>
+                                <%=f.select :areaid, options_for_select(get_area_list(4).collect{|u| [u.areaname ,u.id]}), {}, {:class => "form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
-                                <%=f.select :priorityid, options_for_select(get_priority_list().collect{|p| [p.description, p.id]}), {},{:class =>"form-control"}%>
-                            </div>
-                            <div class="form-group">
-                                <label>Fecha Límite</label>
-                                <div class="input-group date" id="datetimepicker" data-date-format="YYYY/MM/DD">
-                                    <%=f.text_field :duedate ,:class => "form-control"%>
-                                    <span class="input-group-addon"><span class="fa fa-calendar"></span>
-                                    </span>
-                                </div>
+                                <%=f.select :priorityid, options_for_select(get_priority_list().collect{|p| [p.description, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Solicitud:</label>
@@ -67,10 +59,3 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(function () {
-        $('#datetimepicker').datetimepicker({
-            pickTime: false
-        });
-    });
-</script>
