@@ -8,42 +8,12 @@ module RequestsHelper
 		end
 	end
 
-	def get_user_tags
-		tags = Tag.where(:userid => [session[:user_id],0])
-		if tags.nil? || tags.empty?
-			{}
-		else
-			tags
-		end
-	end
-
 	def display_sent_requests
 		if action_name == "sent_requests"
 			"display: block;"
 		else
 			"display: none;"
 		end
-	end
-
-	def get_priority_list
-		RequestPriority.all()
-	end
-
-	def get_status_list
-		RequestStatus.all()
-	end
-
-	def get_area_list(id_list)
-		if id_list.nil? || id_list == ""
-			RequestArea.all()
-		else
-			RequestArea.where(:id => id_list)
-		end
-	end
-
-	def get_receiver_list(area_id)
-		area = RequestArea.find(area_id)
-		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.areaname) 
 	end
 
 	def request_areaname(receiverarea)

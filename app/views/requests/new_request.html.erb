@@ -33,18 +33,31 @@
                                 <%=f.hidden_field :userid, :value =>@user.id%>
                                 <%=f.hidden_field :statusid, :value => "1"%>
                             </div>
+                            <%if @subjects %>
+                            <div class="form-group">
+                                <label>Título:</label>
+                                <%=f.select :subject, options_for_select(@subjects), {}, {:class => "form-control"} %>
+                            </div>
+                            <%else%>
                             <div class="form-group">
                                 <label>Título:</label>
                                 <%=f.text_field :subject, :class => "form-control" %>
                             </div>
+                            <%end%>
                             <div class="form-group">
                                 <label>Area:</label>
-                                <%=f.select :areaid, options_for_select(get_area_list(4).collect{|u| [u.areaname ,u.id]}), {}, {:class => "form-control"}%>
+                                <%=f.select :areaid, options_for_select(@areas.collect{|u| [u.areaname ,u.id]}), {}, {:class => "form-control"}%>
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
-                                <%=f.select :priorityid, options_for_select(get_priority_list().collect{|p| [p.description, p.id]}, 3), {},{:class =>"form-control"}%>
+                                <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
+                            <%if @receivers %>
+                            <div class="form-group">
+                                <label>Destinatario:</label>
+                                <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}), {:include_blank => true},{:class =>"form-control"}%>
+                            </div>
+                            <%end%>
                             <div class="form-group">
                                 <label>Solicitud:</label>
                                 <%=f.text_area :request, :class => "redactor", :rows => 20, :cols => 60%>

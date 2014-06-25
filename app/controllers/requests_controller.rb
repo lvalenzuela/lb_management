@@ -10,6 +10,7 @@ class RequestsController < ApplicationController
 		#solocitudes resueltas o canceladas
 		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
+		@tags = get_user_tags(@user.id)
 	end
 
 	def change_status
@@ -19,8 +20,7 @@ class RequestsController < ApplicationController
 
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
-
-		
+		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
 		end
@@ -52,7 +52,7 @@ class RequestsController < ApplicationController
 		else
 			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		end
-
+		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
 		end
@@ -64,7 +64,7 @@ class RequestsController < ApplicationController
 		else
 			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 		end
-
+		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
 		end
@@ -72,7 +72,7 @@ class RequestsController < ApplicationController
 
 	def mark_with_tag
 		#actualizar campo correspondiente al tag en la solicitud
-		#data(1) = id de la solicitud, data(2) = id del tag
+		#data[1] = id de la solicitud, data[2] = id del tag
 		params[:r_tagid].each do |rt|
 			if rt != ""
 				data = rt.split(";") 
@@ -82,7 +82,7 @@ class RequestsController < ApplicationController
 
 		#refrescar las solicitudes pendientes
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
-		
+		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
 		end
@@ -101,17 +101,35 @@ class RequestsController < ApplicationController
 
 	def sent_requests
 		@user = User.find(session[:user_id])
-		@requests = Request.where(:userid => session[:user_id])
+		#solicitudes pendientes, canceladas o resueltas
+		@requests = Request.where(:userid => session[:user_id], :statusid => [1,2,3]).order("created_at DESC").page(params[:page]).per(5)
+		#solicitudes esperando confirmacion
+		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("created_at DESC").page(params[:page]).per(5)
+		
 	end
 
 	def new_request
 		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()
+		@priorities = RequestPriority.all()
+		@areas = get_areas(4)
+
+		if session[:user_area] == 2 #|| session[:user_area] == 4
+			#Si el usuario TI o Comercial podrá definir un destinatario
+			#de TI
+			@receivers = receiver_list(4)
+		else
+			#Si es de otra area, se limitaran los subjects de las solicitudes
+			#que puede realizar
+			@subjects = subject_list()
+		end
 	end
 
 	def edit_request
 		@request = Request.find(params[:id])
 		@user = User.find(session[:user_id])
+		@priorities = RequestPriority.all()
+		@areas = get_areas(4)
 	end
 
 	def update
@@ -133,6 +151,9 @@ class RequestsController < ApplicationController
 	def create_request
 		@request = Request.create(request_params)
 		if @request.valid?
+			if !@request.receiverid.nil? && @request.receiverid != ""
+				notify_user(@request.receiverid,"Solicitudes","Una solicitud le ha sido asignada.")
+			end
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
 		else
@@ -170,6 +191,8 @@ class RequestsController < ApplicationController
 
 	def show
 		@request = Request.find(params[:id])
+		@statuses = RequestStatus.all()
+		@receivers = receiver_list(@request.areaid)
 	end
 
 	def destroy
@@ -185,6 +208,44 @@ class RequestsController < ApplicationController
 	end
 
 	private
+
+	def subject_list()
+		#listado de subjects que otras areas pueden hacer al área TI
+		subjects = {"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
+					"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
+					"Problema iPad" => "Problema iPad",
+					"Problema PC" => "Problema PC",
+					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
+					"Modificación de Asistencias de Curso" => "Modificación de Asistencias de Curso", 
+					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
+					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
+					"Error en Material de Curso" => "Error en Material de Curso",
+					"Otro" => "Otro"}
+	end
+
+	def receiver_list(area_id)
+		area = RequestArea.find(area_id)
+		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.areaname) 
+	end
+
+	def get_areas(id_list)
+		#se especifican las areas a mostrar.
+		#si no se especifica nada, se muestran todas
+		if id_list.nil? || id_list == ""
+			RequestArea.all()
+		else
+			RequestArea.where(:id => id_list)
+		end
+	end
+
+	def get_user_tags(userid)
+		tags = Tag.where(:userid => [userid,0])
+		if tags.nil? || tags.empty?
+			{}
+		else
+			tags
+		end
+	end
 
 	def check_authentication
 	    if session[:user_id].nil?

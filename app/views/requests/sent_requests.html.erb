@@ -11,6 +11,23 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                        Solicitudes en Espera de Confirmación
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <%=render :partial => "confirmation_request_table"%>
+                        </div>
+                    </div>
+                    <div class="pagination-block">
+                        <%= paginate @conf_requests%>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         Listado de Solicitudes
                         <div class="pull-right">
                             <div class="btn-group">
@@ -22,15 +39,12 @@
 						<div class="table-responsive">
 							<%=render :partial => "requests_table"%>
 						</div>
+                        <div class="pagination-block">
+                            <%= paginate @requests%>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('#my-requests-table').dataTable();
-});
-</script>
