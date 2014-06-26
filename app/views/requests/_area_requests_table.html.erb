@@ -13,18 +13,24 @@
             </tr>
         </thead>
         <tbody>
-            <%@requests.each do |request|%>                                       
-                <tr>
-                    <td style="text-align: center;"><%=check_box_tag "requests[]",request.id%></td>
-                    <td><%=link_to request.subject, {} ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-                    <td><%=get_username(request.userid)%></td>
-                    <td><%=get_username(request.receiverid)%></td>
-                    <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
-                    <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-                    <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                    <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
-                </tr>
-                <%=render :partial => "modal_request", :locals => {:request => request}%>
+            <%if @requests.nil? || @requests.empty?%>
+            <tr class="warning">
+                <td colspan="8">No hay solicitudes para mostrar</td>
+            </tr>
+            <%else%>
+                <%@requests.each do |request|%>                                       
+                    <tr>
+                        <td style="text-align: center;"><%=check_box_tag "requests[]",request.id%></td>
+                        <td><%=link_to request.subject, {} ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
+                        <td><%=get_username(request.userid)%></td>
+                        <td><%=get_username(request.receiverid)%></td>
+                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+                        <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
+                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+                    </tr>
+                    <%=render :partial => "modal_request", :locals => {:request => request}%>
+                <%end%>
             <%end%>
         </tbody>
     </table>

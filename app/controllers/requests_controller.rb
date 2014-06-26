@@ -6,9 +6,9 @@ class RequestsController < ApplicationController
 
 	def index
 		#solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(5)
 		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
 		@tags = get_user_tags(@user.id)
 	end
@@ -17,8 +17,8 @@ class RequestsController < ApplicationController
 		#Modifica el estado de la solicitud desde el usuario a quien se le asigna
 		change_status(params)
 
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(5)
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC").page(params[:page]).per(5)
 		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
@@ -27,9 +27,9 @@ class RequestsController < ApplicationController
 
 	def filter_pending
 		if params[:tag] != ""
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1, :tagid => params[:tag]).order("created_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1, :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(5)
 		else
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(5)
 		end
 		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
@@ -39,9 +39,9 @@ class RequestsController < ApplicationController
 
 	def filter_resolved
 		if params[:tag] != ""
-			@resolved_requests = Request.where(:receiverid => session[:user_id], :tagid => params[:tag], :statusid => [2,3]).order("created_at DESC").page(params[:page]).per(5)
+			@resolved_requests = Request.where(:receiverid => session[:user_id], :tagid => params[:tag], :statusid => [2,3,4]).order("updated_at DESC").page(params[:page]).per(5)
 		else
-			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
+			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC").page(params[:page]).per(5)
 		end
 		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
@@ -60,7 +60,7 @@ class RequestsController < ApplicationController
 		end
 
 		#refrescar las solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(5)
 		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
 			format.js
@@ -81,16 +81,16 @@ class RequestsController < ApplicationController
 	def sent_requests
 		@user = User.find(session[:user_id])
 		#solicitudes pendientes, canceladas o resueltas
-		@requests = Request.where(:userid => session[:user_id], :statusid => [1,2,3]).order("created_at DESC").page(params[:page]).per(5)
+		@requests = Request.where(:userid => session[:user_id], :statusid => [1,2,3]).order("updated_at ASC").page(params[:page]).per(5)
 		#solicitudes esperando confirmacion
-		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("created_at DESC").page(params[:page]).per(5)
+		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("updated_at DESC").page(params[:page]).per(5)
 		
 	end
 
 	def confirm_solution
 		#Modifica el estado de la solicitud desde el usuario que realiza la solicitud
 		change_status(params)
-		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("created_at DESC").page(params[:page]).per(5)
+		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("updated_at DESC").page(params[:page]).per(5)
 		respond_to do |format|
 			format.js
 		end
@@ -156,7 +156,8 @@ class RequestsController < ApplicationController
 		@area = RequestArea.find(params[:id])
 		if !@area.nil?
 			#mostrar todas las solicitudes pendientes del área
-			@requests = Request.where(:areaid => @area.id, :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("created_at DESC").page(params[:page]).per(5)
+			@receivers = receiver_list(@area.id)
 		else
 			@requests = nil
 		end
