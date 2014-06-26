@@ -40,7 +40,8 @@ Rails.application.routes.draw do
   resources :requests do
     collection do
       get 'index'
-      get 'change_status'
+      get 'mark_solution'
+      get 'confirm_solution'
       post 'create_request'
       post 'filter_requests'
       post 'update'
@@ -49,7 +50,6 @@ Rails.application.routes.draw do
       post 'mark_with_tag'
       post 'create_tag'
       get 'sent_requests'
-      get 'all_requests'
       get 'new_request'
       get 'edit_request'
       get 'show'

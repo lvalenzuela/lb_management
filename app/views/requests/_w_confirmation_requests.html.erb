@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered table-hover" id="pending-requests-table">
+<table class="table table-striped table-bordered table-hover" id="conf-requests-table">
     <thead>
         <tr>
             <th>Tema</th>
@@ -21,10 +21,10 @@
                     <td><%=link_to request.subject, "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
                     <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-                    <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {}, {:remote => true, :class => "btn btn-default btn-circle"} %></td>
-                    <td style="text-align: center;"><%=link_to "<i class='fa fa-link'></i>".html_safe, {}, {:remote => true, :class => "btn btn-warning btn-circle"} %></td>
-                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {}, {:remote => true, :class => "btn btn-danger btn-circle"} %></td>
-                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {}, {:remote => true, :class => "btn btn-primary btn-circle"} %></td>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 2}}, {:remote => true, :class => "btn btn-success btn-circle"} %></td>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-link'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-warning btn-circle"} %></td>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 3}}, {:remote => true, :class => "btn btn-danger btn-circle"} %></td>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {}, {:remote => true, :class => "btn btn-primary"} %></td>
                 </tr>
                 <%=render :partial => "modal_request", :locals => {:request => request}%>
             <%end%>

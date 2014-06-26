@@ -13,34 +13,13 @@ class RequestsController < ApplicationController
 		@tags = get_user_tags(@user.id)
 	end
 
-	def change_status
-		r = Request.find(params[:id])
-		#se marca la solicitud como esperando confirmacion
-		r.update_attributes(:statusid => params[:statusid])
+	def mark_solution
+		#Modifica el estado de la solicitud desde el usuario a quien se le asigna
+		change_status(params)
 
 		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("created_at DESC").page(params[:page]).per(5)
 		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("created_at DESC").page(params[:page]).per(5)
 		@tags = get_user_tags(session[:user_id])
-		respond_to do |format|
-			format.js
-		end
-	end
-
-	def all_requests
-		if params[:r_filter]
-			@requests = requests_list(params[:r_filter][:r_area],params[:r_filter][:status],params[:r_filter][:priority],nil)
-		else
-			@requests = requests_list(nil,nil,nil,nil)
-		end
-	end
-
-	def filter_requests
-		if params[:r_filter]
-			@requests = requests_list(params[:r_filter][:r_area],params[:r_filter][:status],params[:r_filter][:priority],nil)
-		else
-			@requests = requests_list(nil,nil,nil,nil)
-		end
-		
 		respond_to do |format|
 			format.js
 		end
@@ -106,6 +85,15 @@ class RequestsController < ApplicationController
 		#solicitudes esperando confirmacion
 		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("created_at DESC").page(params[:page]).per(5)
 		
+	end
+
+	def confirm_solution
+		#Modifica el estado de la solicitud desde el usuario que realiza la solicitud
+		change_status(params)
+		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("created_at DESC").page(params[:page]).per(5)
+		respond_to do |format|
+			format.js
+		end
 	end
 
 	def new_request
@@ -209,18 +197,22 @@ class RequestsController < ApplicationController
 
 	private
 
-	def subject_list()
-		#listado de subjects que otras areas pueden hacer al área TI
-		subjects = {"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
-					"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
-					"Problema iPad" => "Problema iPad",
-					"Problema PC" => "Problema PC",
-					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
-					"Modificación de Asistencias de Curso" => "Modificación de Asistencias de Curso", 
-					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
-					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
-					"Error en Material de Curso" => "Error en Material de Curso",
-					"Otro" => "Otro"}
+	def change_status(params)
+		r = Request.find(params[:id])
+		
+		r.update_attributes(:statusid => params[:statusid])
+		
+		case r.statusid
+		when 1
+			notify_user(r.userid,"Solicitud Pendiente","Una solicitud en espera de confirmación se le ha vuelto a asignar. Por favor, revise sus solicitudes.")
+		when 2
+			notify_user(r.userid,"Solicitud Confirmada","Una solicitud con el tema '"+r.subject+"' ha sido confirmada y se ha registrado como resuelta.")
+		when 3
+			notify_user(r.userid,"Solicitud Cancelada","Una solicitud con el tema '"+r.subject+"' ha sido cancelada.")
+		when 4
+			#se marca la solicitud como esperando confirmacion
+			notify_user(r.userid,"Solicitud Esperando Confirmación","Una solicitud con el tema '"+r.subject+"' ha sido marcada como resuelta y está esperando confirmación. Por favor, revise sus solicitudes enviadas.")
+		end
 	end
 
 	def receiver_list(area_id)
@@ -261,12 +253,22 @@ class RequestsController < ApplicationController
 		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request)
 	end
 
-	def notification_params
-		params.require(:notification).permit(:userid, :subject, :message, :seen)
+	def notify_user(userid, subject, message)
+		n = Notification.new(:userid => userid, :subject => subject, :message => message, :seen => 0)
+		n.save		
 	end
 
-	def notify_user(userid, subject, message)
-		params[:notification] = { :userid => userid, :subject => subject, :message => message, :seen => 0 }
-		Notification.create(notification_params)
+	def subject_list
+		#listado de subjects que otras areas pueden hacer al área TI
+		subjects = {"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
+					"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
+					"Problema iPad" => "Problema iPad",
+					"Problema PC" => "Problema PC",
+					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
+					"Modificación de Asistencias de Curso" => "Modificación de Asistencias de Curso", 
+					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
+					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
+					"Error en Material de Curso" => "Error en Material de Curso",
+					"Otro" => "Otro"}
 	end
 end

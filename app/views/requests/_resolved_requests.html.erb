@@ -20,7 +20,11 @@
                     <td><%=get_tagname(request.tagid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                     <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
-                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "change_status" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle"}%></td>
+                    <%if request.statusid == 4%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle"}%></td>
+                    <%else%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle", :disabled => true}%></td>
+                    <%end%>
                 </tr>
                 <%=render :partial => "modal_request", :locals => {:request => request}%>
             <%end%>
