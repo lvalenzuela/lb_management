@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140617160511) do
+ActiveRecord::Schema.define(version: 20140626160746) do
 
   create_table "notifications", force: true do |t|
     t.integer  "userid"
@@ -25,6 +25,11 @@ ActiveRecord::Schema.define(version: 20140617160511) do
   create_table "request_areas", force: true do |t|
     t.string   "areaname",     limit: 45
     t.integer  "area_manager"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "request_messages", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -64,6 +69,8 @@ ActiveRecord::Schema.define(version: 20140617160511) do
   end
 
   create_table "tags", force: true do |t|
+    t.integer  "userid"
+    t.string   "tagname",    limit: 45
     t.datetime "created_at"
     t.datetime "updated_at"
   end

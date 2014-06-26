@@ -18,7 +18,7 @@
             <ul class="dropdown-menu dropdown-messages">
                 <%get_notifications(session[:user_id]).each do |notification|%>
                     <li>
-                        <%=link_to :controller => "notifications", :action =>"index", :params => {:selected => notification.id} do%>
+                        <%=link_to :controller => "notifications", :action =>"index", :params => {:id => notification.id} do%>
                             <div>
                                 <%=seen_notification(notification.seen).html_safe%>
                                 <strong><%=notification.subject%></strong>

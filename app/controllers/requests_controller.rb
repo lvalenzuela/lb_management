@@ -100,12 +100,13 @@ class RequestsController < ApplicationController
 		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()
 		@priorities = RequestPriority.all()
-		@areas = get_areas(4)
+		#temporalmente limitado a enviar solicitudes sólo al área TI
+		@areas = get_areas([4])
 
-		if session[:user_area] == 2 #|| session[:user_area] == 4
+		if session[:user_area] == 1 || session[:user_area] == 4
 			#Si el usuario TI o Comercial podrá definir un destinatario
 			#de TI
-			@receivers = receiver_list(4)
+			@receivers = receiver_list([1,4])
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
 			#que puede realizar
@@ -215,9 +216,13 @@ class RequestsController < ApplicationController
 		end
 	end
 
-	def receiver_list(area_id)
-		area = RequestArea.find(area_id)
-		receiverlist = User.where(:institution => "Longbourn Institute", :department => area.areaname) 
+	def receiver_list(area_list)
+		areas = RequestArea.where(:id => area_list)
+		area_names = []
+		areas.each do |a|
+			area_names << a.areaname
+		end
+		receiverlist = User.where(:institution => "Longbourn Institute", :department => area_names) 
 	end
 
 	def get_areas(id_list)

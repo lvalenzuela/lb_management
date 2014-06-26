@@ -4,19 +4,20 @@ class NotificationsController < ApplicationController
 	layout "dashboard"
 
 	def index
+		if params[:id].nil?
+			@selected = nil
+		else
+			@selected = Notification.find(params[:id])
+			@selected.update_attributes(:seen => 1)
+		end
 		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
 		@user = User.find(session[:user_id])
-		if params[:selected].nil?
-			@selected_notification = nil
-		else
-			@selected_notification = Notification.find(params[:selected])
-		end
 	end
 
 	def read
-		@selected_notification = Notification.find(params[:id])
-		if @selected_notification.seen == 0
-			 @selected_notification.update_attributes(:seen => 1)
+		@selected = Notification.find(params[:id])
+		if @selected.seen == 0
+			 @selected.update_attributes(:seen => 1)
 		end
 		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
 		respond_to do |format|
@@ -61,5 +62,8 @@ class NotificationsController < ApplicationController
 	    if session[:user_id].nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
+	end
+
+	def mark_as_read
 	end
 end
