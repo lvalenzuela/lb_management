@@ -18,9 +18,6 @@
                             <%=render :partial => "w_confirmation_requests"%>
                         </div>
                     </div>
-                    <div class="pagination-block">
-                        <%= paginate @conf_requests%>
-                    </div>
                 </div>
             </div>
         </div>
@@ -39,12 +36,20 @@
 						<div class="table-responsive">
 							<%=render :partial => "requests_table"%>
 						</div>
-                        <div class="pagination-block">
-                            <%= paginate @requests%>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#my-requests-table').dataTable();
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#conf-requests-table').dataTable();
+});
+</script>

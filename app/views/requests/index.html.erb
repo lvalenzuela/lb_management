@@ -52,20 +52,8 @@
                         Solicitudes Resueltas / Canceladas
                     </div>
                     <div class="panel-body">
-                        <div class="request-options-wrapper">
-                            <div class="col-md-4">
-                                <%=form_tag filter_resolved_requests_path, :remote => true, :id => "resolved-filter-form" do%>
-                                <div class="form-group">
-                                     <%=select_tag :tag, options_for_select(@tags.collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#resolved-filter-form').submit();"}%>
-                                </div>
-                                <%end%>
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <%=render :partial => "resolved_requests"%>
-                        </div>
-                        <div class="pagination-block">
-                            <%= paginate @resolved_requests%>
                         </div>
                     </div>
                 </div>
@@ -73,3 +61,8 @@
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#resolved-requests-table').dataTable();
+});
+</script>

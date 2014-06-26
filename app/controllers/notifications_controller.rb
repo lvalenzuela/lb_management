@@ -10,7 +10,7 @@ class NotificationsController < ApplicationController
 			@selected = Notification.find(params[:id])
 			@selected.update_attributes(:seen => 1)
 		end
-		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
+		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(10)
 		@user = User.find(session[:user_id])
 	end
 
@@ -19,14 +19,14 @@ class NotificationsController < ApplicationController
 		if @selected.seen == 0
 			 @selected.update_attributes(:seen => 1)
 		end
-		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(5)
+		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(10)
 		respond_to do |format|
 			format.js
 		end
 	end
 
 	def search
-		@notifications = Notification.where("userid = #{session[:user_id]} and subject like '%#{params[:find][:subject]}%'").order("id DESC").page(params[:page]).per(5)
+		@notifications = Notification.where("userid = #{session[:user_id]} and subject like '%#{params[:find][:subject]}%'").order("id DESC").page(params[:page]).per(10)
 
 		respond_to do |format|
 			format.js

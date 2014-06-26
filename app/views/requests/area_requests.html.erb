@@ -10,24 +10,49 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Listado de Solicitudes
+                        Solicitudes Pendientes Asignadas
                     </div>
                     <div class="panel-body">
-                        <%=form_tag assign_requests_requests_path, :remote => true, :id => "select-request-form" do %>
+                        <%=form_tag assign_requests_requests_path do %>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <%=hidden_field :areaid, :id, :value => @area.id%>
-                                    <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:include_blank => true, :class => "form-control"}%>
+                                    <%=hidden_field_tag :areaid, @area.id%>
+                                    <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
                                 </div>
                                 <div class="col-md-3">
-                                    <%=button_tag "Asignar a usuario",:class => "btn btn-default", :onclick => "$('#select-request-form').submit();"%>
+                                    <%=submit_tag "Asignar a usuario",:class => "btn btn-default"%>
                                 </div>
                             </div>
-                            <%=render :partial => "area_requests_table"%>
-
+                            <div class="table-responsive">
+                                <div id="unassigned-requests-table">
+                                <%=render :partial => "area_requests_table", :locals => {:requests => @u_requests, :tableid => "u-requests-table"}%>
+                                </div>
+                            </div>
+                        <%end%>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Solicitudes Pendientes sin Asignar
+                    </div>
+                    <div class="panel-body">
+                        <%=form_tag assign_requests_requests_path do %>
                             <div class="row">
-                                <div class="pagination-block">
-                                    <%= paginate @requests %>
+                                <div class="col-md-4">
+                                    <%=hidden_field_tag :areaid, @area.id%>
+                                    <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
+                                </div>
+                                <div class="col-md-3">
+                                    <%=submit_tag "Asignar a usuario",:class => "btn btn-default"%>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <div id="assigned-requests-table">
+                                <%=render :partial => "area_requests_table", :locals => {:requests => @a_requests, :tableid => "a-requests-table"}%>
                                 </div>
                             </div>
                         <%end%> <!-- end form -->
@@ -37,3 +62,13 @@
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#a-requests-table').dataTable();
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('#u-requests-table').dataTable();
+});
+</script>

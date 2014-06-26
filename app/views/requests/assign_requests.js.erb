@@ -1,1 +1,2 @@
-$("#area_request_table").replaceWith("<%= escape_javascript(render(:partial => 'area_requests_table', :object => @requests))%>");
+$("#unassigned-requests-table").replaceWith("<div id='unassigned-requests-table'> <%= escape_javascript(render(:partial => 'area_requests_table', :locals => {:requests => @u_requests, :tableid => 'u-requests-table'}))%> </div>");
+$("#assigned-requests-table").replaceWith("<div id='assigned-requests-table'> <%= escape_javascript(render(:partial => 'area_requests_table', :locals => {:requests => @a_requests, :tableid => 'a-requests-table'}))%> </div>");

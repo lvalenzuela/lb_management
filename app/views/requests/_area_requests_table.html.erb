@@ -1,37 +1,30 @@
-<div class="table-responsive" id="area_request_table">
-    <table class="table table-striped table-bordered table-hover" id="my-requests-table">
-        <thead>
+<table class="table table-striped table-bordered table-hover" id="<%=tableid%>">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Tema</th>
+            <th>Enviada Por</th>
+            <th>Responsable</th>
+            <th style="text-align: center;">Prioridad</th>
+            <th style="text-align: center;">Estado</th>
+            <th style="text-align: center;">Fecha de Solicitud</th>
+            <th style="text-align: center;">Fecha Límite</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%requests.each do |request|%>                                       
             <tr>
-                <th></th>
-                <th>Tema</th>
-                <th>Enviada Por</th>
-                <th>Responsable</th>
-                <th style="text-align: center;">Prioridad</th>
-                <th style="text-align: center;">Estado</th>
-                <th style="text-align: center;">Fecha de Solicitud</th>
-                <th style="text-align: center;">Fecha Límite</th>
+                <td style="text-align: center;"><%=check_box_tag "requests[]",request.id%></td>
+                <td><%=link_to request.subject, {} ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
+                <td><%=get_username(request.userid)%></td>
+                <td><%=get_username(request.receiverid)%></td>
+                <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
             </tr>
-        </thead>
-        <tbody>
-            <%if @requests.nil? || @requests.empty?%>
-            <tr class="warning">
-                <td colspan="8">No hay solicitudes para mostrar</td>
-            </tr>
-            <%else%>
-                <%@requests.each do |request|%>                                       
-                    <tr>
-                        <td style="text-align: center;"><%=check_box_tag "requests[]",request.id%></td>
-                        <td><%=link_to request.subject, {} ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-                        <td><%=get_username(request.userid)%></td>
-                        <td><%=get_username(request.receiverid)%></td>
-                        <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
-                        <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-                        <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                        <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
-                    </tr>
-                    <%=render :partial => "modal_request", :locals => {:request => request}%>
-                <%end%>
-            <%end%>
-        </tbody>
-    </table>
-</div>
+            <%=render :partial => "modal_request", :locals => {:request => request}%>
+        <%end%>
+    </tbody>
+</table>
+

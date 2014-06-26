@@ -13,7 +13,7 @@
     <ul class="nav navbar-top-links navbar-right">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                <i class="fa fa-envelope fa-fw"></i> <%=unseen_notifications(session[:user_id]).html_safe%> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-messages">
                 <%get_notifications(session[:user_id]).each do |notification|%>

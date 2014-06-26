@@ -11,8 +11,17 @@ module ApplicationHelper
 
 	def seen_notification(seen)
 		if seen == 0 #notificacion vista
-			"<i class='fa fa-caret-right'></i>"
+			"<i class='fa fa-exclamation-circle'></i>"
 		else	#notificacion sin ver
+			""
+		end
+	end
+
+	def unseen_notifications(userid)
+		n = Notification.where(:userid => userid, :seen => 0)
+		if !n.empty? && !n.nil?
+			"<i class='fa fa-exclamation'></i>"
+		else
 			""
 		end
 	end
