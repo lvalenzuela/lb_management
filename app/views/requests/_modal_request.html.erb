@@ -11,7 +11,7 @@
                 <a href="<%=request.attach.url%>"></a>
             </div>
             <div class="modal-footer">
-                <%if request.attach %>
+                <%if request.attach.exists? %>
                     <%=link_to "Ver Archivos Adjuntos", request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
                 <%end%>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
