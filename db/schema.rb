@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140626160746) do
+ActiveRecord::Schema.define(version: 20140627150424) do
 
   create_table "notifications", force: true do |t|
     t.integer  "userid"
@@ -57,15 +57,24 @@ ActiveRecord::Schema.define(version: 20140626160746) do
   create_table "requests", force: true do |t|
     t.integer  "tagid"
     t.integer  "userid"
-    t.string   "subject",    limit: 100
+    t.string   "subject",             limit: 100
     t.integer  "receiverid"
     t.integer  "areaid"
     t.integer  "priorityid"
     t.integer  "statusid"
-    t.text     "request",    limit: 2147483647
+    t.text     "request",             limit: 2147483647
     t.date     "duedate"
+    t.date     "resolved_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "attach_file_name"
+    t.string   "attach_content_type"
+    t.integer  "attach_file_size"
+    t.datetime "attach_updated_at"
+    t.string   "pic_file_name"
+    t.string   "pic_content_type"
+    t.integer  "pic_file_size"
+    t.datetime "pic_updated_at"
   end
 
   create_table "tags", force: true do |t|

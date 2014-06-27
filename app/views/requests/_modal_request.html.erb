@@ -8,8 +8,12 @@
             </div>
             <div class="modal-body">
                 <%=simple_format request.request%>
+                <a href="<%=request.attach.url%>"></a>
             </div>
             <div class="modal-footer">
+                <%if request.attach %>
+                    <%=link_to "Ver Archivos Adjuntos", request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
+                <%end%>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

@@ -28,7 +28,7 @@
                         </div>
                     <%end%>
                     <div class="col-lg-8">
-                        <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}) do |f|%>
+                        <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}, :html => { :multipart => true}) do |f|%>
                             <div class="form-group">
                                 <%=f.hidden_field :userid, :value =>@user.id%>
                                 <%=f.hidden_field :statusid, :value => "1"%>
@@ -61,6 +61,10 @@
                             <div class="form-group">
                                 <label>Solicitud:</label>
                                 <%=f.text_area :request, :class => "redactor", :rows => 20, :cols => 60%>
+                            </div>
+                            <div class="form-group">
+                                <label>Adjuntar Archivo:</label>
+                                <%=f.file_field :attach %>
                             </div>
                             <div class="form-group">
                                 <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-default"%>

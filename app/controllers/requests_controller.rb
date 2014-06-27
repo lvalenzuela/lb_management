@@ -116,6 +116,15 @@ class RequestsController < ApplicationController
 		@user = User.find(session[:user_id])
 		@priorities = RequestPriority.all()
 		@areas = get_areas(4)
+		if session[:user_area] == 1 || session[:user_area] == 4
+			#Si el usuario TI o Comercial podrá definir un destinatario
+			#de TI
+			@receivers = receiver_list([1,4])
+		else
+			#Si es de otra area, se limitaran los subjects de las solicitudes
+			#que puede realizar
+			@subjects = subject_list()
+		end
 	end
 
 	def update
@@ -249,7 +258,7 @@ class RequestsController < ApplicationController
 	end
 
 	def request_params
-		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request)
+		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request, :attach, :pic)
 	end
 
 	def notify_user(userid, subject, message)
