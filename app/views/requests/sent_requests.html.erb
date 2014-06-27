@@ -5,13 +5,13 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Solicitudes Realizadas por <%=@user.firstname+" "+@user.lastname%></h1>
+            <h1 class="page-header">Requerimientos Realizados por <%=@user.firstname+" "+@user.lastname%></h1>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Solicitudes en Espera de Confirmación
+                        Requerimientos en Espera de Confirmación
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
@@ -25,7 +25,7 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Listado de Solicitudes
+                        Listado de Requerimientos
                         <div class="pull-right">
                             <div class="btn-group">
                                 <%=link_to "Nueva Solicitud", {:controller => "requests", :action => "new_request"}, :class => "btn btn-default btn-xs"%>
