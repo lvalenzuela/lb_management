@@ -61,7 +61,7 @@
                             <%end%>
                             <div class="form-group">
                                 <label>Solicitud:</label>
-                                <%=f.text_area :request, :class => "redactor", :rows => 20, :cols => 60%>
+                                <%=f.text_area :request, :id => "redactor1", :class => "redactor", :rows => 20, :cols => 60%>
                             </div>
                             <div class="form-group">
                                 <label>Adjuntar Archivo:</label>
@@ -77,10 +77,9 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(function () {
-        $('#datetimepicker').datetimepicker({
-            pickTime: false
-        });
-    });
+<script>
+$('#redactor1').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
 </script>
