@@ -11,7 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140627150424) do
+ActiveRecord::Schema.define(version: 20140627211957) do
+
+  create_table "areas", force: true do |t|
+    t.string   "areaname"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "context_descriptions", force: true do |t|
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "contexts", force: true do |t|
+    t.integer  "descriptionid"
+    t.integer  "instanceid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "notifications", force: true do |t|
     t.integer  "userid"
@@ -75,6 +95,21 @@ ActiveRecord::Schema.define(version: 20140627150424) do
     t.string   "pic_content_type"
     t.integer  "pic_file_size"
     t.datetime "pic_updated_at"
+  end
+
+  create_table "role_assignations", force: true do |t|
+    t.integer  "contextid"
+    t.integer  "userid"
+    t.integer  "roleid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "roles", force: true do |t|
+    t.string   "rolename"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tags", force: true do |t|

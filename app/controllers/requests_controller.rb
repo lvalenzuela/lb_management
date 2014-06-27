@@ -159,7 +159,7 @@ class RequestsController < ApplicationController
 	end
 
 	def area_requests
-		@area = RequestArea.find(params[:id])
+		@area = Area.find(params[:id])
 		if !@area.nil?
 			#mostrar todas las solicitudes pendientes del área
 			@a_requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
@@ -220,7 +220,7 @@ class RequestsController < ApplicationController
 	end
 
 	def receiver_list(area_list)
-		areas = RequestArea.where(:id => area_list)
+		areas = Area.where(:id => area_list)
 		area_names = []
 		areas.each do |a|
 			area_names << a.areaname
@@ -232,9 +232,9 @@ class RequestsController < ApplicationController
 		#se especifican las areas a mostrar.
 		#si no se especifica nada, se muestran todas
 		if id_list.nil? || id_list == ""
-			RequestArea.all()
+			Area.all()
 		else
-			RequestArea.where(:id => id_list)
+			Area.where(:id => id_list)
 		end
 	end
 

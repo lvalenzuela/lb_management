@@ -1,4 +1,6 @@
 module ApplicationHelper
+	
+
 	def activate_menu_item(controller,desired)
 		if controller == desired
 			return "class=active"

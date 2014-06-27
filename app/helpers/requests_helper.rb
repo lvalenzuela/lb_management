@@ -25,7 +25,7 @@ module RequestsHelper
 	end
 
 	def request_areaname(receiverarea)
-		RequestArea.find(receiverarea).areaname
+		Area.find(receiverarea).areaname
 	end
 
 	def request_priority_desc(priority)

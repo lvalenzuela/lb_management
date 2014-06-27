@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     collection do
       get 'control_panel'
       get 'horarios'
+      get 'area_manager'
       get 'extras'
     end
   end

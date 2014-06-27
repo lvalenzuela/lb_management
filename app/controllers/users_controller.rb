@@ -25,7 +25,7 @@ class UsersController < ApplicationController
 	      password = BCrypt::Password.new(user.password)
 	      if user.permissionid <= 2 #permitir solo administradores
 		      if password == params[:password] 
-		        session[:usertype] = user.permissionid
+		        session[:system_role] = role_in_system(user.id)
 		        session[:user_id] = user.id
 		        session[:user_area] = user_area(user.id)
 		        redirect_to root_path
@@ -40,6 +40,12 @@ class UsersController < ApplicationController
 	    end
 	end
 
+	def area_manager
+		#Administración de las áreas de Longborun y de los roles de los usuarios en ellas
+		@areas = Area.all()
+		@users = User.all()
+	end
+
 	def logout
 	    session.clear
 	    redirect_to :action => "index"
@@ -50,6 +56,16 @@ class UsersController < ApplicationController
 	end
 
 	private
+	
+	def role_in_system(userid)
+		u = RoleAssignation.where(:userid => userid, :contextid => 1).first()
+		
+		if u.nil?
+			return 1000 # Mientras mayor es el rol, menores los privilegios
+		else
+			return u.roleid
+		end
+	end
 
 	def user_area(id)
 		user_areaname = User.find(id).department
