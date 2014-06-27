@@ -6,7 +6,7 @@ class RequestsController < ApplicationController
 
 	def index
 		#solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(10)
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at DESC").page(params[:page]).per(10)
 		#solocitudes resueltas o canceladas
 		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC")
 		@user = User.find(session[:user_id])
@@ -81,19 +81,16 @@ class RequestsController < ApplicationController
 	def sent_requests
 		@user = User.find(session[:user_id])
 		#solicitudes pendientes, canceladas o resueltas
-		@requests = Request.where(:userid => session[:user_id], :statusid => [1,2,3]).order("updated_at ASC")
+		@requests = Request.where(:userid => @user.id, :statusid => [1,2,3]).order("updated_at ASC")
 		#solicitudes esperando confirmacion
-		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("updated_at DESC")
+		@conf_requests = Request.where(:userid => @user.id, :statusid => 4).order("updated_at DESC")
 		
 	end
 
 	def confirm_solution
 		#Modifica el estado de la solicitud desde el usuario que realiza la solicitud
-		change_status(params)
-		@conf_requests = Request.where(:userid => session[:user_id], :statusid => 4).order("updated_at DESC")
-		respond_to do |format|
-			format.js
-		end
+		change_status(params)	
+		redirect_to :action => "sent_requests"
 	end
 
 	def new_request
@@ -168,7 +165,7 @@ class RequestsController < ApplicationController
 		#asignar requests a las personas seleccionadas 
 		params[:requests].each do |r|
 			request = Request.find(r)
-			request.update_attributes(:receiverid => params[:receiverid])
+			request.update_attributes(:receiverid => params[:receiverid], :duedate => params[:duedate])
 		end
 		redirect_to :action => "area_requests", :id => params[:areaid]
 	end

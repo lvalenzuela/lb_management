@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root 'notifications#index'
+  root 'requests#sent_requests'
  
   resources :main do
     collection do

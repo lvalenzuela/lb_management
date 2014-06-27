@@ -29,7 +29,7 @@
                 <%if action_name == "sent_requests"%>
                     <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
                 <%end%>
-                <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=show_date(request.duedate)%></td>
                 <%if action_name == "sent_requests"%>
 	                <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
 	                <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>

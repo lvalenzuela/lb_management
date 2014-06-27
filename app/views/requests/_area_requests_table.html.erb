@@ -21,7 +21,7 @@
                 <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                 <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                <td style="text-align: center;"><%=request.duedate.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=show_date(request.duedate)%></td>
             </tr>
             <%=render :partial => "modal_request", :locals => {:request => request}%>
         <%end%>

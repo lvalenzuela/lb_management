@@ -16,6 +16,14 @@ module RequestsHelper
 		end
 	end
 
+	def show_date(date)
+		if !date.nil? && date != ""
+			date.strftime("%d-%m-%Y")
+		else
+			""
+		end
+	end
+
 	def request_areaname(receiverarea)
 		RequestArea.find(receiverarea).areaname
 	end

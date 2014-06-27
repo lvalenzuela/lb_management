@@ -20,6 +20,15 @@
                                     <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
                                 </div>
                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <div class="input-group date" id='datepicker1' data-date-format="DD/MM/YYYY">
+                                            <%=text_field_tag :duedate, "", :class => "form-control", :placeholder => "Fecha Límite"%>
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <%=submit_tag "Asignar a usuario",:class => "btn btn-default"%>
                                 </div>
                             </div>
@@ -47,6 +56,15 @@
                                     <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
                                 </div>
                                 <div class="col-md-3">
+                                    <div class="form-group">
+                                        <div class="input-group date" id='datepicker2' data-date-format="DD/MM/YYYY">
+                                            <%=text_field_tag :duedate, "", :class => "form-control", :placeholder => "Fecha Límite"%>
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <%=submit_tag "Asignar a usuario",:class => "btn btn-default"%>
                                 </div>
                             </div>
@@ -62,6 +80,20 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(function () {
+        $('#datepicker1').datetimepicker({
+            pickTime: false
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('#datepicker2').datetimepicker({
+            pickTime: false
+        });
+    });
+</script>
 <script>
 $(document).ready(function() {
     $('#a-requests-table').dataTable();
