@@ -171,20 +171,20 @@
                 </li>
                 <%end%>
                 <li <%=activate_menu_item(controller_name,"requests")%>>
-                    <a href="#"><i class="fa fa-bell fa-fw"></i> Solicitudes<span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-folder-open-o fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <%=link_to "Solicitudes Enviadas".html_safe, :controller => "requests", :action => "sent_requests"%>
+                            <%=link_to "Mis Trabajos".html_safe, :controller => "requests", :action => "index"%>
                         </li>
                         <li>
-                            <%=link_to "Mis Solicitudes".html_safe, :controller => "requests", :action => "index"%>
+                            <%=link_to "Crear Requerimiento".html_safe, :controller => "requests", :action => "new_request"%>
                         </li>
                         <li>
-                            <%=link_to "Crear Solicitud".html_safe, :controller => "requests", :action => "new_request"%>
+                            <%=link_to "Estado Requerimientos".html_safe, :controller => "requests", :action => "sent_requests"%>
                         </li>
                         <%if session[:usertype] <= 2 && is_area_manager(session[:user_id]) == true%>
                         <li>
-                            <a href="#">Solicitudes de Área<span class="fa arrow"></span></a>
+                            <a href="#">Requerimientos de Área<span class="fa arrow"></span></a>
                             <%areas_for_user().each do |area|%>
                                 <ul class="nav nav-third-level">
                                     <li>
