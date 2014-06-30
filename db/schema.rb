@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140627211957) do
+ActiveRecord::Schema.define(version: 20140630194010) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -42,13 +42,6 @@ ActiveRecord::Schema.define(version: 20140627211957) do
     t.datetime "updated_at"
   end
 
-  create_table "request_areas", force: true do |t|
-    t.string   "areaname",     limit: 45
-    t.integer  "area_manager"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "request_messages", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -62,14 +55,6 @@ ActiveRecord::Schema.define(version: 20140627211957) do
 
   create_table "request_statuses", force: true do |t|
     t.string   "description", limit: 45
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "request_tags", force: true do |t|
-    t.integer  "requestid"
-    t.integer  "userid"
-    t.integer  "tagid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -147,12 +132,6 @@ ActiveRecord::Schema.define(version: 20140627211957) do
     t.integer  "assignments_ontime"
     t.integer  "total_assignments"
     t.datetime "created_at"
-  end
-
-  create_table "user_types", force: true do |t|
-    t.string   "description", limit: 45
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|

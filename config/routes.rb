@@ -6,6 +6,9 @@ Rails.application.routes.draw do
       get 'control_panel'
       get 'horarios'
       get 'area_manager'
+      get 'area_dashboard'
+      post 'assign_role'
+      post 'remove_assignation'
       get 'extras'
     end
   end
@@ -55,7 +58,6 @@ Rails.application.routes.draw do
       get 'edit_request'
       get 'show'
       get 'area_requests'
-      get 'filter_area_requests'
       post 'assign_requests'
       delete 'destroy'
     end

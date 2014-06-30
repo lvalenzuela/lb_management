@@ -28,16 +28,19 @@ module ApplicationHelper
 		end
 	end
 
-	def is_area_manager(userid)
-		requests = RequestArea.where(:area_manager => userid)
-		if requests.nil? || requests.empty?
-			false
-		else
-			true
-		end
+	def areas_for_user
+		#Areas en que el usuario es manager o administrador
+		areas = RoleAssignation.joins("inner join contexts on role_assignations.contextid = contexts.id
+										and role_assignations.userid = #{session[:user_id]}
+										and contexts.descriptionid = 2
+										and role_assignations.roleid in (1,2)").select("role_assignations.id,
+																				role_assignations.roleid,
+																				role_assignations.userid,
+																				role_assignations.contextid,
+																				contexts.instanceid")
 	end
 
-	def areas_for_user
-		areas = RequestArea.where(:area_manager => session[:user_id])
+	def get_areaname(areaid)
+		Area.find(areaid).areaname
 	end
 end

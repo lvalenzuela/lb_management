@@ -51,12 +51,12 @@
                             </div>
                             <div class="form-group">
                                 <label>Prioridad:</label>
-                                <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description, p.id]}), {},{:class =>"form-control"}%>
+                                <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
                             <%if @receivers %>
                             <div class="form-group">
                                 <label>Destinatario:</label>
-                                <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}, @request.receiverid), {:include_blank => true},{:class =>"form-control"}%>
+                                <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}, @request.receiverid), {},{:class =>"form-control"}%>
                             </div>
                             <%end%>
                             <div class="form-group">

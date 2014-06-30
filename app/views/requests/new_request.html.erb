@@ -55,7 +55,7 @@
                             <%if @receivers %>
                             <div class="form-group">
                                 <label>Destinatario:</label>
-                                <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}), {:include_blank => true},{:class =>"form-control"}%>
+                                <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}), {},{:class =>"form-control"}%>
                             </div>
                             <%end%>
                             <div class="form-group">

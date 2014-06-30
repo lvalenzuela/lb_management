@@ -40,12 +40,6 @@ class UsersController < ApplicationController
 	    end
 	end
 
-	def area_manager
-		#Administración de las áreas de Longborun y de los roles de los usuarios en ellas
-		@areas = Area.all()
-		@users = User.all()
-	end
-
 	def logout
 	    session.clear
 	    redirect_to :action => "index"

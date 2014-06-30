@@ -98,12 +98,12 @@ class RequestsController < ApplicationController
 		@user = User.where(:id => session[:user_id]).first()
 		@priorities = RequestPriority.all()
 		#temporalmente limitado a enviar solicitudes sólo al área TI
-		@areas = get_areas([4])
+		@areas = get_areas(default_area)
 
-		if session[:user_area] == 1 || session[:user_area] == 4
+		if session[:user_area] == default_area
 			#Si el usuario TI o Comercial podrá definir un destinatario
 			#de TI
-			@receivers = receiver_list([1,4])
+			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
 			#que puede realizar
@@ -115,11 +115,11 @@ class RequestsController < ApplicationController
 		@request = Request.find(params[:id])
 		@user = User.find(session[:user_id])
 		@priorities = RequestPriority.all()
-		@areas = get_areas(4)
-		if session[:user_area] == 1 || session[:user_area] == 4
+		@areas = get_areas(default_area)
+		if session[:user_area] == default_area
 			#Si el usuario TI o Comercial podrá definir un destinatario
 			#de TI
-			@receivers = receiver_list([1,4])
+			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
 			#que puede realizar
@@ -161,20 +161,34 @@ class RequestsController < ApplicationController
 	def area_requests
 		@area = Area.find(params[:id])
 		if !@area.nil?
-			#mostrar todas las solicitudes pendientes del área
-			@a_requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
-			@u_requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC")
+			case params[:f]
+			when "assigned"
+				#sólo las solicitudes asignadas
+				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
+			when "unassigned"
+				#solo solicitudes sin asignar
+				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC")
+			else
+				#todas las solicitudes
+				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC")
+			end
 			@receivers = receiver_list(@area.id)
 		else
-			@a_requests = nil
+			@requests = nil
 		end
 	end
 
 	def assign_requests
-		#asignar requests a las personas seleccionadas 
-		params[:requests].each do |r|
-			request = Request.find(r)
-			request.update_attributes(:receiverid => params[:receiverid], :duedate => params[:duedate])
+		if params[:requests]
+			#asignar requests a las personas seleccionadas
+			params[:requests].each do |r|
+				request = Request.find(r)
+				if params[:receiverid] != ""
+					request.update_attributes(:receiverid => params[:receiverid], :duedate => params[:duedate])
+				else
+					flash[:notice] = "Debe seleccionar un usuario a quien asignar la solicitud."
+				end
+			end
 		end
 		redirect_to :action => "area_requests", :id => params[:areaid]
 	end
@@ -197,6 +211,9 @@ class RequestsController < ApplicationController
 		end
 	end
 
+	#####################
+	#Functiones Privadas#
+	#####################
 	private
 
 	def change_status(params)
@@ -219,13 +236,15 @@ class RequestsController < ApplicationController
 		end
 	end
 
-	def receiver_list(area_list)
-		areas = Area.where(:id => area_list)
-		area_names = []
-		areas.each do |a|
-			area_names << a.areaname
-		end
-		receiverlist = User.where(:institution => "Longbourn Institute", :department => area_names) 
+	def receiver_list(area)
+		c = Context.where(:descriptionid => 2, :instanceid => area).first()
+
+		return User.joins("inner join role_assignations
+						on role_assignations.userid = users.id
+						and role_assignations.contextid = #{c.id}").select("users.id,
+																			users.firstname,
+																			users.lastname,
+																			role_assignations.roleid").order("roleid ASC")
 	end
 
 	def get_areas(id_list)
@@ -278,5 +297,9 @@ class RequestsController < ApplicationController
 					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
 					"Error en Material de Curso" => "Error en Material de Curso",
 					"Otro" => "Otro"}
+	end
+
+	def default_area
+		area = 4
 	end
 end
