@@ -2,38 +2,26 @@
     <thead>
         <tr>
             <th>Tema</th>
-            <%if action_name == "sent_requests"%>
-                <th>Área de Destino</th>
-            <%end%>
+            <th>Área de Destino</th>
             <th style="text-align: center;">Prioridad</th>
             <th style="text-align: center;">Estado</th>
-            <%if action_name == "sent_requests"%>
-                <th style="text-align: center;">Fecha de Solicitud</th>
-            <%end%>
+            <th style="text-align: center;">Fecha de Solicitud</th>
             <th style="text-align: center;">Fecha Límite</th>
-            <%if action_name == "sent_requests"%>
-            	<th style="text-align: center;">Editar</th>
-            	<th style="text-align: center;">Eliminar</th>
-            <%end%>
+            <th style="text-align: center;">Editar</th>
+            <th style="text-align: center;">Eliminar</th>
         </tr>
     </thead>
     <tbody>
         <%@requests.each do |request|%>                                       
             <tr>
                 <td><%=request.subject%></td>
-                <%if action_name == "sent_requests"%>
-                    <td><%=request_areaname(request.areaid)%></td>
-                <%end%>
+                <td><%=request_areaname(request.areaid)%></td>
                 <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-                <%if action_name == "sent_requests"%>
-                    <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
-                <%end%>
+                <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
                 <td style="text-align: center;"><%=show_date(request.duedate)%></td>
-                <%if action_name == "sent_requests"%>
-	                <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
-	                <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>
-	            <%end%>
+	            <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
+	            <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>
             </tr>
         <%end%>
     </tbody>

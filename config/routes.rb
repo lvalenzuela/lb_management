@@ -63,6 +63,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :request_notes do
+    collection do 
+      get "show"
+      post "create"
+    end
+  end
+
   resources :users do
     collection do 
       get 'index'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140701133013) do
+ActiveRecord::Schema.define(version: 20140701220811) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -43,6 +43,19 @@ ActiveRecord::Schema.define(version: 20140701133013) do
   end
 
   create_table "request_messages", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "request_notes", force: true do |t|
+    t.integer  "requestid"
+    t.integer  "userid"
+    t.string   "subject"
+    t.text     "message"
+    t.string   "attach_file_name"
+    t.string   "attach_content_type"
+    t.integer  "attach_file_size"
+    t.datetime "attach_updated_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

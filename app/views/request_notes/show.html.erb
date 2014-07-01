@@ -1,0 +1,77 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><%=truncate(@request.subject)%></h1>
+        </div>
+        <%if !@notes.nil?%>
+	        <%@notes.each do |note|%>
+		        <div class="row">
+		            <div class="col-lg-12">
+		                <div class="panel panel-default">
+		                	<div class="panel-heading">
+		                		Re: <%=truncate(note.subject)%>
+		                	</div>
+		                	<div class="panel-body">
+		                		<div class="row">
+		                			<div class="col-lg-10 col-lg-offset-1">
+		                				<%=simple_format note.message%>
+		                			</div>
+		                		</div>
+		                		<div class="row">
+		                			<div class="col-lg-10 col-lg-offset-1">
+		                				<%=link_to "Ver Archivos Adjuntos", request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
+		                			</div>
+		                		</div>
+		                	</div>
+		                </div>
+		            </div>
+		        </div>
+	        <%end%>
+	    <%end%>
+	    <div class="row">
+	    	<div class="col-lg-12">
+	    		<div class="panel panel-default">
+	    			<div class="panel-heading">
+	    				Nueva Anotación
+	    			</div>
+	    			<div class="panel-body">
+	    				<%=form_for :request_note, :url => {:controller => "request_notes", :action => "create"} do |f|%>
+		    				<div class="row">
+		    					<div class="col-lg-10 col-lg-offset-1">
+		    						<div class="form-group">
+		    							<label>Tema:</label>
+		    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
+		    						</div>
+		    						<div class="form-group">
+		    							<label>Mensaje:</label>
+		    							<%=f.text_area :message, :id => "redactor1", :class => "redactor", :rows => 20, :cols => 60%>
+		    						</div>
+		    					</div>
+		    				</div>
+		    				<div class="row">
+		    					<div class="col-lg-10 col-lg-offset-1">
+			    					<div class="col-lg-6">
+		                                <label>Adjuntar Archivo:</label>
+		                                <%=f.file_field :attach %>
+			    					</div>
+			    					<div class="col-lg-3 col-lg-offset-3">
+			    						<%=f.submit :class => "btn btn-default"%>
+			    					</div>
+			    				</div>
+		    				</div>
+	    				<%end%>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+    </div>
+</div>
+<script>
+$('#redactor1').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>

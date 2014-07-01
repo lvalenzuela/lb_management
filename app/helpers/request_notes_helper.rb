@@ -1,0 +1,2 @@
+module RequestNotesHelper
+end
