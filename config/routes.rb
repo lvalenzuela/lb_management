@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       get 'area_manager'
       get 'area_dashboard'
       post 'assign_role'
-      post 'remove_assignation'
+      post 'modify_assignation'
       get 'extras'
     end
   end

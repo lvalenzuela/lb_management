@@ -34,19 +34,42 @@ class MainController < ApplicationController
 
     def assign_role
         c = get_area_context(params[:area])
-        params[:user].each do |u|
-            r = RoleAssignation.where(:contextid => c.id, :userid => u).first()
-            if r.nil? 
-                #Si el usuario no ha sido previamente asignado al área
-                #se le asigna un rol
-                RoleAssignation.create(:contextid => c.id, :userid => u, :roleid => params[:role])
-            else 
-                #si el usuario ya tenia un rol en el área, se modifica
-                r.update_attributes(:roleid => params[:role])
+        if params[:user]
+            params[:user].each do |u|
+                r = RoleAssignation.where(:contextid => c.id, :userid => u).first()
+                if r.nil? 
+                    #Si el usuario no ha sido previamente asignado al área
+                    #se le asigna un rol
+                    RoleAssignation.create(:contextid => c.id, :userid => u, :roleid => params[:role])
+                else 
+                    #si el usuario ya tenia un rol en el área, se modifica
+                    r.update_attributes(:roleid => params[:role])
+                end
             end
+            flash[:notice] = "Asignacion llevada a cabo con éxito."
+        else
+            flash[:notice] = "Debe seleccionar un usuario."
         end
-        flash[:notice] = "Asignacion llevada a cabo con éxito."
+        
         redirect_to :action => "area_manager"
+    end
+
+    def modify_assignation
+        c = get_area_context(params[:area])
+        if params[:assign]
+            params[:assign].each do |a|
+                assignation = RoleAssignation.find(a)
+                assignation.update_attributes(:roleid => params[:role])
+            end
+            flash[:notice] = "Asignacion llevada a cabo con éxito."
+        else
+            flash[:notice] = "Debe seleccionar un usuario."
+        end
+        redirect_to :action => "area_dashboard", :id => params[:area]
+    end
+
+    def delete_role
+
     end
 
     private
