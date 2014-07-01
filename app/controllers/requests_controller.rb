@@ -100,9 +100,8 @@ class RequestsController < ApplicationController
 		#temporalmente limitado a enviar solicitudes sólo al área TI
 		@areas = get_areas(default_area)
 
-		if session[:user_area] == default_area
-			#Si el usuario TI o Comercial podrá definir un destinatario
-			#de TI
+		if session[:system_role] <= 2
+			#Si el usuario es administrador o manager del sistema
 			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
@@ -116,9 +115,8 @@ class RequestsController < ApplicationController
 		@user = User.find(session[:user_id])
 		@priorities = RequestPriority.all()
 		@areas = get_areas(default_area)
-		if session[:user_area] == default_area
-			#Si el usuario TI o Comercial podrá definir un destinatario
-			#de TI
+		if session[:system_role] <= 2
+			#Si el usuario es administrador o manager del sistema
 			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes

@@ -27,7 +27,6 @@ class UsersController < ApplicationController
 		      if password == params[:password] 
 		        session[:system_role] = role_in_system(user.id)
 		        session[:user_id] = user.id
-		        session[:user_area] = user_area(user.id)
 		        redirect_to root_path
 		      else
 		        flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
@@ -59,11 +58,5 @@ class UsersController < ApplicationController
 		else
 			return u.roleid
 		end
-	end
-
-	def user_area(id)
-		user_areaname = User.find(id).department
-		area = RequestArea.where(:areaname => user_areaname).first()
-		return area.id
 	end
 end

@@ -9,7 +9,7 @@ class FillContextAreaTables < ActiveRecord::Migration
     Role.create(:rolename => "Admin", :description => "Administrador del sistema")
     Role.create(:rolename => "Manager", :description => "Administrador local de instancias del sistema")
     #Se asigna al administrador del sistema
-    RoleAssignation.create(:contextid => 1, :userid => 182, :roleid => 1)    
+    RoleAssignation.create(:contextid => 1, :userid => 182, :roleid => 1)
     Area.create(:areaname => "Comercial", :description => "Área Comercial")
   	Area.create(:areaname => "Docente", :description => "Área Docente")
   	Area.create(:areaname => "Gerencia", :description => "Área de Gerencia")
