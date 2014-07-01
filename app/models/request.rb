@@ -14,6 +14,6 @@ class Request < ActiveRecord::Base
 	def clean_unsafe_params
 		#Limpia caracteres potencialmente conflictivos antes de la insercion
 		self.subject = self.subject.encode('UTF-8', :invalid => :replace, :undef => :replace)
-		self.subject = self.request.encode('UTF-8', :invalid => :replace, :undef => :replace)
+		self.request = self.request.encode('UTF-8', :invalid => :replace, :undef => :replace)
 	end
 end
