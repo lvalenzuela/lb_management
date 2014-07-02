@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140702150041) do
+ActiveRecord::Schema.define(version: 20140702212523) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -33,10 +33,48 @@ ActiveRecord::Schema.define(version: 20140702150041) do
     t.datetime "updated_at"
   end
 
+  create_table "course_sessions", force: true do |t|
+    t.integer  "courseid"
+    t.datetime "startdatetime"
+    t.datetime "enddatetime"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "courses", force: true do |t|
+    t.string   "coursename"
+    t.string   "bookname"
+    t.string   "description"
+    t.integer  "max_students"
+    t.integer  "mode"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "last_request_message_checks", force: true do |t|
     t.integer  "requestid"
     t.integer  "userid"
     t.datetime "last_check_datetime"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "moodle_course_groups", force: true do |t|
+    t.string   "groupname"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "moodle_courses", force: true do |t|
+    t.integer  "moodleid"
+    t.string   "coursename"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "moodle_groupers", force: true do |t|
+    t.integer  "m_coursegroupid"
+    t.integer  "m_courseid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

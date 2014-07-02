@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
   root 'requests#sent_requests'
  
+  resources :moodle_courses do
+    collection do
+      get 'index'
+    end
+  end
+
   resources :main do
     collection do
       get 'control_panel'

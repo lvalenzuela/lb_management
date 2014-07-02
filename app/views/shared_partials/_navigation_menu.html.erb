@@ -154,12 +154,15 @@
                     <%end%>
                     <!-- /input-group -->
                 </li>
-                <%if session[:system_role] <= 1%>
+                <%if session[:system_role] <= 2%>
                     <li <%=activate_menu_item(controller_name,"main")%>>
                         <a href="#"><i class="fa fa-gears fa-fw"></i> Administración<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
                                 <%=link_to "Áreas".html_safe, :controller => "main", :action => "area_manager" %>
+                            </li>
+                            <li>
+                                <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
                             </li>
                         </ul>
                     </li>

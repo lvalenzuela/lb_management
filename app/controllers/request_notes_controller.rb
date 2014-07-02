@@ -6,10 +6,9 @@ class RequestNotesController < ApplicationController
 	def show
 		@request = Request.find(params[:id])
 		@notes = RequestNote.where(:requestid => params[:id])
-		@user = User.find(session[:user_id])
 		c_time = Time.now #el mismo tiempo para ambos registros
 		#Se registra la visualizacion de las notas de las solicitudes
-		register_last_revision(@request.id, @user.id,c_time)
+		register_last_revision(@request.id,session[:user_id],c_time)
 	end
 
 	def create
@@ -31,7 +30,6 @@ class RequestNotesController < ApplicationController
 	def edit
 		@request = Request.find(params[:requestid])
 		@notes = RequestNote.where(:requestid => params[:requestid])
-		@user = User.find(session[:user_id])
 		@request_note = RequestNote.find(params[:id])
 	end
 

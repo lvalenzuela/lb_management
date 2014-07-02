@@ -1,0 +1,2 @@
+module MoodleCoursesHelper
+end
