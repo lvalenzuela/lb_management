@@ -2,13 +2,17 @@ module RequestsHelper
 
 	def has_unseen_messages(last_msg_time,request,user)
 		if last_msg_time.nil?
-			return false
+			return false 
 		else
-			last_check = LastRequestMessageCheck.where(:requestid => request, :userid => user).first().last_check_datetime
-			if last_msg_time > last_check
-				true
+			last_check = LastRequestMessageCheck.where(:requestid => request, :userid => user).first()
+			if last_check.nil?
+				return true
 			else
-				false
+				if last_msg_time > last_check.last_check_datetime
+					return true
+				else
+					return false
+				end
 			end
 		end
 	end
