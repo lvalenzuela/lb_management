@@ -4,7 +4,7 @@ module RequestsHelper
 		if last_msg_time.nil?
 			return false
 		else
-			last_check = LastRequestMessageCheck.where(:requestid => request, :userid => user).first().last_check_datetime
+			last_check = LastRequestMessageCheck.where(:requestid => request, :userid => user).first().last_msg_datetime
 			if last_msg_time > last_check
 				true
 			else
