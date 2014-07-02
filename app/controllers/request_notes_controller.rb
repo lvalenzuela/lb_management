@@ -9,7 +9,7 @@ class RequestNotesController < ApplicationController
 		@user = User.find(session[:user_id])
 		c_time = Time.now #el mismo tiempo para ambos registros
 		#Se registra la visualizacion de las notas de las solicitudes
-		register_last_revision(@request.id, @user.id, "c",c_time)
+		register_last_revision(@request.id, @user.id,c_time)
 	end
 
 	def create
@@ -18,7 +18,7 @@ class RequestNotesController < ApplicationController
 		#Se registra el ultimo mensaje de la solicitud
 		register_last_message(rn.requestid,c_time)
 		#Se registra la ultima visualizacion del usuario
-		register_last_revision(rn.requestid, rn.userid, "u",c_time)
+		register_last_revision(rn.requestid, rn.userid,c_time)
 		if rn.valid?
 			redirect_to :action => "show", :id => rn.requestid
 		else
@@ -40,7 +40,7 @@ class RequestNotesController < ApplicationController
 		rn.update_attributes(request_note_params)
 		c_time = Time.now #el mismo tiempo para ambos registros
 		#Se registra la ultima visualizacion del usuario
-		register_last_revision(rn.requestid, rn.userid, "u",c_time)
+		register_last_revision(rn.requestid, rn.userid,c_time)
 		#Se registra el ultimo mensaje de la solicitud
 		register_last_message(rn.requestid,c_time)
 		redirect_to :action => "show", :id => params[:request_note][:requestid]
@@ -58,14 +58,12 @@ class RequestNotesController < ApplicationController
 		params.require(:request_note).permit(:requestid, :userid, :subject, :message, :attach)
 	end
 
-	def register_last_revision(request,user,mode,c_time)
-		case mode
-		when "c" #create
-			LastRequestMessageCheck.create(:requestid => request, :userid => user, :last_check_datetime => c_time)
-		when "u" #update
-			t = LastRequestMessageCheck.where(:requestid => request, :userid => user).first()
-			t.update_attributes(:last_check_datetime => c_time)
+	def register_last_revision(request,user,c_time)
+		t = LastRequestMessageCheck.where(:requestid => request, :userid => user)
+		if !t.nil?
+			t.destroy_all
 		end
+		LastRequestMessageCheck.create(:requestid => request, :userid => user, :last_check_datetime => c_time)
 	end
 
 	def register_last_message(request,c_time)
