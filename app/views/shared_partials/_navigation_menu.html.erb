@@ -181,13 +181,13 @@
                     <a href="#"><i class="fa fa-folder-open-o fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <%=link_to "Mis Trabajos".html_safe, :controller => "requests", :action => "index"%>
+                            <%=link_to "Pendientes".html_safe, :controller => "requests", :action => "index"%>
                         </li>
                         <li>
                             <%=link_to "Crear Requerimiento".html_safe, :controller => "requests", :action => "new_request"%>
                         </li>
                         <li>
-                            <%=link_to "Estado Requerimientos".html_safe, :controller => "requests", :action => "sent_requests"%>
+                            <%=link_to "Requerimientos Enviados".html_safe, :controller => "requests", :action => "sent_requests"%>
                         </li>
                         <%areas = areas_for_user()%>
                         <%if !areas.blank? %>

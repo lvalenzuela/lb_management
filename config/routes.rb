@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post 'assign_role'
       post 'modify_assignation'
       get 'extras'
+      delete 'destroy'
     end
   end
 
@@ -67,6 +68,8 @@ Rails.application.routes.draw do
     collection do 
       get "show"
       post "create"
+      get "edit"
+      post "update"
     end
   end
 

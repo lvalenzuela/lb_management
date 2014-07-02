@@ -23,7 +23,11 @@
                 <%else%>
                 <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle", :disabled => true}%></td>
                 <%end%>
-                <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
+                <%if has_unseen_messages(request.last_msg_datetime, request.id, session[:user_id])%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
+                <%else%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
+                <%end%>
             </tr>
             <%=render :partial => "modal_request", :locals => {:request => request}%>
         <%end%>

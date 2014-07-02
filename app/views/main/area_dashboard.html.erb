@@ -29,6 +29,7 @@
                                 <th>Username</th>
                                 <th>E-mail</th>
                                 <th>Rol</th>
+                                <th style="text-align: center;">Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,6 +40,7 @@
                                     <td><%=u.username%></td>
                                     <td><%=u.email%></td>
                                     <td><%=get_rolename(u.roleid)%></td>
+                                    <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: u.assignationid, areaid: @area.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td
                                 </tr>
                             <%end%>
                         </tbody>

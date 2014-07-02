@@ -13,13 +13,17 @@
     <tbody>
         <%@conf_requests.each do |request|%>
             <tr>
-                <td><%=link_to request.subject, "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
+                <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
                 <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                 <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle"} %></td>
                 <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 1}}, {:class => "btn btn-warning btn-circle"} %></td>
                 <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 3}}, {:class => "btn btn-danger btn-circle"} %></td>
-                <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary", :disabled => true} %></td>
+                <%if has_unseen_messages(request.last_msg_datetime, request.id, session[:user_id])%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
+                <%else%>
+                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
+                <%end%>
             </tr>
             <%=render :partial => "modal_request", :locals => {:request => request}%>
         <%end%>

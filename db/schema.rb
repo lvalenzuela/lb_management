@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140701220811) do
+ActiveRecord::Schema.define(version: 20140702150041) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -33,16 +33,19 @@ ActiveRecord::Schema.define(version: 20140701220811) do
     t.datetime "updated_at"
   end
 
+  create_table "last_request_message_checks", force: true do |t|
+    t.integer  "requestid"
+    t.integer  "userid"
+    t.datetime "last_check_datetime"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "notifications", force: true do |t|
     t.integer  "userid"
     t.string   "subject",    limit: 100
     t.text     "message"
     t.integer  "seen"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "request_messages", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -93,6 +96,7 @@ ActiveRecord::Schema.define(version: 20140701220811) do
     t.string   "pic_content_type"
     t.integer  "pic_file_size"
     t.datetime "pic_updated_at"
+    t.datetime "last_msg_datetime"
   end
 
   create_table "role_assignations", force: true do |t|

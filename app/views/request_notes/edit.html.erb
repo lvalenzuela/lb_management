@@ -47,12 +47,13 @@
 	    				Nueva Anotación
 	    			</div>
 	    			<div class="panel-body">
-	    				<%=form_for :request_note, :url => {:controller => "request_notes", :action => "create"} do |f|%>
+	    				<%=form_for :request_note, :url => {:controller => "request_notes", :action => "update"} do |f|%>
 		    				<div class="row">
 		    					<div class="col-lg-10 col-lg-offset-1">
 		    						<div class="form-group">
-		    							<%=f.hidden_field :requestid, :value => @request.id%>
-		    							<%=f.hidden_field :userid, :value => session[:user_id]%>
+		    							<%=f.hidden_field :id%>
+		    							<%=f.hidden_field :requestid%>
+		    							<%=f.hidden_field :userid%>
 		    							<label>Tema:</label>
 		    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
 		    						</div>

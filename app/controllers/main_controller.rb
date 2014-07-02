@@ -68,8 +68,16 @@ class MainController < ApplicationController
         redirect_to :action => "area_dashboard", :id => params[:area]
     end
 
-    def delete_role
-
+    def destroy
+        r = RoleAssignation.find(params[:id])
+        if session[:system_role] <= 2
+            r.destroy
+            flash[:notice] = "El usuario ha sido eliminado del Área."
+            
+        else
+            flash[:notice] = "No estas autorizado para realizar esta acción."
+        end
+        redirect_to :action => "area_dashboard", :id => params[:areaid]
     end
 
     private

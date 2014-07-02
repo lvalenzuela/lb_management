@@ -1,5 +1,18 @@
 module RequestsHelper
 
+	def has_unseen_messages(last_msg_time,request,user)
+		if last_msg_time.nil?
+			return false
+		else
+			last_check = LastRequestMessageCheck.where(:requestid => request, :userid => user).first().last_check_datetime
+			if last_msg_time > last_check
+				true
+			else
+				false
+			end
+		end
+	end
+
 	def get_tagname(id)
 		if !id.nil?
 			tagname = Tag.find(id).tagname
@@ -42,73 +55,6 @@ module RequestsHelper
 		else
 			user = User.find(userid)
 			username = user.firstname+" "+user.lastname
-		end
-	end
-
-	def requests_list(t_areas,status_values,priority_values,userid)
-		
-		if !t_areas.nil?
-			areas = "areaid in ("
-			t_areas.each do |a|
-				if a != t_areas.last
-					areas = areas + a.to_s + ","
-				else
-					areas = areas + a.to_s + ")"
-				end
-			end
-		else
-			areas = ""
-		end
-
-		if !status_values.nil?
-			if !t_areas.nil?
-				statuses = "and statusid in ("
-			else
-				statuses = "statusid in ("
-			end
-			status_values.each do |s|
-				if s != status_values.last
-					statuses = statuses + s.to_s + ","
-				else
-					statuses = statuses + s.to_s + ")"
-				end
-			end
-		else
-			statuses = ""
-		end
-
-		if !priority_values.nil?
-			if !t_areas.nil? || !status_values.nil?
-				priorities = "and priorityid in ("
-			else
-				priorities = "priorityid in ("
-			end
-			priority_values.each do |p|
-				if p != priority_values.last
-					priorities = priorities + p.to_s + ","
-				else
-					priorities = priorities + p.to_s + ")"
-				end
-			end
-		else
-			priorities = ""
-		end
-
-		if !userid.nil?
-			if !t_areas.nil? || !status_values.nil? || !priority_values.nil?
-				user_str = "and userid = "+userid.to_s
-			else
-				user_str = "userid = "+userid.to_s
-			end
-		else
-			user_str = ""
-		end
-
-
-		if !t_areas.nil? || !status_values.nil? || !priority_values.nil? || !userid.nil?
-			Request.where("#{areas} #{statuses} #{priorities} #{user_str}").order("priorityid ASC")
-		else #todas las solicitudes
-			Request.all().order("priorityid ASC")
 		end
 	end
 
