@@ -4,8 +4,6 @@ class CreateMoodleGroups < ActiveRecord::Migration
     	t.string :groupname
       t.timestamps
     end
-    drop_table :moodle_course_groups
-    drop_table :moodle_groupers
   end
 
   def down 
