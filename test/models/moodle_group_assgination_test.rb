@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MoodleGrouperTest < ActiveSupport::TestCase
+class MoodleGroupAssginationTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

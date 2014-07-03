@@ -285,16 +285,15 @@ class RequestsController < ApplicationController
 
 	def subject_list
 		#listado de subjects que otras areas pueden hacer al área TI
-		subjects = {"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
-					"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
-					"Problema iPad" => "Problema iPad",
-					"Problema PC" => "Problema PC",
+		subjects = {#"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
+					#"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
+					#"Problema iPad" => "Problema iPad",
+					#"Problema PC" => "Problema PC",
 					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
 					"Modificación de Asistencias de Curso" => "Modificación de Asistencias de Curso", 
 					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
 					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
-					"Error en Material de Curso" => "Error en Material de Curso",
-					"Otro" => "Otro"}
+					"Error en Material de Curso" => "Error en Material de Curso"}
 	end
 
 	def default_area

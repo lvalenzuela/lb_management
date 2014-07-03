@@ -1,6 +1,7 @@
 <table class="table table-striped table-bordered table-hover" id="conf-requests-table">
     <thead>
         <tr>
+            <th style="text-align: center;"> ID</th>
             <th>Tema</th>
             <th style="text-align: center;">Prioridad</th>
             <th style="text-align: center;">Estado</th>
@@ -13,6 +14,7 @@
     <tbody>
         <%@conf_requests.each do |request|%>
             <tr>
+                <td style="text-align: center;"><%=request.id%></td>
                 <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
                 <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140702212523) do
+ActiveRecord::Schema.define(version: 20140703181046) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -59,12 +59,6 @@ ActiveRecord::Schema.define(version: 20140702212523) do
     t.datetime "updated_at"
   end
 
-  create_table "moodle_course_groups", force: true do |t|
-    t.string   "groupname"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "moodle_courses", force: true do |t|
     t.integer  "moodleid"
     t.string   "coursename"
@@ -72,9 +66,15 @@ ActiveRecord::Schema.define(version: 20140702212523) do
     t.datetime "updated_at"
   end
 
-  create_table "moodle_groupers", force: true do |t|
-    t.integer  "m_coursegroupid"
+  create_table "moodle_group_assignations", force: true do |t|
+    t.integer  "groupid"
     t.integer  "m_courseid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "moodle_groups", force: true do |t|
+    t.string   "groupname"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

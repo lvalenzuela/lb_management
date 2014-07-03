@@ -7,6 +7,14 @@ class MoodleCoursesController < ApplicationController
     	@courses = MoodleCourse.all()
     end
 
+    def assign
+
+    end
+
+    def create_group
+        
+    end
+
     private
 
     def check_authentication

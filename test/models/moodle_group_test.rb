@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MoodleCourseGroupTest < ActiveSupport::TestCase
+class MoodleGroupTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

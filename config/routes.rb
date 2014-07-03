@@ -3,7 +3,9 @@ Rails.application.routes.draw do
  
   resources :moodle_courses do
     collection do
-      get 'index'
+      get "index"
+      post "assign"
+      post "create_group"
     end
   end
 
