@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       post 'mark_with_tag'
       post 'create_tag'
       get 'sent_requests'
+      get 'filter_sent'
       get 'new_request'
       get 'edit_request'
       get 'show'

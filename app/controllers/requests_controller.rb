@@ -80,11 +80,30 @@ class RequestsController < ApplicationController
 
 	def sent_requests
 		@user = User.find(session[:user_id])
-		#solicitudes pendientes, canceladas o resueltas
-		@requests = Request.where(:userid => @user.id, :statusid => [1,2,3]).order("updated_at ASC")
-		#solicitudes esperando confirmacion
-		@conf_requests = Request.where(:userid => @user.id, :statusid => 4).order("updated_at DESC")
-		
+		#Hay dos tipos de tabla
+		#La primera es una tabla regular que muestra solicitudes
+		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
+		@table = 1
+		@editable = false
+		case params[:f]
+		when "inprogress"
+			#Solicitudes pendientes que han sido asignadas
+			@frame_title = "Solicitudes en Proceso de Resolución"
+			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
+		when "solved"
+			#Solicitudes resueltas o canceladas
+			@frame_title = "Solicitudes Resueltas o Canceladas"
+			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at ASC")
+		when "unassigned"
+			#Solicitudes pendientes que no han sido asignadas
+			@frame_title = "Solicitudes Pendientes Sin Asignar"
+			@editable = true
+			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at ASC")
+		else
+			@frame_title = "Solicitudes en Espera de Confirmación"
+			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at ASC")
+			@table = 2
+		end
 	end
 
 	def confirm_solution
