@@ -20,22 +20,17 @@ class UsersController < ApplicationController
 	      flash[:notice] = "Usuario no autorizado para ingresar al sistema"
 	      redirect_to :action => "index" 
 	    else
-	      fixed_pass = user.password
-	      fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
-	      password = BCrypt::Password.new(user.password)
-	      if user.permissionid <= 2 #permitir solo administradores
-		      if password == params[:password] 
-		        session[:system_role] = role_in_system(user.id)
-		        session[:user_id] = user.id
-		        redirect_to root_path
-		      else
-		        flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
-		        redirect_to :action => "index"
-		    end
-		  else
-		  	flash[:notice] = "Usuario no autorizado."
-		  	redirect_to :action => "index"
-	      end
+			fixed_pass = user.password
+			fixed_pass[2] = "a" #se reemplaza de 'y' a 'a' para que se reconozca (blowfish)
+			password = BCrypt::Password.new(user.password)
+			if password == params[:password] 
+				session[:system_role] = role_in_system(user.id)
+				session[:user_id] = user.id
+				redirect_to root_path
+			else
+				flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
+				redirect_to :action => "index"
+			end
 	    end
 	end
 

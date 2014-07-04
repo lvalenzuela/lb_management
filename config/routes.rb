@@ -6,6 +6,8 @@ Rails.application.routes.draw do
       get "index"
       post "assign"
       post "create_group"
+      get "show_group"
+      delete "destroy_group"
     end
   end
 

@@ -2,7 +2,7 @@ module ApplicationHelper
 	
 
 	def activate_menu_item(controller,desired)
-		if controller == desired
+		if desired.include?(controller)
 			return "class=active"
 		end
 	end

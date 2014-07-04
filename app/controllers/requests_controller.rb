@@ -309,10 +309,10 @@ class RequestsController < ApplicationController
 					#"Problema iPad" => "Problema iPad",
 					#"Problema PC" => "Problema PC",
 					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
-					"Modificación de Asistencias de Curso" => "Modificación de Asistencias de Curso", 
 					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
 					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
-					"Error en Material de Curso" => "Error en Material de Curso"}
+					"Error en Material de Curso" => "Error en Material de Curso",
+					"Problemas con portal Summit" => "Problemas con portal Summit"}
 	end
 
 	def default_area

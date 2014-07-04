@@ -34,30 +34,31 @@
         </div>
     </div>
     <div class="row">
+        <%=form_tag :controller => "moodle_courses", :action => "assign" do%>
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Cursos de Moodle
                 </div>
                 <div class="panel-body">
-                    <%=form_tag :controller => "moodle_courses", :action => "assign" do%>
-                    <table class="table table-striped table-bordered table-hover" id="course-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Nombre Curso</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <%@courses.each do |course|%>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="course-table">
+                            <thead>
                                 <tr>
-                                    <td style="text-align: center;"><%=check_box_tag "courses[]", course.moodleid%></td>
-                                    <td><%=truncate(course.coursename, :length => 50)%></td>
+                                    <th></th>
+                                    <th>Nombre Curso</th>
                                 </tr>
-                            <%end%>
-                        </tbody>
-                    </table>
-                    <%end%>
+                            </thead>
+                            <tbody>
+                                <%@courses.each do |course|%>
+                                    <tr>
+                                        <td style="text-align: center;"><%=check_box_tag "courses[]", course.moodleid%></td>
+                                        <td><%=truncate(course.coursename, :length => 50)%></td>
+                                    </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -67,22 +68,33 @@
                     Grupos de Monitoreo
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover" id="course-groups-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Nombre Grupo</th>
-                                <th>Cursos Contenidos</th>
-                                <th>Eliminar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
+                    <%=submit_tag "Asignar Cursos a Grupo", :class => "btn btn-default btn-lg btn-block"%>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="course-groups-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nombre Grupo</th>
+                                    <th># Cursos</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@moodlegroups.each do |g|%>
+                                <tr>
+                                    <td style="text-align: center;"><%=radio_button_tag :groupid, g.id%></td>
+                                    <td><%=link_to g.groupname, :controller => "moodle_courses", :action => "show_group", :params => {:id => g.id}%></td>
+                                    <td><%=g.courses%></td>
+                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {action: "destroy_group", id: g.id}, method: :delete, data: {confirm: "Estas seguro?"}, :class => "btn btn-default btn-circle"%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+        <%end%>
     </div>
 </div>
 <script>
