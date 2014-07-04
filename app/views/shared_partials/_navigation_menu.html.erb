@@ -161,9 +161,11 @@
                             <li>
                                 <%=link_to "Áreas".html_safe, :controller => "main", :action => "area_manager" %>
                             </li>
-                            <li>
-                                <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
-                            </li>
+                            <%if session[:system_role] == 1%>
+                                <li>
+                                    <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
+                                </li>
+                            <%end%>
                         </ul>
                     </li>
                 <%end%>
