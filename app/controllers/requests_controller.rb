@@ -308,11 +308,12 @@ class RequestsController < ApplicationController
 					#"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
 					#"Problema iPad" => "Problema iPad",
 					#"Problema PC" => "Problema PC",
-					"Creación Nuevo Curso en Moodle" => "Creación Nuevo Curso en Moodle",
-					"Registrar Incorporacion / Deserción de Alumno" => "Registrar Incorporacion / Deserción de Alumno",
-					"Problemas de Acceso a Web / Mail Longbourn" => "Problemas de Acceso a Web / Mail Longbourn",
-					"Error en Material de Curso" => "Error en Material de Curso",
-					"Problemas con portal Summit" => "Problemas con portal Summit"}
+					"Solicitud de Incorporación / Eliminación de Estudiante a Curso" => "Solicitud de Incorporación / Eliminación de Estudiante a Curso",
+					"Solicitud de Incorporación / Eliminación de Profesor a Curso" => "Solicitud de Incorporación / Eliminación de Profesor a Curso",
+					"Solicitud de Creación de Nuevo Curso en Web Estudiantes" => "Solicitud de Creación de Nuevo Curso en Web Estudiantes",
+					"Problemas de acceso a la Web / Mail" => "Problemas de acceso a la Web / Mail",
+					"Notificación de Error detectado en Material Web" => "Notificación de Error detectado en Material Web",
+					"Notificación de Problema detectado en Portal Summit" => "Notificación de Problema detectado en Portal Summit"}
 	end
 
 	def default_area
