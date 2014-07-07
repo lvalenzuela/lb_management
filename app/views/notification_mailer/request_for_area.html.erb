@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Estimad@ <%= @user.firstname+" "+@user.lastname %>,</h1>
+    <p>
+      Una solicitud con el título <b>"<%=@request.subject%>"</b> para el área <b><%=@area.areaname%></b>.<br>
+    </p>
+    <p>
+      Para administrar las solicitudes de su área, dirigirse al siguiente <%=link_to "link", @url %>.<br>
+    </p>
+    <br>
+    <p>Saluda atentamente,<br>
+      Área de Sistemas y Procesos Longbourn Institute.</p>
+    
+    -------------------------------------------------------
+    <p>Este correo fue generado automáticamente, por lo cual se sugiere no responderlo.</p>
+  </body>
+</html>

@@ -18,6 +18,8 @@ class RequestNotesController < ApplicationController
 		register_last_message(rn.requestid,c_time)
 		#Se registra la ultima visualizacion del usuario
 		register_last_revision(rn.requestid, rn.userid,c_time)
+		#notificacion por mail
+		notify_new_note(rn.requestid,rn.userid)
 		if rn.valid?
 			redirect_to :action => "show", :id => rn.requestid
 		else
@@ -45,6 +47,18 @@ class RequestNotesController < ApplicationController
 	end
 
 	private
+
+	def notify_new_note(requestid,userid)
+		r = Request.find(requestid)
+		if r.userid == userid
+			#el usuario que escribe el mensaje es el mismo que envía la solicitud
+			user = User.find(r.receiverid)
+		else
+			#el usuario que escribe el mensaje es el receptor de la solicitud
+			user = User.find(r.userid)
+		end
+		NotificationMailer.new_forum_msg(user,r).deliver
+	end
 
 	def check_authentication
 	    if session[:user_id].nil?

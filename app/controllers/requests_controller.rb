@@ -165,6 +165,12 @@ class RequestsController < ApplicationController
 		if @request.valid?
 			if !@request.receiverid.nil? && @request.receiverid != ""
 				notify_user(@request.receiverid,@request,true)
+			else
+				#se notifica a todos los administradores de area que hay 
+				#una nueva solicitud pendiente
+				get_area_managers(@request.areaid).each do |m|
+					NotificationMailer.request_for_area(m,@request).deliver
+				end
 			end
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
@@ -232,6 +238,14 @@ class RequestsController < ApplicationController
 	#Functiones Privadas#
 	#####################
 	private
+
+	def get_area_managers(area)
+		c = Context.where(:descriptionid => 2, :instanceid => area).first()
+		return User.joins("inner join role_assignations
+						on role_assignations.userid = users.id
+						and role_assignations.contextid = #{c.id}
+						and role_assignations.roleid in (1,2)")
+	end
 
 	def change_status(params)
 		r = Request.find(params[:id])
