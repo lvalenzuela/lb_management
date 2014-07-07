@@ -164,7 +164,7 @@ class RequestsController < ApplicationController
 		@request = Request.create(request_params)
 		if @request.valid?
 			if !@request.receiverid.nil? && @request.receiverid != ""
-				notify_user(@request.receiverid,"Solicitudes","Una solicitud le ha sido asignada.")
+				notify_user(@request.receiverid,@request,true)
 			end
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
@@ -237,20 +237,12 @@ class RequestsController < ApplicationController
 		r = Request.find(params[:id])
 		
 		r.update_attributes(:statusid => params[:statusid])
-		
-		case r.statusid
-		when 1
-			notify_user(r.userid,"Solicitud Pendiente","Una solicitud en espera de confirmación se le ha vuelto a asignar. Por favor, revise sus solicitudes.")
-		when 2
-			notify_user(r.userid,"Solicitud Confirmada","Una solicitud con el tema '"+r.subject+"' ha sido confirmada y se ha registrado como resuelta.")
-		when 3
-			notify_user(r.userid,"Solicitud Cancelada","Una solicitud con el tema '"+r.subject+"' ha sido cancelada.")
-		when 4
-			#se marca la solicitud como esperando confirmacion
-			notify_user(r.userid,"Solicitud Esperando Confirmación","Una solicitud con el tema '"+r.subject+"' ha sido marcada como resuelta y está esperando confirmación. Por favor, revise sus solicitudes enviadas.")
+		if r.statusid == 4
+			#Si la solicitud fue resuelta
 			#se marca la fecha en que la solicitud fue marcada como solucionada
 			r.update_attributes(:resolved_at => Date.current())
 		end
+		notify_user(r.userid,r,false)
 	end
 
 	def receiver_list(area)
@@ -297,9 +289,34 @@ class RequestsController < ApplicationController
 		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request, :attach, :pic)
 	end
 
-	def notify_user(userid, subject, message)
-		n = Notification.new(:userid => userid, :subject => subject, :message => message, :seen => 0)
-		n.save		
+	def notify_user(userid,request,new_request)
+		@user = User.find(userid)
+		case request.statusid
+		when 1
+			if new_request
+				subject = "Solicitud Asignada"
+				message = "Una solicitud le ha sido asignada. Por favor, revise sus solicitudes."
+				NotificationMailer.assigned_request(@user,request).deliver
+			else
+				subject = "Solicitud Pendiente"
+				message = "Una solicitud en espera de confirmación se le ha vuelto a asignar. Por favor, revise sus solicitudes."
+				NotificationMailer.reassigned_request(@user,request).deliver
+			end
+
+		when 2
+			subject = "Solicitud Confirmada"
+			message = "Una solicitud con el tema '"+request.subject+"' ha sido confirmada y se ha registrado como resuelta."
+			#NotificationMailer.confirmed_request(@user,request).deliver
+		when 3
+			subject = "Solicitud Cancelada"
+			message = "Una solicitud con el tema '"+request.subject+"' ha sido cancelada."
+			NotificationMailer.canceled_request(@user,request).deliver
+		when 4
+			subject = "Solicitud Esperando Confirmación"
+			message = "Una solicitud con el tema '"+request.subject+"' ha sido marcada como resuelta y está esperando confirmación. Por favor, revise sus solicitudes enviadas."
+			NotificationMailer.waiting_request(@user,request).deliver
+		end
+		Notification.create(:userid => userid, :subject => subject, :message => message)
 	end
 
 	def subject_list

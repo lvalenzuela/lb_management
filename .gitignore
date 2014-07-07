@@ -18,3 +18,5 @@
 #ignorar archivos de configuracion
 /config/database.yml
 /config/secrets.yml
+/config/environments/production.erb
+/config/environments/development.erb

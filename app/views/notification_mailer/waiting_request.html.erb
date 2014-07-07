@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Estimad@ <%= @user.firstname+" "+@user.lastname %>,</h1>
+    <p>
+      Una solicitud con el título <b>"<%=@request.subject%>"</b> ha sido resuelta y está en espera de confirmación.<br>
+    </p>
+    <p>
+      Para ver los detalles de esta solicitud, dirijase a la plataforma Summit de Longbourn mediante el siguiente link: <%=link_to @url, @url %>.<br>
+    </p>
+    <br>
+    <p>Saluda atentamente,<br>
+      Área de Sistemas y Procesos Longbourn Institute.</p>
+    
+    -------------------------------------------------------
+    <p>Este correo fue generado automáticamente, por lo cual se sugiere no responderlo.</p>
+  </body>
+</html>
