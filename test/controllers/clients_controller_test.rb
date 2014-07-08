@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ContextDescriptionTest < ActiveSupport::TestCase
+class ClientsControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end

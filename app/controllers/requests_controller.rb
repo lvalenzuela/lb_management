@@ -240,7 +240,7 @@ class RequestsController < ApplicationController
 	private
 
 	def get_area_managers(area)
-		c = Context.where(:descriptionid => 2, :instanceid => area).first()
+		c = Context.where(:typeid => 2, :instanceid => area).first()
 		return User.joins("inner join role_assignations
 						on role_assignations.userid = users.id
 						and role_assignations.contextid = #{c.id}
@@ -260,7 +260,7 @@ class RequestsController < ApplicationController
 	end
 
 	def receiver_list(area)
-		c = Context.where(:descriptionid => 2, :instanceid => area).first()
+		c = Context.where(:typeid => 2, :instanceid => area).first()
 
 		return User.joins("inner join role_assignations
 						on role_assignations.userid = users.id

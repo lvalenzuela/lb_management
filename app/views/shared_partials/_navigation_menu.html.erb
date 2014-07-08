@@ -76,7 +76,7 @@
                     <!-- /input-group -->
                 </li>
                 <%if session[:system_role] <= 2%>
-                    <li <%=activate_menu_item(controller_name,["main","moodle_courses"])%>>
+                    <li <%=activate_menu_item("admin", active_item)%>>
                         <a href="#"><i class="fa fa-gears fa-fw"></i> Administración<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -86,12 +86,25 @@
                                 <li>
                                     <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
                                 </li>
+                                <li>
+                                    <%=link_to "Admin. Cuentas Clientes", :controller => "clients", :action => "manage_accounts"%>
+                                </li>
                             <%end%>
                         </ul>
                     </li>
                 <%end%>
+                <%if session[:system_role] <= 2%>
+                    <li <%=activate_menu_item("clients", active_item)%>>
+                        <a href="#"><i class="fa fa-group fa-fw"></i> Clientes<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <%=link_to "Cuentas", :controller => "clients", :action => "index"%>
+                            </li>
+                        </ul>
+                    </li>
+                <%end%>
                 <%if session[:system_role] <= 2 %>
-                    <li <%=activate_menu_item(controller_name,"reports")%>>
+                    <li <%=activate_menu_item("reports",active_item)%>>
                         <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -103,7 +116,7 @@
                         </ul>
                     </li>
                 <%end%>
-                <li <%=activate_menu_item(controller_name,["requests","request_notes"])%>>
+                <li <%=activate_menu_item("requests", active_item)%>>
                     <a href="#"><i class="fa fa-folder-open-o fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
@@ -117,7 +130,7 @@
                         </li>
                         <%areas = areas_for_user()%>
                         <%if !areas.blank? %>
-                        <li>
+                        <li <%=activate_menu_item("area_requests", active_item)%>>
                             <a href="#">Requerimientos por Área<span class="fa arrow"></span></a>
                             <%areas.each do |area|%>
                                 <ul class="nav nav-third-level">
@@ -130,7 +143,7 @@
                         <%end%>
                     </ul>
                 </li>
-                <li <%=activate_menu_item(controller_name,"notifications")%>>
+                <li <%=activate_menu_item("notifications",active_item)%>>
                     <%=link_to "<i class='fa fa-envelope fa-fw'></i>  Notificaciones".html_safe, :controller => "notifications", :action => "index" %>
                 </li>
             </ul>

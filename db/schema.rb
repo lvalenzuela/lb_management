@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140704192746) do
+ActiveRecord::Schema.define(version: 20140708195731) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -20,14 +20,58 @@ ActiveRecord::Schema.define(version: 20140704192746) do
     t.datetime "updated_at"
   end
 
-  create_table "context_descriptions", force: true do |t|
+  create_table "contact_account_types", force: true do |t|
+    t.string   "typename"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  create_table "contact_accounts", force: true do |t|
+    t.string   "accountname"
+    t.string   "description"
+    t.integer  "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "contact_statuses", force: true do |t|
+    t.string   "statusname"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "contact_types", force: true do |t|
+    t.string   "typename"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "contacts", force: true do |t|
+    t.integer  "accountid"
+    t.string   "institution"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "rut"
+    t.string   "email"
+    t.integer  "phone"
+    t.integer  "typeid"
+    t.integer  "statusid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "context_types", force: true do |t|
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "description"
+  end
+
   create_table "contexts", force: true do |t|
-    t.integer  "descriptionid"
+    t.integer  "typeid"
     t.integer  "instanceid"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -59,6 +103,13 @@ ActiveRecord::Schema.define(version: 20140704192746) do
     t.datetime "updated_at"
   end
 
+  create_table "modalities", force: true do |t|
+    t.string   "modalityname"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "moodle_courses", force: true do |t|
     t.integer  "moodleid"
     t.string   "coursename"
@@ -84,6 +135,47 @@ ActiveRecord::Schema.define(version: 20140704192746) do
     t.string   "subject",    limit: 100
     t.text     "message"
     t.integer  "seen"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "product_prices", force: true do |t|
+    t.integer  "modalityid"
+    t.integer  "students_qty"
+    t.integer  "hours_amt"
+    t.integer  "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "products", force: true do |t|
+    t.integer  "productpriceid"
+    t.integer  "courseid"
+    t.integer  "students_qty"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "quotation_products", force: true do |t|
+    t.integer  "quotationid"
+    t.integer  "productid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "quotation_statuses", force: true do |t|
+    t.string   "statusname"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "quotations", force: true do |t|
+    t.integer  "contactid"
+    t.integer  "productid"
+    t.decimal  "discount",   precision: 10, scale: 0
+    t.integer  "price"
+    t.integer  "statusid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

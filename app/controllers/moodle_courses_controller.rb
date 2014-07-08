@@ -14,8 +14,14 @@ class MoodleCoursesController < ApplicationController
     def assign
         if params[:courses] && params[:groupid]
             params[:courses].each do |c|
-                #Se asignan los cursos seleccionados al grupo correspondiente
-                MoodleGroupAssignation.create(:groupid => params[:groupid], :m_courseid => c)
+                g = MoodleGroupAssignation.where(:groupid => params[:groupid], :m_courseid => c)
+                if g.nil? || g.empty?
+                    #Se asignan los cursos seleccionados al grupo correspondiente
+                    MoodleGroupAssignation.create(:groupid => params[:groupid], :m_courseid => c)
+                else
+                    #El curso ya esta asignado al grupo
+                    #duh
+                end
             end
         else
             flash[:notice] = "No se pudo llevar a cabo la asignacion."

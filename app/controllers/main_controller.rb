@@ -89,6 +89,6 @@ class MainController < ApplicationController
     end
 
     def get_area_context(areaid)
-        Context.where(:descriptionid => 2, :instanceid => areaid).first()
+        Context.where(:typeid => 2, :instanceid => areaid).first()
     end
 end

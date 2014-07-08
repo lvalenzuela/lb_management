@@ -1,5 +1,16 @@
 Rails.application.routes.draw do
   root 'requests#sent_requests'
+
+  resources :clients do
+    collection do 
+      get 'index'
+      get 'manage_accounts'
+      post 'create_account'
+      get "show_account"
+      get "account_managers"
+      post "assign_client"
+    end
+  end
  
   resources :moodle_courses do
     collection do
