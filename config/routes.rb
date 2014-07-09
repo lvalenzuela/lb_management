@@ -6,8 +6,11 @@ Rails.application.routes.draw do
       get 'index'
       get 'manage_accounts'
       post 'create_account'
+      get "new"
+      post "create_client"
       get "show_account"
       get "account_managers"
+      post "modify_account_managers"
       post "assign_client"
     end
   end

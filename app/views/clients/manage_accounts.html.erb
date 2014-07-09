@@ -18,7 +18,7 @@
                     <%=form_tag :controller => "clients", :action => "create_account" do%>
                     <div class="col-lg-6">
                         <div class="form-group">
-                            <label>Cuenta de Clientes:</label>
+                            <label>Cuenta de Contactos:</label>
                             <%=text_field_tag :accountname, nil,{:placeholder => "Nombre Cuenta", :class => "form-control"}%>
                             <label>Descripción:</label>
                             <%=text_field_tag :description, nil,{:placeholder => "Descripción de la Cuenta", :class => "form-control"}%>
@@ -28,8 +28,8 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <h3>Cuentas de Clientes</h3>
-                        <p>La función de las cuentas de clientes es agrupar clientes para que queden a cargo de algun ejecutivo en particular. Mediante las cuentas de clientes será posible asociar más de un cliente a un mismo ejecutivo.</p>
+                        <h3>Cuentas de Contactos</h3>
+                        <p>La función de las cuentas de contactos es agrupar clientes para que queden a cargo de algun ejecutivo en particular. Mediante las cuentas de clientes será posible asociar más de un cliente a un mismo ejecutivo.</p>
                     </div>
                     <%end%>
                 </div>

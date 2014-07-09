@@ -29,7 +29,7 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
-    bootstrap3-datetimepicker-rails (3.0.0)
+    bootstrap3-datetimepicker-rails (3.0.0.2)
       momentjs-rails (~> 2.5.0)
     builder (3.2.2)
     capistrano (2.15.5)
@@ -174,7 +174,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt
-  bootstrap3-datetimepicker-rails (~> 3.0.0)
+  bootstrap3-datetimepicker-rails (~> 3.0.0.2)
   capistrano
   coffee-rails (~> 4.0.0)
   font-awesome-rails

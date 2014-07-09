@@ -98,6 +98,9 @@
                         <a href="#"><i class="fa fa-group fa-fw"></i> Clientes<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
+                                <%=link_to "Registrar Cliente", :controller => "clients", :action => "new"%>
+                            </li>
+                            <li>
                                 <%=link_to "Cuentas", :controller => "clients", :action => "index"%>
                             </li>
                         </ul>

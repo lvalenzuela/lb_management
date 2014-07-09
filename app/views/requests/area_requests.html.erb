@@ -36,12 +36,11 @@
                                     <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <div class="input-group date" id='datepicker1' data-date-format="DD/MM/YYYY">
-                                            <%=text_field_tag :duedate, "", :class => "form-control", :placeholder => "Fecha Límite"%>
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i>
-                                            </span>
-                                        </div>
+                                    <div class="form-group input-group">
+                                        <%=text_field_tag :duedate, "", :class => "form-control", :id => "datepicker1", :placeholder => "Fecha Límite", :data => {"date-format" => "DD/MM/YYYY"}%>
+                                        <span class="input-group-addon">
+                                            <i class='fa fa-calendar'></i>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -61,11 +60,9 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(function () {
-        $('#datepicker1').datetimepicker({
-            pickTime: false
-        });
-    });
+$(function () {
+    $('#datepicker1').datetimepicker();
+});
 </script>
 <script>
 $(document).ready(function() {

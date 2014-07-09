@@ -1,0 +1,80 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Administradores de la Cuenta: <%=@account.accountname%></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Listado de Administradores de esta Cuenta
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="account-managers-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Remover</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@account_managers.each do |a|%>
+                                <tr>
+                                    <td><%=a.firstname+" "+a.lastname%></td>
+                                    <td><%=a.email%></td>
+                                    <td style="text-align:center;"><%=link_to "<i class='fa fa-chevron-right'></i><i class='fa fa-chevron-right'></i>".html_safe, {:controller => "clients", :action => "modify_account_managers", :params => {:accountid => @account.id, :userid => a.id, :opt => "rmv"}}, :method => :post%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Listado de Usuarios del Sistema
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="system-users-table">
+                            <thead>
+                                <tr>
+                                    <th>Agregar</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@system_users.each do |u|%>
+                                <tr>
+                                    <td style="text-align:center;"><%=link_to "<i class='fa fa-chevron-left'></i><i class='fa fa-chevron-left'></i>".html_safe, {:controller => "clients", :action => "modify_account_managers", :params => {:accountid => @account.id, :userid => u.id, :opt => "add"}}, :method => :post%></td>
+                                    <td><%=u.firstname+" "+u.lastname%></td>
+                                    <td><%=u.email%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#account-managers-table').dataTable();
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('#system-users-table').dataTable();
+});
+</script>
