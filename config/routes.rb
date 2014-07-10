@@ -12,6 +12,12 @@ Rails.application.routes.draw do
       get "account_managers"
       post "modify_account_managers"
       post "assign_client"
+      get "quotations"
+      get "manage_quotations"
+      post "create_quotation_format"
+      get "set_default_format"
+      get "new_quotation"
+      post "create_quotation"
     end
   end
  

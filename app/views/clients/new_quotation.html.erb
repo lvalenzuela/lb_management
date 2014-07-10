@@ -1,0 +1,126 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ["quotations","clients"]%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Nueva Cotización</h1>
+        </div>
+    </div>
+    <%=form_for @quotation, :url =>{:controller => "clients", :action => "create_quotation"} do |f|%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Información General
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-5">
+                        <table class="table" id="provider-table">
+                            <tr>
+                                <th>Proveedor</th>
+                                <td><%=@provider.institution%></td>
+                            </tr>
+                            <tr>
+                                <th>RUT</th>
+                                <td><%=@provider.rut%></td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td><%=@provider.address%></td>
+                            </tr>
+                            <tr>
+                                <th>Telefono</th>
+                                <td><%=@provider.phone%></td>
+                            </tr>
+                            <tr>
+                                <th>Atención</th>
+                                <td><%=@user.firstname+" "+@user.lastname%></td>
+                            </tr>
+                            <tr>
+                                <th>E-Mail</th>
+                                <td><%=@user.email%></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-lg-5 col-lg-offset-1">
+                        <table class="table" id="client-table">
+                            <tr>
+                                <th>Comprador</th>
+                                <td><%=@client.institution%></td>
+                            </tr>
+                            <tr>
+                                <th>Rut</th>
+                                <td><%=@client.rut%></td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td><%=@client.address%></td>
+                            </tr>
+                            <tr>
+                                <th>Telefono</th>
+                                <td><%=@client.phone%></td>
+                            </tr>
+                            <tr>
+                                <th>Contacto</th>
+                                <td><%=@client.firstname+" "+@client.lastname%></td>
+                            </tr>
+                            <tr>
+                                <th>E-Mail</th>
+                                <td><%=@client.email%></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Mensaje de la Cotización
+                </div>
+                <div class="panel-body">
+                    <%=f.text_area :textbody, :value => (@template.nil? ? "" : @template.body),:id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Productos de la Cotización
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Cierre de la Cotización
+                </div>
+                <div class="panel-body">
+                    <%=f.text_area :textfooter, :value => (@template.nil? ? "" : @template.footer),:id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%end%>
+</div>
+<script>
+$('#redactor1').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>
+<script>
+$('#redactor2').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>

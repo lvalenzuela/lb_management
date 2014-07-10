@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140708195731) do
+ActiveRecord::Schema.define(version: 20140710221316) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -56,11 +56,12 @@ ActiveRecord::Schema.define(version: 20140708195731) do
     t.string   "lastname"
     t.string   "rut"
     t.string   "email"
-    t.integer  "phone"
+    t.string   "phone"
     t.integer  "typeid"
     t.integer  "statusid"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "address"
   end
 
   create_table "context_types", force: true do |t|
@@ -170,14 +171,27 @@ ActiveRecord::Schema.define(version: 20140708195731) do
     t.datetime "updated_at"
   end
 
+  create_table "quotation_templates", force: true do |t|
+    t.string   "title"
+    t.text     "body"
+    t.text     "footer"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "userid"
+    t.integer  "default"
+  end
+
   create_table "quotations", force: true do |t|
     t.integer  "contactid"
-    t.integer  "productid"
     t.decimal  "discount",   precision: 10, scale: 0
     t.integer  "price"
     t.integer  "statusid"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "userid"
+    t.text     "textbody"
+    t.text     "textfooter"
+    t.text     "comments"
   end
 
   create_table "request_notes", force: true do |t|

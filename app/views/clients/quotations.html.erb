@@ -1,0 +1,100 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ["quotations","clients"]%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Cotizaciones</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Formato de Cotizaciones
+                </div>
+                <div class="panel-body">
+                    <h3>Administracion de Formato de Cotizaciones</h3>
+                    <p>Acceder al menú de administración y edición de los valores por defecto ingresados al realizar cotizaciones. Mediante éste, se podran crear y seleccionar los valores y formatos que se utilizaran por defecto al generar una nueva cotizacion</p>
+                    <%=link_to "Administrar Valores de Cotizaciones", {:controller => "clients", :action => "manage_quotations"}, {:class => "btn btn-default btn-lg btn-block"}%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Registro de Cotizaciones Realizadas
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="quotations-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Contacto</th>
+                                    <th>Organizacion</th>
+                                    <th>Fecha</th>
+                                    <th>Cotizacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@user_quotations.each do |q|%>
+                                <tr>
+                                    <td><%=q.id%></td>
+                                    <td><%=q.firstname+" "+q.lastname%></td>
+                                    <td><%=q.institution%></td>
+                                    <td><%=q.created_at.strftime("%d-%m-%Y")%></td>
+                                    <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30")%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Clientes
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="clients-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Contacto</th>
+                                    <th>Organizacion</th>
+                                    <th>Cotizar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@clients.each do |c|%>
+                                <tr>
+                                    <td><%=c.firstname+" "+c.lastname%></td>
+                                    <td><%=c.institution%></td>
+                                    <td style="text-align: center"><%=link_to "<i class='fa fa-file-o'></i>".html_safe, :controller => "clients", :action => "new_quotation", :params => {:clientid => c.id}%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#quotations-table').dataTable();
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#clients-table').dataTable();
+});
+</script>

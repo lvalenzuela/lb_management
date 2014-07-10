@@ -7,12 +7,20 @@ class ClientsController < ApplicationController
 		account_list = user_contact_accounts(session[:user_id])
 		#Cuentas de clientes correspondientes al usuario
 		@accounts = ContactAccount.where(:id => account_list)
-		#Clientes correspondientes al usuario
-		@clients = Contact.where(:accountid => account_list)
+		if params[:accountid]
+			@clients = Contact.where(:accountid => params[:accountid])
+			@selected = ContactAccount.find(params[:accountid])
+		else
+			@clients = {}
+			@selected = {}
+		end
 	end
 
 	def new
-		@client = Contact.new()
+		@contact = Contact.new()
+		account_list = user_contact_accounts(session[:user_id])
+		@accounts = ContactAccount.where(:id => account_list)
+		@types = ContactType.all()
 	end
 
 	def create
@@ -25,6 +33,58 @@ class ClientsController < ApplicationController
 			#no se pudo crear el cliente
 			render :action => "new"
 		end
+	end
+
+	def quotations
+		@user_quotations = Quotation.where(:userid => session[:user_id])
+		account_list = user_contact_accounts(session[:user_id])
+		@clients = Contact.where(:accountid => account_list)
+	end
+
+	def new_quotation
+		#longbourn institute
+		@provider = Contact.where(:typeid => 1).first()
+		@user = User.find(session[:user_id])
+		@client = Contact.find(params[:clientid])
+		@quotation = Quotation.new()
+		t = QuotationTemplate.where(:userid => session[:user_id], :default => 1).first()
+		if t.nil? || t.blank?
+			@template = nil
+		end
+
+	end
+
+	def manage_quotations
+		@defaults = QuotationTemplate.where(:userid => [0,session[:user_id]])
+	end
+
+	def create_quotation_format
+		if params[:quotation_template][:default] == 1
+			#verificar si hay algun otro template marcado como default...
+			#si lo hay, eliminarlo
+		end
+		QuotationTemplate.create(quotation_format_params)
+		redirect_to :action => "manage_quotations"
+	end
+
+	def set_default_format
+		d = QuotationTemplate.where(:userid => session[:user_id], :default => 1).first()
+		if d.nil? || d.blank?
+			#no hay un formato establecido por defecto
+			#no se hace nada
+		else
+			if d.id == params[:id]
+				#El formato ya esta asignado como formato por defecto
+				redirect_to :action => "create_quotation_format"
+			else
+				#El formato encontrado deja de ser el formato por defecto
+				d.update_attributes(:default => 0)
+			end
+		end
+		#se establece el formato seleccionado como el formato por defecto
+		qd = QuotationTemplate.find(params[:id])
+		qd.update_attributes(:default => 1)
+		redirect_to :action => "create_quotation_format"
 	end
 
 	def manage_accounts
@@ -97,7 +157,11 @@ class ClientsController < ApplicationController
 	private
 
 	def client_params
-		params.require(:client).permit(:firstname, :lastname, :rut, :institution, :email, :phone, :accountid, :typeid, :statusid)
+		params.require(:contact).permit(:firstname, :lastname, :rut, :institution, :email, :phone, :accountid, :typeid, :statusid, :address)
+	end
+
+	def quotation_format_params
+		params.require(:quotation_template).permit(:title, :body, :footer, :userid, :default)
 	end
 
 	def check_authentication

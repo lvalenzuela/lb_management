@@ -103,6 +103,16 @@
                             <li>
                                 <%=link_to "Cuentas", :controller => "clients", :action => "index"%>
                             </li>
+                            <li <%=activate_menu_item("quotations", active_item)%>>
+                            <a href="#">Cotizaciones<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li>
+                                    <%=link_to "Mis Cotizaciones", :controller => "clients", :action => "quotations"%>
+                                </li>
+                                <li>
+                                    <%=link_to "Administrar Cotizaciones", :controller => "clients", :action => "manage_quotations"%>
+                                </li>
+                            </ul>
                         </ul>
                     </li>
                 <%end%>
