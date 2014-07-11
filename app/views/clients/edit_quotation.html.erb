@@ -1,0 +1,194 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ["quotations","clients"]%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Nueva Cotización</h1>
+        </div>
+    </div>
+    <%=form_for :quotation, :url =>{:controller => "clients", :action => "update_quotation"} do |f|%>
+    <%=f.hidden_field :id, :value => @quotation.id%>
+    <%=f.hidden_field :price, :value => @total_price%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Información General
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-5">
+                        <table class="table" id="provider-table">
+                            <tr>
+                                <th>Proveedor</th>
+                                <td><%=@provider.institution%></td>
+                            </tr>
+                            <tr>
+                                <th>RUT</th>
+                                <td><%=@provider.rut%></td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td><%=@provider.address%></td>
+                            </tr>
+                            <tr>
+                                <th>Telefono</th>
+                                <td><%=@provider.phone%></td>
+                            </tr>
+                            <tr>
+                                <th>Atención</th>
+                                <td><%=@user.firstname+" "+@user.lastname%></td>
+                            </tr>
+                            <tr>
+                                <th>E-Mail</th>
+                                <td><%=@user.email%></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-lg-5 col-lg-offset-1">
+                        <table class="table" id="client-table">
+                            <tr>
+                                <th>Comprador</th>
+                                <td><%=@client.institution%></td>
+                            </tr>
+                            <tr>
+                                <th>Rut</th>
+                                <td><%=@client.rut%></td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td><%=@client.address%></td>
+                            </tr>
+                            <tr>
+                                <th>Telefono</th>
+                                <td><%=@client.phone%></td>
+                            </tr>
+                            <tr>
+                                <th>Contacto</th>
+                                <td><%=@client.firstname+" "+@client.lastname%></td>
+                            </tr>
+                            <tr>
+                                <th>E-Mail</th>
+                                <td><%=@client.email%></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Mensaje de la Cotización
+                </div>
+                <div class="panel-body">
+                    <%if @quotation.textbody.nil? || @quotation.textbody.blank?%>
+                        <%=f.text_area :textbody, :value => (@template.nil? ? "" : @template.body),:id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
+                    <%else%>
+                        <%=f.text_area :textbody,:id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
+                    <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Productos de la Cotización
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <%=link_to "Editar Productos", {:controller => "clients", :action => "new_products" , :params => {:qid => @quotation.id}}, :class => "btn btn-default btn-xs"%>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Modalidad</th>
+                                <th>Cantidad Alumnos</th>
+                                <th>Ubicación</th>
+                                <th>Precio por Alumno</th>
+                                <th>Horas del Curso</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%@products.each do |p|%>
+                            <tr>
+                                <td><%=p.modality%></td>
+                                <td><%=p.students_qty%></td>
+                                <td><%=p.location%></td>
+                                <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
+                                <td><%=p.hours_amt.to_s%></td>
+                                <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
+                            </tr>
+                            <%end%>
+                            <tr>
+                                <td colspan="5"><b>Descuento</b></td>
+                                <td><b><%=(@quotation.discount*100).to_s+"%"%></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><b>Total Programa</b></td>
+                                <td><b><%=number_to_currency(@quotation.price, :unit => "$", :precision => 0)%></b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Comentarios
+                </div>
+                <div class="panel-body">
+                    <%=f.text_area :comments, :id => "redactor3", :class => "redactor", :rows => 30, :cols => 60%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Cierre de la Cotización
+                </div>
+                <div class="panel-body">
+                <%if @quotation.textfooter.nil? || @quotation.textfooter.blank?%>
+                    <%=f.text_area :textfooter, :value => (@template.nil? ? "" : @template.footer),:id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
+                <%else%>
+                    <%=f.text_area :textfooter,:id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
+                <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="well">
+        <%=f.submit "Guardar Cotizacion", :class => "btn btn-lg btn-block btn-default"%>
+    </div>
+    <%end%>
+</div>
+<script>
+$('#redactor1').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>
+<script>
+$('#redactor2').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>
+<script>
+$('#redactor3').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>

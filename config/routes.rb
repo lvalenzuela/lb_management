@@ -17,7 +17,15 @@ Rails.application.routes.draw do
       post "create_quotation_format"
       get "set_default_format"
       get "new_quotation"
+      get "edit_quotation"
+      post "update_quotation"
+      post "set_discount"
+      get "show_quotation"
       post "create_quotation"
+      get "new_products"
+      post "create_product"
+      delete "destroy_product"
+      post "show_features"
     end
   end
  

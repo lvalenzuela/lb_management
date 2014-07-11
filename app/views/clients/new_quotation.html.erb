@@ -7,7 +7,22 @@
             <h1 class="page-header">Nueva Cotización</h1>
         </div>
     </div>
-    <%=form_for @quotation, :url =>{:controller => "clients", :action => "create_quotation"} do |f|%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Nota
+                </div>
+                <div class="panel-body">
+                    <h3>Confirmación de Integridad de Datos:</h3>
+                    <p>Por favor, confirme los datos correspondientes al cliente para quien desea generar la cotizacion. Confirmando los datos, se dará paso a generar la cotizacion.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%=form_for :quotation, :url =>{:controller => "clients", :action => "create_quotation"} do |f|%>
+    <%=f.hidden_field :contactid, :value => @client.id%>
+    <%=f.hidden_field :userid, :value => @user.id%>
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -75,52 +90,8 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Mensaje de la Cotización
-                </div>
-                <div class="panel-body">
-                    <%=f.text_area :textbody, :value => (@template.nil? ? "" : @template.body),:id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Productos de la Cotización
-                </div>
-                <div class="panel-body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Cierre de la Cotización
-                </div>
-                <div class="panel-body">
-                    <%=f.text_area :textfooter, :value => (@template.nil? ? "" : @template.footer),:id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
-                </div>
-            </div>
-        </div>
+    <div class="pull-right">
+        <%=f.submit "Confirmar Datos y Generar Cotizacion", :class => "btn btn-default"%>
     </div>
     <%end%>
 </div>
-<script>
-$('#redactor1').redactor({
-    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
-'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
-});
-</script>
-<script>
-$('#redactor2').redactor({
-    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
-'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
-});
-</script>

@@ -42,24 +42,95 @@ class ClientsController < ApplicationController
 	end
 
 	def new_quotation
-		#longbourn institute
+		#primer paso de la cotización.
+		#se especifica el cliente y se indica que se desea generar una cotizacion.
+		#Los datos de longbourn institute son obtenidos de la lista de contactos
 		@provider = Contact.where(:typeid => 1).first()
 		@user = User.find(session[:user_id])
 		@client = Contact.find(params[:clientid])
-		@quotation = Quotation.new()
-		t = QuotationTemplate.where(:userid => session[:user_id], :default => 1).first()
-		if t.nil? || t.blank?
-			@template = nil
-		end
+	end
 
+	def create_quotation
+		#Se genera una cotizacion que sólo contiene
+		#a los usuarios participantes
+		q = Quotation.create(quotation_params)
+		redirect_to :action => "new_products", :qid => q.id
+	end
+
+	def edit_quotation
+		@quotation = Quotation.find(params[:id])
+		@user = User.find(@quotation.userid)
+		@client = Contact.find(@quotation.contactid)
+		@provider = Contact.where(:typeid => 1).first()
+		@products = quotation_products(@quotation.id)
+	end
+
+	def set_discount
+		q = Quotation.find(params[:quotation][:id])
+		q.update_attributes(:discount => params[:quotation][:discount].to_f/100)
+		q.update_attributes(:price => quotation_price(q.id,q.discount))
+		redirect_to :action => "new_products", :qid => params[:quotation][:id]
+	end
+
+	def update_quotation
+		quotation = Quotation.find(params[:quotation][:id])
+		quotation.update_attributes(quotation_params)
+		redirect_to :action => "show_quotation", :id => quotation.id
+	end
+
+	def show_quotation
+		@quotation = Quotation.find(params[:id])
+		@user = User.find(@quotation.userid)
+		@client = Contact.find(@quotation.contactid)
+		@provider = Contact.where(:typeid => 1).first()
+		@products = quotation_products(@quotation.id)
+	end
+
+	def new_products
+		@quotation = Quotation.find(params[:qid])
+		@products = quotation_products(@quotation.id)
+		@prices = ProductPrice.where("valid_until > curdate()")
+		@product = Product.new()
+	end
+
+	def create_product
+		#validar mediante modelo
+		p = Product.create(product_params)
+		if p.valid?
+			QuotationProduct.create(:productid => p.id, :quotationid => params[:product][:qid])
+			q = Quotation.find(params[:product][:qid])
+			q.update_attributes(:price => quotation_price(q.id,q.discount))
+			redirect_to :action => "new_products", :qid => params[:product][:qid]
+		else
+			@quotation = Quotation.find(params[:qid])
+			@products = quotation_products(@quotation.id)
+			@prices = ProductPrice.where("valid_until > curdate()")
+			render "new_products"
+		end
+	end
+
+	def destroy_product
+		p = Product.find(params[:productid])
+		p.destroy
+		#Basicamente, solo basta con destruir la asociacion, pero igual se hacen las dos cosas ;P
+		pq = QuotationProduct.where(:productid => params[:productid], :quotationid => params[:qid])
+		pq.destroy_all
+		redirect_to :action => "new_products", :qid => params[:qid]
+	end
+
+	def show_features
+		respond_to do |format|
+			format.js
+		end
 	end
 
 	def manage_quotations
-		@defaults = QuotationTemplate.where(:userid => [0,session[:user_id]])
+		@defaults = QuotationTemplate.where(:userid => session[:user_id])
 	end
 
 	def create_quotation_format
 		if params[:quotation_template][:default] == 1
+			#si se marco la opcion para establecer el template creado como default
 			#verificar si hay algun otro template marcado como default...
 			#si lo hay, eliminarlo
 		end
@@ -155,6 +226,37 @@ class ClientsController < ApplicationController
 	end
 
 	private
+
+	def quotation_price(qid,discount)
+		price = quotation_products(qid).sum(:price)
+		if discount.nil? || discount.blank?
+			return price
+		else
+			return price - price*discount
+		end
+	end
+
+	def quotation_products(qid)
+		return Product.joins("inner join quotation_products as qp
+										on products.id = qp.productid
+										and qp.quotationid = #{qid}
+										inner join product_prices as pp
+										on products.productpriceid = pp.id").select("products.id as productid,
+																					 products.students_qty as students_qty,
+																					 products.location as location,
+																					 pp.modality as modality,
+																					 pp.students_qty as max_students,
+																					 pp.hours_amt as hours_amt,
+																					 pp.price as price")
+	end
+
+	def product_params
+		params.require(:product).permit(:productpriceid, :students_qty, :location)
+	end
+
+	def quotation_params
+		params.require(:quotation).permit(:contactid, :discount, :price, :statusid, :userid, :textbody, :textfooter, :comments)
+	end
 
 	def client_params
 		params.require(:contact).permit(:firstname, :lastname, :rut, :institution, :email, :phone, :accountid, :typeid, :statusid, :address)

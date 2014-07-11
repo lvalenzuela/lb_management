@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140710221316) do
+ActiveRecord::Schema.define(version: 20140711213454) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -141,20 +141,21 @@ ActiveRecord::Schema.define(version: 20140710221316) do
   end
 
   create_table "product_prices", force: true do |t|
-    t.integer  "modalityid"
+    t.string   "modality"
     t.integer  "students_qty"
     t.integer  "hours_amt"
     t.integer  "price"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "valid_until"
   end
 
   create_table "products", force: true do |t|
     t.integer  "productpriceid"
-    t.integer  "courseid"
     t.integer  "students_qty"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "location"
   end
 
   create_table "quotation_products", force: true do |t|
@@ -183,7 +184,7 @@ ActiveRecord::Schema.define(version: 20140710221316) do
 
   create_table "quotations", force: true do |t|
     t.integer  "contactid"
-    t.decimal  "discount",   precision: 10, scale: 0
+    t.decimal  "discount",   precision: 5, scale: 2
     t.integer  "price"
     t.integer  "statusid"
     t.datetime "created_at"

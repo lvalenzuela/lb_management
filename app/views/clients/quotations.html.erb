@@ -43,8 +43,8 @@
                                 <%@user_quotations.each do |q|%>
                                 <tr>
                                     <td><%=q.id%></td>
-                                    <td><%=q.firstname+" "+q.lastname%></td>
-                                    <td><%=q.institution%></td>
+                                    <td><%=link_to get_contact_name(q.contactid), :controller => "clients", :action => "show_quotation", :params => {:id => q.id}%></td>
+                                    <td><%=get_contact_institution(q.contactid)%></td>
                                     <td><%=q.created_at.strftime("%d-%m-%Y")%></td>
                                     <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30")%></td>
                                 </tr>
