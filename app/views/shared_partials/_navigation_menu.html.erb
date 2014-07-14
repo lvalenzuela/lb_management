@@ -89,6 +89,9 @@
                                 <li>
                                     <%=link_to "Admin. Cuentas Clientes", :controller => "clients", :action => "manage_accounts"%>
                                 </li>
+                                <li>
+                                    <%=link_to "Listado de Productos", :controller => "main", :action => "manage_products"%>
+                                </li>
                             <%end%>
                         </ul>
                     </li>
@@ -108,9 +111,6 @@
                             <ul class="nav nav-third-level">
                                 <li>
                                     <%=link_to "Mis Cotizaciones", :controller => "clients", :action => "quotations"%>
-                                </li>
-                                <li>
-                                    <%=link_to "Administrar Cotizaciones", :controller => "clients", :action => "manage_quotations"%>
                                 </li>
                             </ul>
                         </ul>

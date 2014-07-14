@@ -1,0 +1,125 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ["quotations","clients"]%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Administración de Cotizaciones</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Formatos Generados
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="formats-table">
+                            <thead>
+                                <tr>
+                                    <th>Titulo</th>
+                                    <th>Set Default</th>
+                                    <th>Eliminar</th>
+                                    <th>Editar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%@templates.each do |d|%>
+                                    <%if d.default == 1%>
+                                        <tr class="success">
+                                    <%else%>
+                                        <tr>
+                                    <%end%>
+                                            <td><%=d.title%></td>
+                                            <td><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "clients", :action => "set_default_format", :params => {:id => d.id}}, {:class => "btn btn-default"}%></td>
+                                            <td><%=link_to "Eliminar"%></td>
+                                            <td><%=link_to "Editar"%></td>
+                                        </tr>   
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Formato de Cotizaciones
+                </div>
+                <%if @default.nil? || @default.blank?%>
+                    <div class="panel-body">
+                        <%=form_for(:quotation_template, :url => {:controller => "clients", :action => "create_quotation_format"}) do |f|%>
+                        <%=f.hidden_field :userid, :value => session[:user_id]%>
+                        <div class="form-group">
+                            <label>Título del Formato</label>
+                            <%=f.text_field :title, :class => "form-control", :placeholder => "Título del formato"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Cuerpo de la cotización:</label>
+                            <%=f.text_area :body, :id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
+                        </div>
+                        <div class="form-group">
+                            <label>Texto final de la cotizacion</label>
+                            <%=f.text_area :footer, :id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
+                        </div>
+                        <div class="form-group">
+                            <%=f.check_box :default%>
+                            <label>Establecer como Template por Defecto</label>
+                        </div>
+                        <div class="pull-right">
+                            <%=f.submit "Generar Formato", :class => "btn btn-default"%>
+                        </div>
+                        <%end%>
+                    </div>
+                <%else%>
+                    <div class="panel-body">
+                        <%=form_for(:quotation_template, :url => {:controller => "clients", :action => "edit_quotation_format"}) do |f|%>
+                        <%=f.hidden_field :id, :value => @default.id%>
+                        <%=f.hidden_field :userid, :value => @default.userid%>
+                        <div class="form-group">
+                            <label>Título del Formato</label>
+                            <%=f.text_field :title, :value => @default.title,:class => "form-control", :placeholder => "Título del formato"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Cuerpo de la cotización:</label>
+                            <%=f.text_area :body, :value => @default.body,:id => "redactor1", :class => "redactor", :rows => 30, :cols => 60%>
+                        </div>
+                        <div class="form-group">
+                            <label>Texto final de la cotizacion</label>
+                            <%=f.text_area :footer, :value => @default.footer, :id => "redactor2", :class => "redactor", :rows => 30, :cols => 60%>
+                        </div>
+                        <div class="form-group">
+                            <%=f.check_box :default, :checked => @default.default.nil? ? false : true %>
+                            <label>Establecer como Template por Defecto</label>
+                        </div>
+                        <div class="pull-right">
+                            <%=f.submit "Editar Formato", :class => "btn btn-default"%>
+                        </div>
+                        <%end%>
+                    </div>
+                <%end%>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#formats-table').dataTable();
+});
+</script>
+<script>
+$('#redactor1').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>
+<script>
+$('#redactor2').redactor({
+    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
+'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
+});
+</script>

@@ -8,20 +8,6 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Formato de Cotizaciones
-                </div>
-                <div class="panel-body">
-                    <h3>Administracion de Formato de Cotizaciones</h3>
-                    <p>Acceder al menú de administración y edición de los valores por defecto ingresados al realizar cotizaciones. Mediante éste, se podran crear y seleccionar los valores y formatos que se utilizaran por defecto al generar una nueva cotizacion</p>
-                    <%=link_to "Administrar Valores de Cotizaciones", {:controller => "clients", :action => "manage_quotations"}, {:class => "btn btn-default btn-lg btn-block"}%>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -46,7 +32,7 @@
                                     <td><%=link_to get_contact_name(q.contactid), :controller => "clients", :action => "show_quotation", :params => {:id => q.id}%></td>
                                     <td><%=get_contact_institution(q.contactid)%></td>
                                     <td><%=q.created_at.strftime("%d-%m-%Y")%></td>
-                                    <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30")%></td>
+                                    <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "clients", :action => "generate_quotation", :params =>{:id => q.id}, :format => "pdf"},:target => "_blank"%></td>
                                 </tr>
                                 <%end%>
                             </tbody>

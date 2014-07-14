@@ -7,14 +7,18 @@ Rails.application.routes.draw do
       get 'manage_accounts'
       post 'create_account'
       get "new"
+      get "edit"
+      post "update"
       post "create_client"
       get "show_account"
       get "account_managers"
       post "modify_account_managers"
       post "assign_client"
       get "quotations"
-      get "manage_quotations"
+      get "quotation_templates"
+      get "generate_quotation"
       post "create_quotation_format"
+      post "edit_quotation_format"
       get "set_default_format"
       get "new_quotation"
       get "edit_quotation"
@@ -49,6 +53,10 @@ Rails.application.routes.draw do
       post 'modify_assignation'
       get 'extras'
       delete 'destroy'
+      get "manage_products"
+      post "update_product"
+      post "create_product"
+      delete "destroy_product"
     end
   end
 

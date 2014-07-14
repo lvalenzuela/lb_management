@@ -77,20 +77,6 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    Mensaje de la Cotización
-                </div>
-                <div class="panel-body">
-                    <div class="col-lg-10 col-lg-offset-1">
-                        <%=simple_format @quotation.textbody%>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
                 <div class="panel-body">
                     <table class="table table-striped" id="products-table">
                         <thead>
@@ -114,6 +100,14 @@
                                 <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
                             </tr>
                             <%end%>
+                            <tr>
+                                <td colspan="5"><b>Descuento</b></td>
+                                <td><b><%=(@quotation.discount*100).to_s+"%"%></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><b>Total Programa</b></td>
+                                <td><b><%=number_to_currency(@quotation.price, :unit => "$", :precision => 0)%></b></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -129,20 +123,6 @@
                 <div class="panel-body">
                     <div class="col-lg-10 col-lg-offset-1">
                         <%=simple_format @quotation.comments%>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Cierre de la Cotización
-                </div>
-                <div class="panel-body">
-                    <div class="col-lg-10 col-lg-offset-1">
-                        <%=simple_format @quotation.textfooter%>
                     </div>
                 </div>
             </div>

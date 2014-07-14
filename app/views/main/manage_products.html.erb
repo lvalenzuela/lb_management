@@ -1,0 +1,142 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Productos de Longbourn Institute</h1>
+        </div>
+    </div>
+    <%if @new_product == true%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Nuevo Producto
+                </div>
+                <div class="panel-body">
+                    <%=form_for :product_price, :url => {:controller => "main", :action => "create_product"} do |f|%>
+                    <div class="row">
+                        <div class="col-lg-4 form-group">
+                            <label>Modalidad</label>
+                            <%=f.text_field :modality, :class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Máximo de Alumnos</label>
+                            <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|s| ["#{s}",s]}), {},:class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Horas del Curso</label>
+                            <%=f.number_field :hours_amt, :value => 96, :class => "form-control", :disabled => true%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Precio Total</label>
+                            <%=f.number_field :price, :class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Válido Hasta</label>
+                            <div class="input-group">
+                                <%=f.text_field :valid_until, :class => "form-control", :id => "datepicker1", :placeholder => "Fecha Límite", :data => {"date-format" => "DD/MM/YYYY"}%>
+                                <span class="input-group-addon">
+                                    <i class='fa fa-calendar'></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2 form-group pull-right">
+                            <%=f.submit "Crear Producto", :class => "btn btn-default btn-lg"%>
+                        </div>
+                    </div>
+                    <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%elsif @product%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Editar Producto
+                </div>
+                <div class="panel-body">
+                    <%=form_for @product, :url => {:controller => "main", :action => "update_product"} do |f|%>
+                    <%=f.hidden_field :id, :value => @product.id%>
+                    <div class="row">
+                        <div class="col-lg-4 form-group">
+                            <label>Modalidad</label>
+                            <%=f.text_field :modality, :class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Máximo de Alumnos</label>
+                            <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|s| ["#{s}",s]}), {},:class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Horas del Curso</label>
+                            <%=f.number_field :hours_amt, :value => 96, :class => "form-control", :disabled => true%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Precio Total</label>
+                            <%=f.number_field :price, :class => "form-control"%>
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label>Válido Hasta</label>
+                            <%=f.date_select :valid_until, {:order => [:day, :month, :year], :start_year => Date.current.year, :end_year => Date.current.year+10}, {:class => "form-control"}%>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 form-group">
+                            <div class="pull-right">
+                                <%=f.submit "Guardar Producto", :class => "btn btn-default btn-lg"%>
+                            </div>
+                        </div>
+                    </div>
+                    <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%end%>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Listado de Productos
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <%=link_to "Nuevo Producto", {:controller => "main", :action => "manage_products", :params => {:ctrl => "create"}}, :class => "btn btn-default btn-xs"%>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Modalidad</th>
+                                <th>Máximo de Alumnos</th>
+                                <th>Horas del Curso</th>
+                                <th>Precio por Alumno</th>
+                                <th>Precio Total</th>
+                                <th>Válido Hasta</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>
+                            </tr>
+                            <%@products.each do |p|%>
+                                <tr>
+                                    <td><%=p.modality%></td>
+                                    <td><%=p.students_qty%></td>
+                                    <td><%=p.hours_amt%></td>
+                                    <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
+                                    <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
+                                    <td><%=p.valid_until.strftime("%d-%m-%Y")%></td>
+                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:controller => "main", :action => "manage_products", :params => {:ctrl => "edit", :id => p.id}}, {:class => "btn btn-circle btn-default"}%></td>
+                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "main", :action => "destroy_product", :params => {:productid => p.id}}, {:class => "btn btn-circle btn-default", :method => :delete, :data => {:confirm => "Estas Seguro?"}}%></td>
+                                </tr>
+                            <%end%>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

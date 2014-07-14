@@ -129,8 +129,6 @@ class StudentReportPdf < Prawn::Document
 
 	def indicadores_academicos(report_data)
 
-		
-
 		move_down 15
 		font "Helvetica", :style => :bold
 		text "2. Indicadores Academicos"

@@ -16,11 +16,24 @@ class ClientsController < ApplicationController
 		end
 	end
 
+	def edit
+		@contact = Contact.find(params[:id])
+		account_list = user_contact_accounts(session[:user_id])
+		@accounts = ContactAccount.where(:id => account_list)
+		@types = ContactType.where("id <> 1")
+	end
+
+	def update
+		client = Contact.find(params[:contact][:id])
+		client.update_attributes(client_params)
+		redirect_to :action => "index"
+	end
+
 	def new
 		@contact = Contact.new()
 		account_list = user_contact_accounts(session[:user_id])
 		@accounts = ContactAccount.where(:id => account_list)
-		@types = ContactType.all()
+		@types = ContactType.where("id <> 1")
 	end
 
 	def create
@@ -63,6 +76,20 @@ class ClientsController < ApplicationController
 		@client = Contact.find(@quotation.contactid)
 		@provider = Contact.where(:typeid => 1).first()
 		@products = quotation_products(@quotation.id)
+	end
+
+	def generate_quotation
+		#Genera el PDF de la nueva cotizacion
+		q = Quotation.find(params[:id])
+
+		respond_to do |format|
+			format.html
+			format.pdf do
+				pdf = QuotationPdf.new(q,view_context)
+				send_data pdf.render, filename: "Cotizacion_"+q.id.to_s+"_"+Date.today().to_s+".pdf",
+	  								 type: "application/pdf"
+			end
+		end
 	end
 
 	def set_discount
@@ -115,6 +142,8 @@ class ClientsController < ApplicationController
 		#Basicamente, solo basta con destruir la asociacion, pero igual se hacen las dos cosas ;P
 		pq = QuotationProduct.where(:productid => params[:productid], :quotationid => params[:qid])
 		pq.destroy_all
+		q = Quotation.find(params[:qid])
+		q.update_attributes(:price => quotation_price(q.id,q.discount))
 		redirect_to :action => "new_products", :qid => params[:qid]
 	end
 
@@ -124,8 +153,9 @@ class ClientsController < ApplicationController
 		end
 	end
 
-	def manage_quotations
-		@defaults = QuotationTemplate.where(:userid => session[:user_id])
+	def quotation_templates
+		@templates = QuotationTemplate.where(:userid => session[:user_id])
+		@default = QuotationTemplate.where(:userid => session[:user_id], :default => 1).first()
 	end
 
 	def create_quotation_format
@@ -133,29 +163,24 @@ class ClientsController < ApplicationController
 			#si se marco la opcion para establecer el template creado como default
 			#verificar si hay algun otro template marcado como default...
 			#si lo hay, eliminarlo
+			unset_default_template(session[:user_id])
 		end
 		QuotationTemplate.create(quotation_format_params)
-		redirect_to :action => "manage_quotations"
+		redirect_to :action => "quotation_templates"
+	end
+
+	def edit_quotation_format
+		t = QuotationTemplate.find(params[:quotation_template][:id])
+		t.update_attributes(quotation_format_params)
+		redirect_to :action => "quotation_templates"
 	end
 
 	def set_default_format
-		d = QuotationTemplate.where(:userid => session[:user_id], :default => 1).first()
-		if d.nil? || d.blank?
-			#no hay un formato establecido por defecto
-			#no se hace nada
-		else
-			if d.id == params[:id]
-				#El formato ya esta asignado como formato por defecto
-				redirect_to :action => "create_quotation_format"
-			else
-				#El formato encontrado deja de ser el formato por defecto
-				d.update_attributes(:default => 0)
-			end
-		end
+		unset_default_template(session[:user_id])
 		#se establece el formato seleccionado como el formato por defecto
 		qd = QuotationTemplate.find(params[:id])
 		qd.update_attributes(:default => 1)
-		redirect_to :action => "create_quotation_format"
+		redirect_to :action => "quotation_templates"
 	end
 
 	def manage_accounts
@@ -227,6 +252,15 @@ class ClientsController < ApplicationController
 
 	private
 
+	def unset_default_template(userid)
+		t = QuotationTemplate.where(:userid => userid, :default => 1).first()
+		if t.nil? || t.blank?
+			#No hay templates establecidos por defecto
+		else
+			t.update_attributes(:default => 0)
+		end
+	end
+
 	def quotation_price(qid,discount)
 		price = quotation_products(qid).sum(:price)
 		if discount.nil? || discount.blank?
@@ -255,7 +289,7 @@ class ClientsController < ApplicationController
 	end
 
 	def quotation_params
-		params.require(:quotation).permit(:contactid, :discount, :price, :statusid, :userid, :textbody, :textfooter, :comments)
+		params.require(:quotation).permit(:contactid, :discount, :price, :statusid, :userid, :comments)
 	end
 
 	def client_params

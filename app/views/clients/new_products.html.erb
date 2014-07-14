@@ -14,6 +14,8 @@
                     Productos Agregados
                 </div>
                 <div class="panel-body">
+                <%=form_for :quotation, :url => {:controller => "clients", :action => "set_discount"} do |f|%>
+                <%=f.hidden_field :id, :value => @quotation.id%>
                     <table class="table table-striped" id="products-table">
                         <thead>
                             <tr>
@@ -39,12 +41,9 @@
                             </tr>
                             <%end%>
                             <tr>
-                                <%=form_for :quotation, :url => {:controller => "clients", :action => "set_discount"} do |f|%>
-                                <%=f.hidden_field :id, :value => @quotation.id%>
                                 <td colspan="5"><b>Descuento</b></td>
                                 <td><%=f.select :discount, options_for_select((0..20).step(5).collect{|d| ["#{d}%",d]}, (@quotation.discount*100).to_i), {}, :class => "form-control"%></td>
-                                <td><%=f.submit "Definir Descuento", :class => "btn btn-default"%></td>
-                                <%end%>
+                                <td><%=f.submit "Aplicar Descuento", :class => "btn btn-default"%></td>
                             </tr>
                             <tr>
                                 <td colspan="5"><b>Total</b></td>
@@ -56,6 +55,7 @@
                     <div class="pull-right">
                         <%=link_to "Continuar con la Cotizacion", {:controller => "clients", :action => "edit_quotation", :params => {:id => @quotation.id}}, :class => "btn btn-default"%>
                     </div> 
+                <%end%>
                 </div>
             </div>
         </div>

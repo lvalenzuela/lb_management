@@ -80,6 +80,29 @@ class MainController < ApplicationController
         redirect_to :action => "area_dashboard", :id => params[:areaid]
     end
 
+    def manage_products
+        case params[:ctrl]
+        when "create"
+            @new_product = true
+        when "edit"
+            @product = ProductPrice.find(params[:id])
+        end
+        @products = ProductPrice.where("valid_until >= curdate()")
+    end
+
+    def create_product
+
+    end
+
+    def update_product
+    end
+
+    def destroy_product
+        p = ProductPrice.find(params[:id])
+        p.destroy
+        redirect_to :action => "manage_products"
+    end
+
     private
     
     def check_authentication
