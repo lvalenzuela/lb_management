@@ -1,0 +1,51 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Edicion de Items de Precios</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Editar Producto
+                </div>
+                <div class="panel-body">
+                    <%=form_for :product_price, :url => {:controller => "main", :action => "update_product"} do |f|%>
+                    <%=f.hidden_field :id, :value => @product.id%>
+
+                        <div class="form-group">
+                            <label>Modalidad</label>
+                            <%=f.text_field :modality, :value => @product.modality, :class => "form-control"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Máximo de Alumnos</label>
+                            <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|s| ["#{s}",s]}, @product.students_qty), {},:class => "form-control"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Horas del Curso</label>
+                            <%=f.number_field :hours_amt, :value => @product.hours_amt, :class => "form-control"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Total</label>
+                            <%=f.number_field :price, :value => @product.price, :class => "form-control"%>
+                        </div>
+                        <div class="form-group">
+                            <label>Válido Hasta</label>
+                            <%=f.date_field :valid_until, :value => @product.valid_until, :class => "form-control"%>
+                        </div>
+                        <div class="form-group">
+                        	<label>Marcar como Eliminado</label>
+                        	<%=f.check_box :deleted, :checked => @product.deleted ? true : false%>
+                        </div>
+                        <div class="pull-right">
+                            <%=f.submit "Guardar Producto", :class => "btn btn-default"%>
+                        </div>
+                    <%end%>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

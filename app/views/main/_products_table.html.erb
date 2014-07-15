@@ -1,0 +1,80 @@
+<%if mode == "default" || mode == "outdated"%>
+    <table class="table table-striped">
+        <tr>
+            <th>Modalidad</th>
+            <th>Máximo de Alumnos</th>
+            <th>Horas del Curso</th>
+            <th>Precio por Alumno</th>
+            <th>Precio Total</th>
+            <th>Válido Hasta</th>
+            <th style="text-align: center;">Editar</th>
+            <th style="text-align: center;">Eliminar</th>
+        </tr>
+        <%products.each do |p|%>
+            <tr>
+                <td><%=p.modality%></td>
+                <td><%=p.students_qty%></td>
+                <td><%=p.hours_amt%></td>
+                <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
+                <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
+                <td><%=p.valid_until.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:controller => "main", :action => "edit_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default"}%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "main", :action => "delete_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default btn-danger", :method => :delete, :data => {:confirm => "Estas Seguro?"}}%></td>
+            </tr>
+        <%end%>
+    </table>
+<%elsif mode == "all"%>
+    <table class="table table-striped">
+        <tr>
+            <th>Modalidad</th>
+            <th>Máximo de Alumnos</th>
+            <th>Horas del Curso</th>
+            <th>Precio por Alumno</th>
+            <th>Precio Total</th>
+            <th>Válido Hasta</th>
+            <th style="text-align: center;">Editar</th>
+            <th style="text-align: center;">Acciones</th>
+        </tr>
+        <%products.each do |p|%>
+            <tr>
+                <td><%=p.modality%></td>
+                <td><%=p.students_qty%></td>
+                <td><%=p.hours_amt%></td>
+                <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
+                <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
+                <td><%=p.valid_until.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:controller => "main", :action => "edit_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default"}%></td>
+                <%if p.deleted == false%>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "main", :action => "delete_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default btn-danger", :method => :delete, :data => {:confirm => "Estas seguro que deseas eliminar este producto?"}}%></td>
+                <%else%>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "main", :action => "enable_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default btn-success"}%></td>
+                <%end%>
+            </tr>
+        <%end%>
+    </table>
+<%elsif mode == "deleted"%>
+    <table class="table table-striped">
+        <tr>
+            <th>Modalidad</th>
+            <th>Máximo de Alumnos</th>
+            <th>Horas del Curso</th>
+            <th>Precio por Alumno</th>
+            <th>Precio Total</th>
+            <th>Válido Hasta</th>
+            <th style="text-align: center;">Editar</th>
+            <th style="text-align: center;">Re-Habilitar</th>
+        </tr>
+        <%products.each do |p|%>
+            <tr>
+                <td><%=p.modality%></td>
+                <td><%=p.students_qty%></td>
+                <td><%=p.hours_amt%></td>
+                <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
+                <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
+                <td><%=p.valid_until.strftime("%d-%m-%Y")%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:controller => "main", :action => "edit_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default"}%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "main", :action => "enable_product", :params => {:id => p.id}}, {:class => "btn btn-circle btn-default btn-success"}%></td>
+            </tr>
+        <%end%>
+    </table>
+<%end%>

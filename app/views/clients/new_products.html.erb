@@ -29,7 +29,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%@products.each do |p|%>
+                            <%@courses.each do |p|%>
                             <tr>
                                 <td><%=p.modality%></td>
                                 <td><%=p.students_qty%></td>
@@ -37,7 +37,7 @@
                                 <td><%=number_to_currency((p.price/p.students_qty), :unit => "$", :precision => 0)%></td>
                                 <td><%=p.hours_amt.to_s%></td>
                                 <td><%=number_to_currency(p.price, :unit => "$", :precision => 0)%></td>
-                                <td><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "clients", :action => "destroy_product", :params => {:productid => p.productid, :qid => @quotation.id}}, {:class => "btn btn-circle btn-default", :method => :delete, :data => {:confirm => "Estas Seguro?"}}%></td>
+                                <td><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "clients", :action => "destroy_product", :params => {:courseid => p.courseid, :qid => @quotation.id}}, {:class => "btn btn-circle btn-default", :method => :delete, :data => {:confirm => "Estas Seguro?"}}%></td>
                             </tr>
                             <%end%>
                             <tr>
@@ -61,7 +61,7 @@
         </div>
     </div>
     <div class="row">
-        <%=form_for @product, :url => {:controller => "clients", :action => "create_product"} do |f|%>
+        <%=form_for @course, :url => {:controller => "clients", :action => "create_product"} do |f|%>
         <%=f.hidden_field :qid, :value => @quotation.id%>
         <div class="col-lg-12">
             <div class="panel panel-default">

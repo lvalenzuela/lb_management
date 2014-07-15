@@ -75,7 +75,7 @@ class ClientsController < ApplicationController
 		@user = User.find(@quotation.userid)
 		@client = Contact.find(@quotation.contactid)
 		@provider = Contact.where(:typeid => 1).first()
-		@products = quotation_products(@quotation.id)
+		@courses = quotation_courses(@quotation.id)
 	end
 
 	def generate_quotation
@@ -110,37 +110,37 @@ class ClientsController < ApplicationController
 		@user = User.find(@quotation.userid)
 		@client = Contact.find(@quotation.contactid)
 		@provider = Contact.where(:typeid => 1).first()
-		@products = quotation_products(@quotation.id)
+		@courses = quotation_courses(@quotation.id)
 	end
 
 	def new_products
 		@quotation = Quotation.find(params[:qid])
-		@products = quotation_products(@quotation.id)
-		@prices = ProductPrice.where("valid_until > curdate()")
-		@product = Product.new()
+		@courses = quotation_courses(@quotation.id)
+		@prices = ProductPrice.where("valid_until > curdate() and deleted = 0")
+		@course = Course.new()
 	end
 
 	def create_product
 		#validar mediante modelo
-		p = Product.create(product_params)
+		p = Course.create(product_params)
 		if p.valid?
-			QuotationProduct.create(:productid => p.id, :quotationid => params[:product][:qid])
-			q = Quotation.find(params[:product][:qid])
+			QuotationCourse.create(:courseid => p.id, :quotationid => params[:course][:qid])
+			q = Quotation.find(params[:course][:qid])
 			q.update_attributes(:price => quotation_price(q.id,q.discount))
-			redirect_to :action => "new_products", :qid => params[:product][:qid]
+			redirect_to :action => "new_products", :qid => params[:course][:qid]
 		else
 			@quotation = Quotation.find(params[:qid])
-			@products = quotation_products(@quotation.id)
-			@prices = ProductPrice.where("valid_until > curdate()")
+			@courses = quotation_courses(@quotation.id)
+			@prices = ProductPrice.where("valid_until > curdate() and deleted = 0")
 			render "new_products"
 		end
 	end
 
 	def destroy_product
-		p = Product.find(params[:productid])
+		p = Course.find(params[:courseid])
 		p.destroy
 		#Basicamente, solo basta con destruir la asociacion, pero igual se hacen las dos cosas ;P
-		pq = QuotationProduct.where(:productid => params[:productid], :quotationid => params[:qid])
+		pq = QuotationCourse.where(:courseid => params[:courseid], :quotationid => params[:qid])
 		pq.destroy_all
 		q = Quotation.find(params[:qid])
 		q.update_attributes(:price => quotation_price(q.id,q.discount))
@@ -262,7 +262,7 @@ class ClientsController < ApplicationController
 	end
 
 	def quotation_price(qid,discount)
-		price = quotation_products(qid).sum(:price)
+		price = quotation_courses(qid).sum(:price)
 		if discount.nil? || discount.blank?
 			return price
 		else
@@ -270,14 +270,14 @@ class ClientsController < ApplicationController
 		end
 	end
 
-	def quotation_products(qid)
-		return Product.joins("inner join quotation_products as qp
-										on products.id = qp.productid
+	def quotation_courses(qid)
+		return Course.joins("inner join quotation_courses as qp
+										on courses.id = qp.courseid
 										and qp.quotationid = #{qid}
 										inner join product_prices as pp
-										on products.productpriceid = pp.id").select("products.id as productid,
-																					 products.students_qty as students_qty,
-																					 products.location as location,
+										on courses.productpriceid = pp.id").select("courses.id as courseid,
+																					 courses.students_qty as students_qty,
+																					 courses.location as location,
 																					 pp.modality as modality,
 																					 pp.students_qty as max_students,
 																					 pp.hours_amt as hours_amt,
@@ -285,7 +285,7 @@ class ClientsController < ApplicationController
 	end
 
 	def product_params
-		params.require(:product).permit(:productpriceid, :students_qty, :location)
+		params.require(:course).permit(:productpriceid, :students_qty, :location)
 	end
 
 	def quotation_params

@@ -28,6 +28,11 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Información General
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <%=link_to "Editar Datos de Cliente", {:controller => "clients", :action => "edit" , :params => {:id => @client.id}}, :class => "btn btn-default btn-xs"%>
+                        </div>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div class="col-lg-5">

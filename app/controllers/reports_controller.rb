@@ -54,6 +54,18 @@ class ReportsController < ApplicationController
 		end
 	end
 
+	def course_groups
+		@groups = MoodleGroup.all()
+		if params[:id]
+			@courses = MoodleCourse.joins("inner join moodle_group_assignations as mga
+							on mga.m_courseid = moodle_courses.moodleid
+							and mga.groupid = #{params[:id]}")
+			@selected_group = MoodleGroup.find(params[:id])
+		else
+			@courses = nil
+		end
+	end
+
 	def reporte_preliminar
 
 	end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140714221746) do
+ActiveRecord::Schema.define(version: 20140715211334) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -78,6 +78,34 @@ ActiveRecord::Schema.define(version: 20140714221746) do
     t.datetime "updated_at"
   end
 
+  create_table "course_group_reports", force: true do |t|
+    t.integer  "groupid"
+    t.integer  "userid"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "institution"
+    t.string   "department"
+    t.string   "username"
+    t.date     "lastaccess"
+    t.integer  "total_sessions"
+    t.integer  "current_sessions"
+    t.integer  "p_sessions"
+    t.integer  "a_sessions"
+    t.integer  "t_sessions"
+    t.decimal  "avg_inclasswork",     precision: 5, scale: 2
+    t.decimal  "avg_attitude",        precision: 5, scale: 2
+    t.decimal  "grade_coursegroup",   precision: 5, scale: 2
+    t.decimal  "grade_homework",      precision: 5, scale: 2
+    t.decimal  "grade_writing_tests", precision: 5, scale: 2
+    t.decimal  "grade_tests_teg",     precision: 5, scale: 2
+    t.decimal  "grade_tests",         precision: 5, scale: 2
+    t.decimal  "grade_oral_tests",    precision: 5, scale: 2
+    t.integer  "assignments_ontime"
+    t.integer  "total_assignments"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_sessions", force: true do |t|
     t.integer  "courseid"
     t.datetime "startdatetime"
@@ -86,14 +114,26 @@ ActiveRecord::Schema.define(version: 20140714221746) do
     t.datetime "updated_at"
   end
 
+  create_table "course_statuses", force: true do |t|
+    t.string   "statusname"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "courses", force: true do |t|
     t.string   "coursename"
-    t.string   "bookname"
     t.string   "description"
-    t.integer  "max_students"
+    t.integer  "students_qty"
     t.integer  "mode"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "productpriceid"
+    t.integer  "coursetemplateid"
+    t.integer  "statusid"
+    t.date     "start_date"
+    t.string   "location"
+    t.integer  "moodleid"
   end
 
   create_table "last_request_message_checks", force: true do |t|
@@ -148,20 +188,12 @@ ActiveRecord::Schema.define(version: 20140714221746) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "valid_until"
+    t.boolean  "deleted",      default: false
   end
 
-  create_table "products", force: true do |t|
-    t.integer  "productpriceid"
-    t.integer  "students_qty"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "location"
-    t.integer  "courseid"
-  end
-
-  create_table "quotation_products", force: true do |t|
+  create_table "quotation_courses", force: true do |t|
     t.integer  "quotationid"
-    t.integer  "productid"
+    t.integer  "courseid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

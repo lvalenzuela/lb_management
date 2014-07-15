@@ -54,9 +54,12 @@ Rails.application.routes.draw do
       get 'extras'
       delete 'destroy'
       get "manage_products"
+      get "new_product"
+      get "edit_product"
       post "update_product"
       post "create_product"
-      delete "destroy_product"
+      delete "delete_product"
+      get "enable_product"
     end
   end
 
@@ -85,6 +88,7 @@ Rails.application.routes.draw do
       get 'show'
       get 'historical'
       get 'reports_for_course'
+      get "course_groups"
     end
   end
 

@@ -187,12 +187,15 @@ class RequestsController < ApplicationController
 			case params[:f]
 			when "assigned"
 				#sólo las solicitudes asignadas
+				@active = "assigned"
 				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
 			when "unassigned"
 				#solo solicitudes sin asignar
+				@active = "unassigned"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC")
 			else
 				#todas las solicitudes
+				@active = "all"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC")
 			end
 			@receivers = receiver_list(@area.id)

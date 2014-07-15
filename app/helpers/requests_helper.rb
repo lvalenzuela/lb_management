@@ -1,5 +1,11 @@
 module RequestsHelper
 
+	def activate_area_tab(current,desired)
+		if current.include?(desired)
+			return "class=active"
+		end
+	end
+
 	def has_unseen_messages(last_msg_time,request,user)
 		if last_msg_time.nil?
 			return false 
