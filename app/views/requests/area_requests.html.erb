@@ -10,13 +10,13 @@
     <div class="row">
         <div class="col-lg-12 form-group">
             <ul class="nav nav-tabs nav-justified" role="tablist">
-                <li <%=activate_area_tab(@active,"all")%>>
+                <li <%=activate_tab(@active,"all")%>>
                     <%=link_to "Todos los Requerimientos del Área", :controller => "requests", :action => "area_requests", :params => {:f => "all", :id => @area.id}%>
                 </li>
-                <li <%=activate_area_tab(@active,"assigned")%>>
+                <li <%=activate_tab(@active,"assigned")%>>
                     <%=link_to "Sólo Requerimientos Asignados", :controller => "requests", :action => "area_requests", :params => {:f => "assigned", :id => @area.id}%>
                 </li>
-                <li <%=activate_area_tab(@active,"unassigned")%>>
+                <li <%=activate_tab(@active,"unassigned")%>>
                     <%=link_to "Sólo Requerimientos Sin Asignar", :controller => "requests", :action => "area_requests", :params => {:f => "unassigned", :id => @area.id}%>
                 </li>
             </ul>

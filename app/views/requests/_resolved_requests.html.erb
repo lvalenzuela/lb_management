@@ -7,7 +7,6 @@
             <th>Remitente</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
-            <th style="text-align: center;">Marcar como Pendiente</th>
             <th style="text-align: center;">Anotaciones</th>
         </tr>
     </thead>
@@ -20,11 +19,6 @@
                 <td><%=get_username(request.userid)%></td>
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                 <td style="text-align: center;"><%=show_date(request.duedate)%></td>
-                <%if request.statusid == 4%>
-                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle"}%></td>
-                <%else%>
-                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:remote => true, :class => "btn btn-danger btn-circle", :disabled => true}%></td>
-                <%end%>
                 <%if has_unseen_messages(request.last_msg_datetime, request.id, session[:user_id])%>
                     <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
                 <%else%>

@@ -1,6 +1,6 @@
 module RequestsHelper
 
-	def activate_area_tab(current,desired)
+	def activate_tab(current,desired)
 		if current.include?(desired)
 			return "class=active"
 		end

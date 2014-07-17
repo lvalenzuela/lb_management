@@ -5,10 +5,15 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def index
+		@active = "pending"
+		case params[:opt] 
+		when "solved"
+			@active = "solved"
+		end
 		#solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at DESC").page(params[:page]).per(10)
+		@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4]).order("updated_at DESC").page(params[:page]).per(10)
 		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC")
+		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,]).order("updated_at DESC")
 		@user = User.find(session[:user_id])
 		@tags = get_user_tags(@user.id)
 	end
@@ -17,12 +22,7 @@ class RequestsController < ApplicationController
 		#Modifica el estado de la solicitud desde el usuario a quien se le asigna
 		change_status(params)
 
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(10)
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC")
-		@tags = get_user_tags(session[:user_id])
-		respond_to do |format|
-			format.js
-		end
+		redirect_to :action => params[:actionname]
 	end
 
 	def filter_pending

@@ -6,6 +6,20 @@
         <div class="col-lg-12">
             <h1 class="page-header">Requerimientos Asignados a <%=@user.firstname+" "+@user.lastname%></h1>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 form-group">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+                <li <%=activate_tab(@active,"pending")%>>
+                    <%=link_to "Requerimientos Pendientes", {:controller => "requests", :action => "index", :params => {:opt => "pending"}}%>
+                </li>
+                <li <%=activate_tab(@active,"solved")%>>
+                    <%=link_to "Requerimientos Resueltos / Cancelados", {:controller => "requests", :action => "index", :params => {:opt => "solved"}}%>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <%if @active == "pending"%>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -33,11 +47,11 @@
                                 <%end%>
                             </div>                        
                         </div>
-						<div class="table-responsive">
+    					<div class="table-responsive">
                             <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
                                 <%=render :partial => "pending_requests"%>
                             <%end%> <!-- tag-marker-form -->
-						</div>
+    					</div>
                         <div class="pagination-block">
                             <%= paginate @requests %>
                         </div>
@@ -45,6 +59,7 @@
                 </div>
             </div>
         </div>
+    <%else%>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -59,7 +74,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    <%end%>
 </div>
 <script>
 $(document).ready(function() {
