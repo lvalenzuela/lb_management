@@ -29,13 +29,9 @@
                     <div class="panel-body">
                         <div class="request-options-wrapper">
                             <div class="col-md-4">
-                                <%=form_tag filter_pending_requests_path, :remote => true, :id => "tag-filter-form" do%>
-                                <div class="form-group">
-                                    <%=select_tag :tag, options_for_select(@tags.collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#tag-filter-form').submit();"}%>
-                                </div> 
-                                <%end%>
+                                <%=button_tag "Grabar Tags Seleccionados", :class => "btn btn-default btn-block", :onclick => "$('#tag-marker-form').submit();"%>
                             </div>
-                            <div class="col-md-4 col-md-offset-4">
+                            <div class="col-md-4">
                                 <%=form_for :tag, :url => {:controller => "requests", :action => "create_tag"}, :html =>{:id => "crate-tag-form"} do |f|%>
                                 <div class="input-group">
                                     <%=f.text_field :tagname, :class => "form-control", :placeholder => "Crear Tag"%>
@@ -45,10 +41,18 @@
                                     <%=f.hidden_field :userid, :value => session[:user_id]%>
                                 </div>
                                 <%end%>
+                            </div>
+                            <div class="col-md-4">
+                                <%=form_tag filter_pending_requests_path, :remote => true, :id => "tag-filter-form" do%>
+                                <div class="form-group">
+                                    <%=select_tag :tag, options_for_select(@tags.collect{|t| [t.tagname, t.id]}), {:prompt => "Filtrar por Tag", :class => "form-control", :onchange => "$('#tag-filter-form').submit();"}%>
+                                </div> 
+                                <%end%>
                             </div>                        
                         </div>
     					<div class="table-responsive">
-                            <%=form_tag mark_with_tag_requests_path, :remote => true, :id => "tag-marker-form" do%>
+                            <%=form_tag mark_with_tag_requests_path, :id => "tag-marker-form" do%>
+                                <%=hidden_field_tag :actionname, action_name%>
                                 <%=render :partial => "pending_requests"%>
                             <%end%> <!-- tag-marker-form -->
     					</div>

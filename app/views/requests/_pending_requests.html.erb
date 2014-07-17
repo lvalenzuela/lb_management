@@ -22,7 +22,7 @@
                 <tr>
                     <td style="text-align: center;"><%=request.id%></td>
                     <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-                    <td><%=select_tag "r_tagid[]", options_for_select(@tags.collect{|t| [t.tagname, request.id.to_s+";"+t.id.to_s]}, request.id.to_s+";"+request.tagid.to_s), {:class => "form-control", :onchange => "$('#tag-marker-form').submit();"}%></td>
+                    <td><%=select_tag "r_tagid[]", options_for_select(@tags.collect{|t| [t.tagname, request.id.to_s+";"+t.id.to_s]}, request.id.to_s+";"+request.tagid.to_s), {:class => "form-control"}%></td>
                     <td><%=get_username(request.userid)%></td>
                     <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>

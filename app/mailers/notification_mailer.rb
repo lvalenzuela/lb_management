@@ -51,7 +51,7 @@ class NotificationMailer < ActionMailer::Base
   def new_forum_msg(user,request)
   	@user = user
   	@request = request
-  	@url = "http://summit.longbourn.cl/show?id="+request.id.to_s
+  	@url = "http://summit.longbourn.cl/request_notes/show?id="+request.id.to_s
   	mail(to: @user.email, subject: "Longbourn Summit: Hay un nuevo mensaje en una de sus solicitudes.")
   end
 end

@@ -27,21 +27,9 @@ class RequestsController < ApplicationController
 
 	def filter_pending
 		if params[:tag] != ""
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1, :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(10)
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4], :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(10)
 		else
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(10)
-		end
-		@tags = get_user_tags(session[:user_id])
-		respond_to do |format|
-			format.js
-		end
-	end
-
-	def filter_resolved
-		if params[:tag] != ""
-			@resolved_requests = Request.where(:receiverid => session[:user_id], :tagid => params[:tag], :statusid => [2,3,4]).order("updated_at DESC")
-		else
-			@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,4]).order("updated_at DESC")
+			@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4]).order("updated_at ASC").page(params[:page]).per(10)
 		end
 		@tags = get_user_tags(session[:user_id])
 		respond_to do |format|
@@ -59,12 +47,7 @@ class RequestsController < ApplicationController
 			end
 		end
 
-		#refrescar las solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => 1).order("updated_at ASC").page(params[:page]).per(10)
-		@tags = get_user_tags(session[:user_id])
-		respond_to do |format|
-			format.js
-		end
+		redirect_to :action => params[:actionname]
 	end
 
 	def create_tag
@@ -85,22 +68,22 @@ class RequestsController < ApplicationController
 		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
 		@table = 1
 		@editable = false
+		@active = "wconf"
 		case params[:f]
 		when "inprogress"
 			#Solicitudes pendientes que han sido asignadas
-			@frame_title = "Solicitudes en Proceso de Resolución"
+			@active = "inprogress"
 			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
 		when "solved"
 			#Solicitudes resueltas o canceladas
-			@frame_title = "Solicitudes Resueltas o Canceladas"
+			@active = "solved"
 			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at ASC")
 		when "unassigned"
 			#Solicitudes pendientes que no han sido asignadas
-			@frame_title = "Solicitudes Pendientes Sin Asignar"
+			@active = "unassigned"
 			@editable = true
 			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at ASC")
 		else
-			@frame_title = "Solicitudes en Espera de Confirmación"
 			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at ASC")
 			@table = 2
 		end
@@ -112,15 +95,20 @@ class RequestsController < ApplicationController
 		redirect_to :action => "sent_requests"
 	end
 
+	def area_for_request
+		@areas = get_areas(default_area)
+	end
+
 	def new_request
 		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()
 		@priorities = RequestPriority.all()
 		#temporalmente limitado a enviar solicitudes sólo al área TI
-		@areas = get_areas(default_area)
+		@area = Area.find(params[:areaid])
 
-		if session[:system_role] <= 2
+		if is_area_manager?(@user.id, @area.id)
 			#Si el usuario es administrador o manager del sistema
+			@manager = true
 			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
@@ -242,6 +230,18 @@ class RequestsController < ApplicationController
 	#####################
 	private
 
+	def is_area_manager?(userid, areaid)
+		c_id = Context.where(:typeid => 2, :instanceid => areaid).first().id
+		role = RoleAssignation.where(:contextid => c_id, :userid => userid).first()
+		if role.roleid == 1 || role.roleid == 2
+			#es administrador de area
+			return true
+		else
+			#no es...
+			return false
+		end
+	end
+
 	def get_area_managers(area)
 		c = Context.where(:typeid => 2, :instanceid => area).first()
 		return User.joins("inner join role_assignations
@@ -303,7 +303,7 @@ class RequestsController < ApplicationController
 	end
 
 	def request_params
-		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :request, :attach, :pic)
+		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :duedate, :request, :attach, :pic)
 	end
 
 	def notify_user(userid,request,new_request)
@@ -351,6 +351,6 @@ class RequestsController < ApplicationController
 	end
 
 	def default_area
-		area = 4
+		area = [4]
 	end
 end

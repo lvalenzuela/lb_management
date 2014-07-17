@@ -103,6 +103,8 @@ Rails.application.routes.draw do
       get 'index'
       get 'mark_solution'
       get 'confirm_solution'
+      get "area_for_request"
+      get 'new_request'
       post 'create_request'
       post 'filter_requests'
       post 'update'
@@ -112,7 +114,6 @@ Rails.application.routes.draw do
       post 'create_tag'
       get 'sent_requests'
       get 'filter_sent'
-      get 'new_request'
       get 'edit_request'
       get 'show'
       get 'area_requests'

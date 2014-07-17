@@ -10,6 +10,7 @@
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha de Solicitud</th>
             <th style="text-align: center;">Fecha Límite</th>
+            <th style="text-align: center;">Anotaciones</th>
         </tr>
     </thead>
     <tbody>
@@ -24,6 +25,7 @@
                 <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                 <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
                 <td style="text-align: center;"><%=show_date(request.duedate)%></td>
+                <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
             </tr>
             <%=render :partial => "modal_request", :locals => {:request => request}%>
         <%end%>
