@@ -66,10 +66,6 @@ class ReportsController < ApplicationController
 		end
 	end
 
-	def reporte_preliminar
-
-	end
-
 	def show
 	
 	end
@@ -107,6 +103,19 @@ class ReportsController < ApplicationController
 				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter],view_context)
 	  			send_data pdf.render, filename: courses.first().institution+" - "+params[:fullname]+" - "+Date.today().to_s+".pdf",
 					                   type:"application/pdf"
+			end
+		end
+	end
+
+	def course_group_report
+		group = MoodleGroup.find(params[:id])
+
+		respond_to do |format|
+			format.html
+			format.pdf do
+				pdf = CourseGroupReportPdf.new(group, view_context)
+				send_data pdf.render, filename: group.groupname+"-"+Date.today.to_s+".pdf",
+										type: "application/pdf"
 			end
 		end
 	end

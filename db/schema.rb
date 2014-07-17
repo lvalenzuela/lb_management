@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140715211334) do
+ActiveRecord::Schema.define(version: 20140717134831) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 20140715211334) do
     t.decimal  "grade_oral_tests",    precision: 5, scale: 2
     t.integer  "assignments_ontime"
     t.integer  "total_assignments"
-    t.datetime "created_at"
+    t.date     "created_at"
     t.datetime "updated_at"
   end
 

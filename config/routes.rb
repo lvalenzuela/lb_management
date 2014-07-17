@@ -89,6 +89,7 @@ Rails.application.routes.draw do
       get 'historical'
       get 'reports_for_course'
       get "course_groups"
+      get "course_group_report"
     end
   end
 
