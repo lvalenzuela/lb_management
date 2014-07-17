@@ -33,13 +33,13 @@ class QuotationPdf < Prawn::Document
 	end
 
 	def quotation_products(q)
-		products = Product.joins("inner join quotation_products as qp
-										on products.id = qp.productid
+		products = Course.joins("inner join quotation_courses as qp
+										on courses.id = qp.courseid
 										and qp.quotationid = #{q.id}
 										inner join product_prices as pp
-										on products.productpriceid = pp.id").select("products.id as productid,
-																					 products.students_qty as students_qty,
-																					 products.location as location,
+										on courses.productpriceid = pp.id").select("courses.id as productid,
+																					 courses.students_qty as students_qty,
+																					 courses.location as location,
 																					 pp.modality as modality,
 																					 pp.students_qty as max_students,
 																					 pp.hours_amt as hours_amt,
@@ -148,7 +148,7 @@ class QuotationPdf < Prawn::Document
 							["<b>Rut</b>", client.rut],
 							["<b>Dirección</b>", client.address],
 							["<b>Telefono</b>", client.phone],
-							["<b>Atención</b>", client.firstname+" "+user.lastname],
+							["<b>Atención</b>", client.firstname+" "+client.lastname],
 							["<b>E-Mail</b>", client.email]]
 			table(clientdata, :column_widths => {0 => 70, 1 => 175}, :cell_style => {:size => 10,:borders => [], :inline_format => true, :padding => [1,0]}, :position => :left)
 		end
