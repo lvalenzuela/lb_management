@@ -1,6 +1,6 @@
 class CourseGroupReportPdf < Prawn::Document
 
-	def initialize(group, view_context)
+	def initialize(group, reportdate, view_context)
 		super(:margin => 50)
 		font "Helvetica"
 		members = find_group_members(group.id)
@@ -16,9 +16,9 @@ class CourseGroupReportPdf < Prawn::Document
 
 		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 80) do
 			font "Helvetica", :size => 12
-			general_data(group)
-			course_attendance(members, group)
-			indicadores_academicos(members, group)
+			general_data(group, reportdate)
+			course_attendance(members, group, reportdate)
+			indicadores_academicos(members, group, reportdate)
 		end	
 
 		number_pages "<page> de <total>",:at => [480, 0], size:9
@@ -39,17 +39,21 @@ class CourseGroupReportPdf < Prawn::Document
 		text "www.longbourn.cl", :align => :center
 	end
 
-	def general_data(group)
+	def general_data(group, reportdate)
 		font "Helvetica", :style => :bold
 		text "Informe de Desempeño por Curso"
 		font "Helvetica", :style => :normal
-
+		if reportdate.nil?
+			date = Date.today()
+		else
+			date = reportdate
+		end
 		data = [["<b>Curso</b>", group.groupname],
-				["<b>Fecha</b>", Date.today()]]
+				["<b>Fecha</b>", date]]
 		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
 	end
 
-	def course_attendance(members, group)
+	def course_attendance(members, group, reportdate)
 		move_down 20
 		font "Helvetica", :style => :bold
 		text "1. Indicadores de Asistencia"
@@ -59,7 +63,11 @@ class CourseGroupReportPdf < Prawn::Document
 		data = []
 		data << ["<b>Nombre</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
-			member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id).order("created_at DESC").first()
+			if reportdate.nil?
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id).order("created_at DESC").first()
+			else
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id, :created_at => reportdate).first()
+			end
 			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
 			
 			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil? && !member_data.p_sessions.nil?
@@ -96,7 +104,7 @@ class CourseGroupReportPdf < Prawn::Document
 		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence (Máximo 25% del total).", size:9, :inline_format => true
 	end
 
-	def indicadores_academicos(members, group)
+	def indicadores_academicos(members, group, reportdate)
 		move_down 15
 		font "Helvetica", :style => :bold
 		text "2. Indicadores Academicos"
@@ -106,7 +114,11 @@ class CourseGroupReportPdf < Prawn::Document
 		data = []
 		data << ["<b>Nombre</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
 		members.each do |member|
-			member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id).order("created_at DESC").first()
+			if reportdate.nil?
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id).order("created_at DESC").first()
+			else
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id, :created_at => reportdate).first()
+			end
 
 			data << [member_data.firstname+" "+member_data.lastname, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end

@@ -1,5 +1,9 @@
 module ReportsHelper
 
+	def get_groupname(groupid)
+		return MoodleGroup.find(groupid).groupname
+	end
+
 	def get_client_list(institution)
 		if institution.nil?
 			@clients = UserReport.select("institution, 

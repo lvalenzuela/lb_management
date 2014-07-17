@@ -40,11 +40,16 @@ Rails.application.routes.draw do
       post "create_group"
       get "show_group"
       delete "destroy_group"
+      post "assign_course"
+      delete "destroy_assignation"
     end
   end
 
   resources :main do
     collection do
+      get 'system_manager'
+      post "assign_system_manager"
+      delete "unassign_system_manager"
       get 'control_panel'
       get 'horarios'
       get 'area_manager'

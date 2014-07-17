@@ -57,9 +57,7 @@ class ReportsController < ApplicationController
 	def course_groups
 		@groups = MoodleGroup.all()
 		if params[:id]
-			@courses = MoodleCourse.joins("inner join moodle_group_assignations as mga
-							on mga.m_courseid = moodle_courses.moodleid
-							and mga.groupid = #{params[:id]}")
+			@reports = CourseGroupReport.where(:groupid => params[:id]).group("created_at").order("created_at DESC")
 			@selected_group = MoodleGroup.find(params[:id])
 		else
 			@courses = nil
@@ -109,11 +107,16 @@ class ReportsController < ApplicationController
 
 	def course_group_report
 		group = MoodleGroup.find(params[:id])
+		if params[:date]
+			date = params[:date]
+		else
+			date = nil
+		end
 
 		respond_to do |format|
 			format.html
 			format.pdf do
-				pdf = CourseGroupReportPdf.new(group, view_context)
+				pdf = CourseGroupReportPdf.new(group, date, view_context)
 				send_data pdf.render, filename: group.groupname+"-"+Date.today.to_s+".pdf",
 										type: "application/pdf"
 			end

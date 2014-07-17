@@ -14,14 +14,7 @@ class MoodleCoursesController < ApplicationController
     def assign
         if params[:courses] && params[:groupid]
             params[:courses].each do |c|
-                g = MoodleGroupAssignation.where(:groupid => params[:groupid], :m_courseid => c)
-                if g.nil? || g.empty?
-                    #Se asignan los cursos seleccionados al grupo correspondiente
-                    MoodleGroupAssignation.create(:groupid => params[:groupid], :m_courseid => c)
-                else
-                    #El curso ya esta asignado al grupo
-                    #duh
-                end
+                assign_to_group(params[:groupid],c)
             end
         else
             flash[:notice] = "No se pudo llevar a cabo la asignacion."
@@ -29,10 +22,27 @@ class MoodleCoursesController < ApplicationController
         redirect_to :action => "index"
     end
 
+    def assign_course
+        assign_to_group(params[:groupid], params[:courseid])
+        redirect_to :action => "show_group", :id => params[:groupid]
+    end
+
+    def destroy_assignation
+        g = MoodleGroupAssignation.where(:groupid => params[:groupid], :m_courseid => params[:courseid])
+        g.destroy_all
+        redirect_to :action => "show_group", :id => params[:groupid]
+    end
+
     def show_group
         @courses = MoodleCourse.joins("inner join moodle_group_assignations as mga
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}")
+        @group = params[:id]
+        courselist = []
+        @courses.each do |c|
+            courselist << c.moodleid
+        end
+        @remaining_courses = MoodleCourse.where("moodleid not in (?)", courselist)
     end
 
     def create_group
@@ -50,6 +60,17 @@ class MoodleCoursesController < ApplicationController
     end
 
     private
+
+    def assign_to_group(groupid,courseid)
+        g = MoodleGroupAssignation.where(:groupid => groupid, :m_courseid => courseid)
+        if g.nil? || g.empty?
+            #Se asignan los cursos seleccionados al grupo correspondiente
+            MoodleGroupAssignation.create(:groupid => groupid, :m_courseid => courseid)
+        else
+            #El curso ya esta asignado al grupo
+            #duh
+        end
+    end
 
     def check_authentication
         if session[:user_id].nil?

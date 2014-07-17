@@ -9,6 +9,32 @@ class MainController < ApplicationController
       
     end
 
+    def system_manager
+        @managers = get_system_managers
+        m_list = []
+        @managers.each do |m|
+            m_list << m.id
+        end
+        @roles = Role.where("id <> 1")
+        @remaining_users = User.where("id not in (?)", m_list)
+    end
+
+    def assign_system_manager
+        if params[:user]
+            params[:user].each do |u|
+                m = RoleAssignation.where(:contextid => 1, :userid => u)
+                m.destroy_all
+                RoleAssignation.create(:contextid => 1, :userid => u, :roleid => params[:role])
+            end
+        end
+        redirect_to :action => "system_manager"
+    end
+
+    def unassign_system_manager
+        RoleAssignation.where(:contextid => 1, :userid => params[:userid]).destroy_all
+        redirect_to :action => "system_manager"
+    end
+
     def area_manager
         #Administración de las áreas de Longborun y de los roles de los usuarios en ellas
         @areas = Area.all()
@@ -146,5 +172,16 @@ class MainController < ApplicationController
 
     def get_area_context(areaid)
         Context.where(:typeid => 2, :instanceid => areaid).first()
+    end
+
+    def get_system_managers
+        admins = User.joins("inner join role_assignations as ra
+                            on users.id = ra.userid
+                            and ra.contextid = 1
+                            and ra.roleid in (1,2)").select("users.id,
+                                                            users.firstname,
+                                                            users.lastname,
+                                                            users.username,
+                                                            ra.roleid")
     end
 end
