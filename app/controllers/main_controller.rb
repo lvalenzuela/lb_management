@@ -37,47 +37,18 @@ class MainController < ApplicationController
 
     def area_manager
         #Administración de las áreas de Longborun y de los roles de los usuarios en ellas
-        @areas = Area.all()
-        @users = User.all()
+        @areas = areas_for_user(session[:user_id])
+        @active = params[:opt] ? params[:opt].to_s : @areas.first().id.to_s
+        @selected_area = @areas.find(@active.to_i)
+        @area_users = get_area_users(@selected_area.id)
+        @system_users = User.where("id not in (?)", @area_users.map{|u| u.id})
         @roles = Role.all()
     end
 
-    def area_dashboard
-        @area = Area.find(params[:id])
-        @roles = Role.all()
-        c = get_area_context(@area.id)
 
-        @users = User.joins("inner join role_assignations as ra
-                            on users.id = ra.userid and 
-                            ra.contextid = #{c.id}").select("users.id, 
-                                                            users.firstname, 
-                                                            users.lastname, 
-                                                            users.username,
-                                                            users.email,
-                                                            ra.roleid,
-                                                            ra.id as assignationid")
-    end
-
-    def assign_role
-        c = get_area_context(params[:area])
-        if params[:user]
-            params[:user].each do |u|
-                r = RoleAssignation.where(:contextid => c.id, :userid => u).first()
-                if r.nil? 
-                    #Si el usuario no ha sido previamente asignado al área
-                    #se le asigna un rol
-                    RoleAssignation.create(:contextid => c.id, :userid => u, :roleid => params[:role])
-                else 
-                    #si el usuario ya tenia un rol en el área, se modifica
-                    r.update_attributes(:roleid => params[:role])
-                end
-            end
-            flash[:notice] = "Asignacion llevada a cabo con éxito."
-        else
-            flash[:notice] = "Debe seleccionar un usuario."
-        end
-        
-        redirect_to :action => "area_manager"
+    def assign_to_area
+        assign_area_member(params[:area],params[:user])
+        redirect_to :action => "area_manager", :opt => params[:area]
     end
 
     def modify_assignation
@@ -87,11 +58,8 @@ class MainController < ApplicationController
                 assignation = RoleAssignation.find(a)
                 assignation.update_attributes(:roleid => params[:role])
             end
-            flash[:notice] = "Asignacion llevada a cabo con éxito."
-        else
-            flash[:notice] = "Debe seleccionar un usuario."
         end
-        redirect_to :action => "area_dashboard", :id => params[:area]
+        redirect_to :action => "area_manager", :opt => params[:area]
     end
 
     def destroy
@@ -159,6 +127,51 @@ class MainController < ApplicationController
     end
 
     private
+
+    def assign_area_member(areaid,userid)
+        c = get_area_context(areaid)
+        r = RoleAssignation.where(:contextid => c.id, :userid => userid).first()
+        if r.nil? 
+            #Si el usuario no ha sido previamente asignado al área
+            #se le asigna el rol de miembro
+            RoleAssignation.create(:contextid => c.id, :userid => userid, :roleid => 3)
+        end
+        #si el usuario ya tenia un rol en el área no se hace nada
+    end
+
+    def get_area_users(areaid)
+        c = get_area_context(areaid)
+        return User.joins("inner join role_assignations as ra
+                                on users.id = ra.userid and 
+                                ra.contextid = #{c.id}").select("users.id, 
+                                                                users.firstname, 
+                                                                users.lastname, 
+                                                                users.username,
+                                                                users.email,
+                                                                ra.roleid,
+                                                                ra.id as assignationid")
+    end
+
+    def areas_for_user(userid)
+        check_if_system_manager = get_system_managers.select{|user| user.id == userid}
+        if !check_if_system_manager.empty? || !check_if_system_manager.blank?
+            return Area.all()
+        else
+            ctx = Context.joins("inner join areas
+                                    on areas.id = contexts.instanceid
+                                    and contexts.typeid = 2
+                                inner join role_assignations as ra
+                                    on contexts.id = ra.contextid
+                                    and ra.userid = #{userid}
+                                    and ra.roleid in (1,2)")
+            area_list = []
+            ctx.each do |c|
+                area_list << c.instanceid
+            end
+
+            return Area.where(:id => area_list)
+        end
+    end
     
     def product_price_params
         params.require(:product_price).permit(:modality, :students_qty, :hours_amt, :price, :valid_until, :deleted)

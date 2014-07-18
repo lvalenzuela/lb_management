@@ -5,7 +5,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Requerimientos</h1>
+            <h1 class="page-header">Nuevo Requerimiento: <%=@area.areaname%></h1>
             
         </div>
         <!-- /.col-lg-12 -->
@@ -49,11 +49,13 @@
                                 <label>Prioridad:</label>
                                 <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
-                            <%if @manager %>
+                            <%if @receivers%>
                             <div class="form-group">
                                 <label>Destinatario:</label>
                                 <%=f.select :receiverid, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname, r.id]}), {},{:class =>"form-control"}%>
                             </div>
+                            <%end%>
+                            <%if @manager %>
                             <div class="form-group">
                                 <label>Fecha Límite</label>
                                 <%=f.date_field :duedate, :class => "form-control"%>
@@ -67,7 +69,7 @@
                                 <label>Adjuntar Archivo:</label>
                                 <%=f.file_field :attach %>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group pull-right">
                                 <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-default"%>
                             </div>
                         <%end%>

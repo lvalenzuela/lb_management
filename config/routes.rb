@@ -54,7 +54,7 @@ Rails.application.routes.draw do
       get 'horarios'
       get 'area_manager'
       get 'area_dashboard'
-      post 'assign_role'
+      post 'assign_to_area'
       post 'modify_assignation'
       get 'extras'
       delete 'destroy'

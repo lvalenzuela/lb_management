@@ -105,10 +105,13 @@ class RequestsController < ApplicationController
 		@priorities = RequestPriority.all()
 		#temporalmente limitado a enviar solicitudes sólo al área TI
 		@area = Area.find(params[:areaid])
-
-		if is_area_manager?(@user.id, @area.id)
+		role = area_role(@user.id, @area.id)
+		if role <= 2
 			#Si el usuario es administrador o manager del sistema
 			@manager = true
+		end
+		if role <= 3
+			#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
 			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
@@ -121,9 +124,14 @@ class RequestsController < ApplicationController
 		@request = Request.find(params[:id])
 		@user = User.find(session[:user_id])
 		@priorities = RequestPriority.all()
-		@areas = get_areas(default_area)
-		if session[:system_role] <= 2
+		@area = Area.find(@request.areaid)
+		role = area_role(@user.id, @area.id)
+		if role <= 2
 			#Si el usuario es administrador o manager del sistema
+			@manager = true
+		end
+		if role <= 3
+			#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
 			@receivers = receiver_list(default_area)
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
@@ -230,16 +238,10 @@ class RequestsController < ApplicationController
 	#####################
 	private
 
-	def is_area_manager?(userid, areaid)
+	def area_role(userid, areaid)
 		c_id = Context.where(:typeid => 2, :instanceid => areaid).first().id
 		role = RoleAssignation.where(:contextid => c_id, :userid => userid).first()
-		if role.roleid == 1 || role.roleid == 2
-			#es administrador de area
-			return true
-		else
-			#no es...
-			return false
-		end
+		return role.roleid
 	end
 
 	def get_area_managers(area)
