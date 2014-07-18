@@ -11,12 +11,8 @@ class MainController < ApplicationController
 
     def system_manager
         @managers = get_system_managers
-        m_list = []
-        @managers.each do |m|
-            m_list << m.id
-        end
         @roles = Role.where("id <> 1")
-        @remaining_users = User.where("id not in (?)", m_list)
+        @remaining_users = User.where("id not in (?)", @managers.map{|m| m.id})
     end
 
     def assign_system_manager
@@ -71,7 +67,7 @@ class MainController < ApplicationController
         else
             flash[:notice] = "No estas autorizado para realizar esta acción."
         end
-        redirect_to :action => "area_dashboard", :id => params[:areaid]
+        redirect_to :action => "area_manager", :opt => params[:areaid]
     end
 
     def manage_products
@@ -164,12 +160,7 @@ class MainController < ApplicationController
                                     on contexts.id = ra.contextid
                                     and ra.userid = #{userid}
                                     and ra.roleid in (1,2)")
-            area_list = []
-            ctx.each do |c|
-                area_list << c.instanceid
-            end
-
-            return Area.where(:id => area_list)
+            return Area.where(:id => ctx.map{|c| c.instanceid})
         end
     end
     

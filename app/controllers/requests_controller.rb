@@ -99,6 +99,10 @@ class RequestsController < ApplicationController
 		@areas = get_areas(default_area)
 	end
 
+	def manage_requests
+		
+	end
+
 	def new_request
 		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()

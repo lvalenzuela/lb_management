@@ -106,6 +106,7 @@ Rails.application.routes.draw do
       get 'confirm_solution'
       get "area_for_request"
       get 'new_request'
+      get "manage_requests"
       post 'create_request'
       post 'filter_requests'
       post 'update'

@@ -28,7 +28,7 @@
                                 <td><%=check_box_tag "assign[]", u.assignationid%></td>
                                 <td><%=u.firstname+" "+u.lastname%></td>
                                 <td><%=get_rolename(u.roleid)%></td>
-                                <td style="text-align: center;"><%=link_to "<i class='fa fa-chevron-right'></i><i class='fa fa-chevron-right'></i>".html_safe, {action: "destroy", id: u.assignationid, areaid: area.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td
+                                <td style="text-align: center;"><%=link_to "<i class='fa fa-chevron-right'></i><i class='fa fa-chevron-right'></i>".html_safe, {action: "destroy", id: u.assignationid, area: area.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td
                             </tr>
                         <%end%>
                     </tbody>
