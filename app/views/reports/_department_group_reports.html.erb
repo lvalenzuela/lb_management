@@ -1,0 +1,99 @@
+
+<%if institution %>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Por Departamentos de <%=institution%>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="groups-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre grupo</th>
+                                    <th style="text-align:center;">Último Reporte</th>
+                                    <th style="text-align:center;">Ver Reportes Historicos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%groups.each do |g|%>
+                                    <tr>
+                                        <td><%=link_to g.department, :controller => "moodle_courses", :action => "show_group", :params => {:id => g.id}%></td>
+                                        <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => institution, :department => g.department, :format => "pdf"}}, :target => "_blank"%></td>
+                                        <td style="text-align:center;"><%=link_to "<i class='fa fa-clock-o'></i>".html_safe, {:controller => "reports", :action => "course_groups", :params => {:department => g.department, :institution => institution, :opt => "department"}}, {:class => "btn btn-default btn-circle"}%></td>
+                                    </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%if reports%>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Reportes Historicos: <%=selected_group%>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="reports-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Grupo</th>
+                                    <th>Fecha</th>
+                                    <th>Reporte</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%reports.each do |r|%>
+                                    <tr>
+                                        <td><%=r.department%></td>
+                                        <td><%=r.created_at.strftime("%d-%m-%Y")%></td>
+                                        <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => r.institution, :department => r.department, :date => r.created_at, :format => "pdf"}}, :target => "_blank"%></td>
+                                    </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%end%>
+    </div>
+<%else%>
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Selección de Empresa
+                </div>
+                <div class="panel-body">
+                    <h3>Listado de Empresas</h3>
+                    <p>Seleccione la empresa de la cual desea generar reportes</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="institutions-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Empresa</th>
+                                    <th style="text-align: center;"># Alumnos</th>
+                                    <th style="text-align: center;"># Cursos</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%institution_list.each do |i|%>
+                                <tr>
+                                    <td><%=link_to i.institution, {:controller => "reports", :action => "course_groups", :params => {:institution => i.institution, :opt => "department"}}%></td>
+                                    <td><%=i.users%></td>
+                                    <td><%=i.groups%></td>
+                                </tr>
+                                <%end%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%end%>

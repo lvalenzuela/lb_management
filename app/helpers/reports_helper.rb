@@ -1,5 +1,11 @@
 module ReportsHelper
 
+	def activate_tab(current,desired)
+		if current.include?(desired)
+			return "class=active"
+		end
+	end
+
 	def get_groupname(groupid)
 		return MoodleGroup.find(groupid).groupname
 	end

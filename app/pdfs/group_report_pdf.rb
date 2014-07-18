@@ -1,7 +1,7 @@
 class GroupReportPdf < Prawn::Document
 	include ReportsHelper
 
-	def initialize(institution, group_name, filter, view_context)
+	def initialize(institution, group_name, filter, date, view_context)
 		super(:margin => 50)
 		font "Helvetica"
 		members = find_group_members(institution, group_name, filter)
@@ -17,9 +17,9 @@ class GroupReportPdf < Prawn::Document
 
 		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 80) do
 			font "Helvetica", :size => 12
-			general_data(institution, group_name, filter)
-			course_attendance(members, filter)
-			indicadores_academicos(members, filter)
+			general_data(institution, group_name, date, filter)
+			course_attendance(members, filter, date)
+			indicadores_academicos(members, filter, date)
 		end	
 
 		number_pages "<page> de <total>",:at => [480, 0], size:9
@@ -40,7 +40,7 @@ class GroupReportPdf < Prawn::Document
 		text "www.longbourn.cl", :align => :center
 	end
 
-	def general_data(institution, group_name, filter)
+	def general_data(institution, group_name, date, filter)
 		if filter.to_i == 1
 			group = "Curso"
 		else
@@ -52,11 +52,11 @@ class GroupReportPdf < Prawn::Document
 
 		data = [["<b>"+group+"</b>",group_name],
 				["<b>Empresa</b>",institution],
-				["<b>Fecha</b>", Date.today()]]
+				["<b>Fecha</b>", date]]
 		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
 	end
 
-	def course_attendance(members,filter)
+	def course_attendance(members,filter,date)
 		move_down 20
 		font "Helvetica", :style => :bold
 		text "1. Indicadores de Asistencia"
@@ -72,7 +72,11 @@ class GroupReportPdf < Prawn::Document
 		data = []
 		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
-			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			if date
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
+			else
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			end
 			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
 			
 			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil? && !member_data.p_sessions.nil?
@@ -114,7 +118,7 @@ class GroupReportPdf < Prawn::Document
 		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence (Máximo 25% del total).", size:9, :inline_format => true
 	end
 
-	def indicadores_academicos(members, filter)
+	def indicadores_academicos(members, filter, date)
 		move_down 15
 		font "Helvetica", :style => :bold
 		text "2. Indicadores Academicos"
@@ -130,7 +134,11 @@ class GroupReportPdf < Prawn::Document
 		data = []
 		data << ["<b>Nombre</b>", "<b>"+table_group+"</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
 		members.each do |member|
-			member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			if date
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
+			else
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+			end
 			if filter.to_i == 1
 				member_group = member_data.department
 			else

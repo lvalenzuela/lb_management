@@ -95,6 +95,7 @@ Rails.application.routes.draw do
       get 'reports_for_course'
       get "course_groups"
       get "course_group_report"
+      get "institution_department_report"
     end
   end
 

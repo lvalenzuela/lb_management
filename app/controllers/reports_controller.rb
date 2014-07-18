@@ -54,16 +54,6 @@ class ReportsController < ApplicationController
 		end
 	end
 
-	def course_groups
-		@groups = MoodleGroup.all()
-		if params[:id]
-			@reports = CourseGroupReport.where(:groupid => params[:id]).group("created_at").order("created_at DESC")
-			@selected_group = MoodleGroup.find(params[:id])
-		else
-			@courses = nil
-		end
-	end
-
 	def show
 	
 	end
@@ -98,26 +88,60 @@ class ReportsController < ApplicationController
 		respond_to do |format|
 			format.html
 			format.pdf do
-				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter],view_context)
-	  			send_data pdf.render, filename: courses.first().institution+" - "+params[:fullname]+" - "+Date.today().to_s+".pdf",
+				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
+	  			send_data pdf.render, filename: courses.first().institution+" - "+params[:fullname]+" - "+params[:date].to_s+".pdf",
 					                   type:"application/pdf"
+			end
+		end
+	end
+
+	def course_groups
+
+		case params[:opt]
+		when "department"
+			@active = "department"
+			if params[:institution]
+				@groups = CourseGroupReport.select("distinct department").where(:institution => params[:institution])
+				@institution = params[:institution]
+				if params[:department]
+					@reports = CourseGroupReport.where(:institution => params[:institution], :department => params[:department]).group("created_at").order("created_at DESC")
+					@selected_group = params[:department]
+				end
+			else
+				@institution_list = CourseGroupReport.select("institution, count(distinct userid) as users, count(distinct groupid) as groups").group("institution")
+			end
+		else
+			@active = "groups"
+			@groups = MoodleGroup.all()
+			if params[:id]
+				@reports = CourseGroupReport.where(:groupid => params[:id]).group("created_at").order("created_at DESC")
+				@selected_group = MoodleGroup.find(params[:id])
 			end
 		end
 	end
 
 	def course_group_report
 		group = MoodleGroup.find(params[:id])
-		if params[:date]
-			date = params[:date]
-		else
-			date = nil
-		end
+		date = params[:date] ? params[:date] : nil
 
 		respond_to do |format|
 			format.html
 			format.pdf do
 				pdf = CourseGroupReportPdf.new(group, date, view_context)
 				send_data pdf.render, filename: group.groupname+"-"+Date.today.to_s+".pdf",
+										type: "application/pdf"
+			end
+		end
+	end
+
+	def institution_department_report
+		date = params[:date] ? params[:date] : nil
+
+		respond_to do |format|
+			format.html
+			format.pdf do
+				pdf = InstitutionDepartmentReportPdf.new(params[:institution], params[:department], date, view_context)
+				send_data pdf.render, filename: params[:institution]+"-"+params[:department]+"-"+Date.today.to_s+".pdf",
 										type: "application/pdf"
 			end
 		end
