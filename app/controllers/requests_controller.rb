@@ -106,16 +106,19 @@ class RequestsController < ApplicationController
 		#temporalmente limitado a enviar solicitudes sólo al área TI
 		@area = Area.find(params[:areaid])
 		role = area_role(@user.id, @area.id)
-		if role <= 2
-			#Si el usuario es administrador o manager del sistema
-			@manager = true
-		end
-		if role <= 3
-			#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
-			@receivers = receiver_list(default_area)
+		if role
+			if role <= 2
+				#Si el usuario es administrador o manager del sistema
+				@manager = true
+			elsif role <= 3
+				#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
+				@receivers = receiver_list(default_area)
+			else
+				#Si es de otra area, se limitaran los subjects de las solicitudes
+				#que puede realizar
+				@subjects = subject_list()
+			end
 		else
-			#Si es de otra area, se limitaran los subjects de las solicitudes
-			#que puede realizar
 			@subjects = subject_list()
 		end
 	end
@@ -241,7 +244,11 @@ class RequestsController < ApplicationController
 	def area_role(userid, areaid)
 		c_id = Context.where(:typeid => 2, :instanceid => areaid).first().id
 		role = RoleAssignation.where(:contextid => c_id, :userid => userid).first()
-		return role.roleid
+		if role.nil? || role.blank?
+			return nil
+		else
+			return role.roleid
+		end
 	end
 
 	def get_area_managers(area)
