@@ -35,7 +35,7 @@
                             <%if @subjects %>
                             <div class="form-group">
                                 <label>Título:</label>
-                                <%=f.select :subject, options_for_select(@subjects), {}, {:class => "form-control"} %>
+                                <%=f.select :subject, options_for_select(@subjects.collect{|s| [s.title,s.title]}), {}, {:class => "form-control"} %>
                             </div>
                             <%else%>
                             <div class="form-group">

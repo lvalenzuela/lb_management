@@ -13,8 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require moment
 //= require redactor-rails
-//= require bootstrap-datetimepicker
+//= require modernizr
 //= require_tree .
 

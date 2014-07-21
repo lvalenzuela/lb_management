@@ -13,7 +13,6 @@
  *= require font-awesome
  *= require redactor-rails
  *= require_tree .
- *= require bootstrap-datetimepicker
  *= require_self
  */
 

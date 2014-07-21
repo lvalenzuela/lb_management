@@ -1,4 +1,5 @@
 class Area < ActiveRecord::Base
+	has_many :request_area_titles
 	after_create :register_instance
 
 	def register_instance

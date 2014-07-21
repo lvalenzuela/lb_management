@@ -106,7 +106,6 @@ Rails.application.routes.draw do
       get 'confirm_solution'
       get "area_for_request"
       get 'new_request'
-      get "manage_requests"
       post 'create_request'
       post 'filter_requests'
       post 'update'
@@ -114,13 +113,18 @@ Rails.application.routes.draw do
       post 'filter_resolved'
       post 'mark_with_tag'
       post 'create_tag'
+      post "create_default_title"
+      post "update_default_title"
+      get "edit_default_title"
       get 'sent_requests'
       get 'filter_sent'
       get 'edit_request'
       get 'show'
       get 'area_requests'
+      get "manage_area_requests"
       post 'assign_requests'
       delete 'destroy'
+      delete "destroy_default_title"
     end
   end
 

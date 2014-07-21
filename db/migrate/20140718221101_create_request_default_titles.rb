@@ -1,7 +1,7 @@
 class CreateRequestDefaultTitles < ActiveRecord::Migration
   def up
     create_table :request_default_titles do |t|
-    	t.integer :areaid
+    	t.belongs_to :area
     	t.string :title
       	t.timestamps
     end

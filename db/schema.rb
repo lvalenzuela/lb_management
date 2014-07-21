@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140717134831) do
+ActiveRecord::Schema.define(version: 20140721145541) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -226,6 +226,13 @@ ActiveRecord::Schema.define(version: 20140717134831) do
     t.text     "textbody"
     t.text     "textfooter"
     t.text     "comments"
+  end
+
+  create_table "request_default_titles", force: true do |t|
+    t.integer  "area_id"
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "request_notes", force: true do |t|

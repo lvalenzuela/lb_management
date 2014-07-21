@@ -19,23 +19,10 @@
                 <li <%=activate_tab(@active,"unassigned")%>>
                     <%=link_to "Sólo Requerimientos Sin Asignar", :controller => "requests", :action => "area_requests", :params => {:f => "unassigned", :id => @area.id}%>
                 </li>
+                <li <%=activate_tab(@active,"manage")%>>
+                    <%=link_to "Administración", :controller => "requests", :action => "manage_area_requests", :params => {:id => @area.id}%>
+                </li>
             </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Requerimientos de Área
-                </div>
-                <div class="panel-body">
-                    <div class="col-lg-6 col-lg-offset-3">
-                        <h3>Administrar Solicitudes Predeterminadas</h3>
-                        <p>Acceder al panel de acceso para las solicitudes predeterminadas del Área.</p>
-                        <%=link_to "Administrar Solicitudes", {:controller => "requests", :action => "manage_requests", :params => {:id => @area.id}}, {:class => "btn btn-default btn-block"}%>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="row">

@@ -99,10 +99,6 @@ class RequestsController < ApplicationController
 		@areas = get_areas(default_area)
 	end
 
-	def manage_requests
-		
-	end
-
 	def new_request
 		@request = Request.new()
 		@user = User.where(:id => session[:user_id]).first()
@@ -120,10 +116,10 @@ class RequestsController < ApplicationController
 			else
 				#Si es de otra area, se limitaran los subjects de las solicitudes
 				#que puede realizar
-				@subjects = subject_list()
+				@subjects = RequestDefaultTitle.where(:area_id => @area.id)
 			end
 		else
-			@subjects = subject_list()
+			@subjects = RequestDefaultTitle.where(:area_id => @area.id)
 		end
 	end
 
@@ -143,7 +139,7 @@ class RequestsController < ApplicationController
 		else
 			#Si es de otra area, se limitaran los subjects de las solicitudes
 			#que puede realizar
-			@subjects = subject_list()
+			@subjects = RequestDefaultTitle.where(:area_id => @area.id)
 		end
 	end
 
@@ -205,6 +201,37 @@ class RequestsController < ApplicationController
 		else
 			@requests = nil
 		end
+	end
+
+	def manage_area_requests
+		@area = Area.find(params[:id])
+		@active = "manage"
+		@titles = RequestDefaultTitle.where(:area_id => @area.id).order("created_at ASC")
+		@default_title = RequestDefaultTitle.new()
+	end
+
+	def create_default_title
+		RequestDefaultTitle.create(params.require(:request_default_title).permit(:area_id, :title))
+		redirect_to :action => :manage_area_requests, :id => params[:request_default_title][:area_id]
+	end
+
+	def edit_default_title
+		@area = Area.find(params[:id])
+		@active = "manage"
+		@titles = RequestDefaultTitle.where(:area_id => @area.id).order("created_at ASC")
+		@default_title = RequestDefaultTitle.find(params[:titleid])
+		render :manage_area_requests
+	end
+
+	def update_default_title
+		t = RequestDefaultTitle.find(params[:request_default_title][:id])
+		t.update_attributes(params.require(:request_default_title).permit(:title))
+		redirect_to :action => :manage_area_requests, :id => params[:request_default_title][:area_id]
+	end
+
+	def destroy_default_title
+		RequestDefaultTitle.find(params[:id]).destroy
+		redirect_to :action => :manage_area_requests, :id => params[:area_id]
 	end
 
 	def assign_requests
@@ -347,20 +374,6 @@ class RequestsController < ApplicationController
 			NotificationMailer.waiting_request(@user,request).deliver
 		end
 		Notification.create(:userid => userid, :subject => subject, :message => message)
-	end
-
-	def subject_list
-		#listado de subjects que otras areas pueden hacer al área TI
-		subjects = {#"Habilitación nuevo iPad" => "Habilitación nuevo iPad",
-					#"Habilitación Nuevo PC" => "Habilitación Nuevo PC",
-					#"Problema iPad" => "Problema iPad",
-					#"Problema PC" => "Problema PC",
-					"Solicitud de Incorporación / Eliminación de Estudiante a Curso" => "Solicitud de Incorporación / Eliminación de Estudiante a Curso",
-					"Solicitud de Incorporación / Eliminación de Profesor a Curso" => "Solicitud de Incorporación / Eliminación de Profesor a Curso",
-					"Solicitud de Creación de Nuevo Curso en Web Estudiantes" => "Solicitud de Creación de Nuevo Curso en Web Estudiantes",
-					"Problemas de acceso a la Web / Mail" => "Problemas de acceso a la Web / Mail",
-					"Notificación de Error detectado en Material Web" => "Notificación de Error detectado en Material Web",
-					"Notificación de Problema detectado en Portal Summit" => "Notificación de Problema detectado en Portal Summit"}
 	end
 
 	def default_area
