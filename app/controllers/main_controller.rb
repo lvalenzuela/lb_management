@@ -3,10 +3,16 @@ class MainController < ApplicationController
     protect_from_forgery
     require 'bcrypt'
     layout "dashboard"
-    include MainHelper
 
     def index
       
+    end
+
+    def extras
+        source = "https://invoice.zoho.com/api/v3/items?authtoken="+zoho_auth_token+"&organization_id=39721460"
+        resp = Net::HTTP.get_response(URI.parse(source))
+        data = resp.body
+        @response = JSON.parse data
     end
 
     def system_manager
@@ -187,5 +193,9 @@ class MainController < ApplicationController
                                                             users.lastname,
                                                             users.username,
                                                             ra.roleid")
+    end
+
+    def zoho_auth_token
+        return "c08fd565113c4bbe94df623ecf397be5"
     end
 end

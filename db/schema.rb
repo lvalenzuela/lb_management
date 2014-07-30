@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140721145541) do
+ActiveRecord::Schema.define(version: 20140730221605) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -35,6 +35,21 @@ ActiveRecord::Schema.define(version: 20140721145541) do
     t.datetime "updated_at"
   end
 
+  create_table "contact_people", force: true do |t|
+    t.integer  "contact_id"
+    t.string   "gender"
+    t.string   "salutation"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "email"
+    t.string   "password"
+    t.string   "phone"
+    t.string   "mobile"
+    t.boolean  "is_primary_contact"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "contact_statuses", force: true do |t|
     t.string   "statusname"
     t.string   "description"
@@ -50,18 +65,22 @@ ActiveRecord::Schema.define(version: 20140721145541) do
   end
 
   create_table "contacts", force: true do |t|
-    t.integer  "accountid"
-    t.string   "institution"
-    t.string   "firstname"
-    t.string   "lastname"
+    t.string   "contact_name"
+    t.string   "company_name"
+    t.integer  "payment_terms"
+    t.string   "payment_terms_label"
+    t.string   "currency_id"
+    t.string   "website"
     t.string   "rut"
-    t.string   "email"
+    t.string   "address"
+    t.string   "city"
+    t.string   "country"
+    t.string   "zip"
     t.string   "phone"
-    t.integer  "typeid"
-    t.integer  "statusid"
+    t.integer  "zoho_default_template_id"
+    t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "address"
   end
 
   create_table "context_types", force: true do |t|
@@ -74,6 +93,14 @@ ActiveRecord::Schema.define(version: 20140721145541) do
   create_table "contexts", force: true do |t|
     t.integer  "typeid"
     t.integer  "instanceid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_features", force: true do |t|
+    t.integer  "course_id"
+    t.string   "feature_name"
+    t.string   "feature_description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -121,19 +148,27 @@ ActiveRecord::Schema.define(version: 20140721145541) do
     t.datetime "updated_at"
   end
 
+  create_table "course_types", force: true do |t|
+    t.string   "typename"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "courses", force: true do |t|
     t.string   "coursename"
     t.string   "description"
     t.integer  "students_qty"
-    t.integer  "mode"
+    t.string   "mode"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "productpriceid"
+    t.string   "productpriceid"
     t.integer  "coursetemplateid"
     t.integer  "statusid"
     t.date     "start_date"
     t.string   "location"
     t.integer  "moodleid"
+    t.integer  "course_type_id"
   end
 
   create_table "last_request_message_checks", force: true do |t|
@@ -345,6 +380,25 @@ ActiveRecord::Schema.define(version: 20140721145541) do
     t.string   "institution",  limit: 45
     t.string   "department",   limit: 45
     t.string   "email",        limit: 45
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "zoho_default_templates", force: true do |t|
+    t.string   "invoice_template_id"
+    t.string   "estimate_template_id"
+    t.string   "creditnote_template_id"
+    t.string   "invoice_email_template_id"
+    t.string   "estimate_email_template_id"
+    t.string   "creditnote_email_template_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "zoho_organization_data", force: true do |t|
+    t.string   "authtoken"
+    t.string   "organization_name"
+    t.string   "organization_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,6 +1,17 @@
 Rails.application.routes.draw do
   root 'requests#sent_requests'
 
+  resources :courses do 
+    collection do
+      get "index"
+      get "new"
+      post "create"
+      get "edit"
+      post "update"
+      delete "destoy"
+    end
+  end
+
   resources :clients do
     collection do 
       get 'index'
