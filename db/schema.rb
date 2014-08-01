@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140730221605) do
+ActiveRecord::Schema.define(version: 20140801135352) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -36,16 +36,20 @@ ActiveRecord::Schema.define(version: 20140730221605) do
   end
 
   create_table "contact_people", force: true do |t|
+    t.string   "zoho_contact_person_id"
     t.integer  "contact_id"
     t.string   "gender"
     t.string   "salutation"
+    t.date     "birthday"
     t.string   "firstname"
     t.string   "lastname"
+    t.string   "rut"
     t.string   "email"
     t.string   "password"
     t.string   "phone"
     t.string   "mobile"
     t.boolean  "is_primary_contact"
+    t.boolean  "zoho_enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -65,6 +69,7 @@ ActiveRecord::Schema.define(version: 20140730221605) do
   end
 
   create_table "contacts", force: true do |t|
+    t.string   "zoho_contact_id"
     t.string   "contact_name"
     t.string   "company_name"
     t.integer  "payment_terms"
@@ -79,6 +84,7 @@ ActiveRecord::Schema.define(version: 20140730221605) do
     t.string   "phone"
     t.integer  "zoho_default_template_id"
     t.string   "notes"
+    t.boolean  "zoho_enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -391,6 +397,14 @@ ActiveRecord::Schema.define(version: 20140730221605) do
     t.string   "invoice_email_template_id"
     t.string   "estimate_email_template_id"
     t.string   "creditnote_email_template_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "zoho_invoices", force: true do |t|
+    t.integer  "contact_id"
+    t.string   "zoho_contact_id"
+    t.string   "zoho_invoice_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
