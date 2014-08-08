@@ -6,7 +6,7 @@ class ReportsController < ApplicationController
 	require 'zip'
 	
 	def index
-		if !session[:user_id].nil?
+		if !current_user.id.nil?
 			redirect_to :action => :clients
 		else
 			redirect_to :controller => "main", :action => "index"
@@ -83,13 +83,12 @@ class ReportsController < ApplicationController
 	end
 
 	def group_report
-		courses = find_course_by_institution(params[:institution], params[:filter])
 
 		respond_to do |format|
 			format.html
 			format.pdf do
 				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
-	  			send_data pdf.render, filename: courses.first().institution+" - "+params[:fullname]+" - "+params[:date].to_s+".pdf",
+	  			send_data pdf.render, filename: params[:institution]+" - "+params[:fullname]+" - "+params[:date].to_s+".pdf",
 					                   type:"application/pdf"
 			end
 		end
@@ -150,7 +149,7 @@ class ReportsController < ApplicationController
 	private
 
 	def check_authentication
-	    if session[:user_id].nil?
+	    if current_user.nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
 	end

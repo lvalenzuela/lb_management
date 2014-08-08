@@ -5,10 +5,11 @@ Rails.application.routes.draw do
     collection do
       get "index"
       get "new"
+      get "show"
       post "create"
       get "edit"
       post "update"
-      delete "destoy"
+      post "cancel_course"
     end
   end
 

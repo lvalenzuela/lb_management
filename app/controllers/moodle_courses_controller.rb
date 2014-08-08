@@ -73,7 +73,7 @@ class MoodleCoursesController < ApplicationController
     end
 
     def check_authentication
-        if session[:user_id].nil?
+        if current_user.nil?
           redirect_to :controller => "users", :action => "index"
         end
     end

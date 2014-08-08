@@ -10,8 +10,8 @@ class NotificationsController < ApplicationController
 			@selected = Notification.find(params[:id])
 			@selected.update_attributes(:seen => 1)
 		end
-		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(10)
-		@user = User.find(session[:user_id])
+		@notifications = Notification.where(:userid => current_user.id).order("id DESC").page(params[:page]).per(10)
+		@user = User.find(current_user.id)
 	end
 
 	def read
@@ -19,14 +19,14 @@ class NotificationsController < ApplicationController
 		if @selected.seen == 0
 			 @selected.update_attributes(:seen => 1)
 		end
-		@notifications = Notification.where(:userid => session[:user_id]).order("id DESC").page(params[:page]).per(10)
+		@notifications = Notification.where(:userid => current_user.id).order("id DESC").page(params[:page]).per(10)
 		respond_to do |format|
 			format.js
 		end
 	end
 
 	def search
-		@notifications = Notification.where("userid = #{session[:user_id]} and subject like '%#{params[:find][:subject]}%'").order("id DESC").page(params[:page]).per(10)
+		@notifications = Notification.where("userid = #{current_user.id} and subject like '%#{params[:find][:subject]}%'").order("id DESC").page(params[:page]).per(10)
 
 		respond_to do |format|
 			format.js
@@ -59,7 +59,7 @@ class NotificationsController < ApplicationController
 	private
 
 	def check_authentication
-	    if session[:user_id].nil?
+	    if current_user.nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
 	end

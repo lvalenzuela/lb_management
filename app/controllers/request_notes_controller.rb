@@ -8,7 +8,7 @@ class RequestNotesController < ApplicationController
 		@notes = RequestNote.where(:requestid => params[:id])
 		c_time = Time.now #el mismo tiempo para ambos registros
 		#Se registra la visualizacion de las notas de las solicitudes
-		register_last_revision(@request.id,session[:user_id],c_time)
+		register_last_revision(@request.id,current_user.id,c_time)
 	end
 
 	def create
@@ -61,7 +61,7 @@ class RequestNotesController < ApplicationController
 	end
 
 	def check_authentication
-	    if session[:user_id].nil?
+	    if current_user.nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
 	end

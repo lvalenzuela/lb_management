@@ -4,14 +4,14 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Creación de Cursos Longbourn</h1>
+            <h1 class="page-header">Edición de Cursos Longbourn</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Datos de Nuevo Curso
+                    Datos del Curso
                 </div>
                 <div class="panel-body">
                     <%if @course.errors.any?%>
@@ -25,6 +25,7 @@
                         </div>
                     <%end%>
                     <%=form_for @course, :url => {:controller => "courses", :action => "create"} do |f|%>
+                    <%=f.hidden_field :id%>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -35,13 +36,13 @@
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>Tipo de Curso</label>
-                                <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]},1), {}, {:class => "form-control"}%>
+                                <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]}), {}, {:class => "form-control"}%>
                             </div>
                         </div>
                         <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Estudiantes</label>
-                                <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|q| ["#{q}",q]},2), {}, {:class => "form-control"}%>
+                                <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|q| ["#{q}",q]}), {}, {:class => "form-control"}%>
                             </div>
                         </div>
 
@@ -69,22 +70,22 @@
                         </div>
                         <div class="col-lg-2">
                             <label>Dia 1</label>
-                            <%=select_tag :first_weekday, options_for_select(weekday_options,"Lunes"), {:class => "form-control"}%>
+                            <%=select_tag :first_weekday, options_for_select(weekday_options,get_course_feature(@course_features,"first_day")), {:class => "form-control"}%>
                         </div>
                         <div class="col-lg-2">
                             <label>Hora</label><br>
                             <div class="form-group bootstrap-timepicker">
-                                <%=text_field_tag :hour_first_weekday, "", {:class => "form-control", :id => "timepicker1"}%>
+                                <%=text_field_tag :hour_first_weekday, get_course_feature(@course_features,"first_day_hour"), {:class => "form-control", :id => "timepicker1"}%>
                             </div>
                         </div>
                         <div class="col-lg-2">
                             <label>Dia 2</label>
-                            <%=select_tag :second_weekday, options_for_select(weekday_options,"Lunes"), {:class => "form-control"}%>
+                            <%=select_tag :second_weekday, options_for_select(weekday_options,get_course_feature(@course_features,"second_day")), {:class => "form-control"}%>
                         </div>
                         <div class="col-lg-2">
                             <label>Hora</label><br>
                             <div class="form-group bootstrap-timepicker">
-                                <%=text_field_tag :hour_second_weekday, "", {:class => "form-control", :id => "timepicker2"}%>
+                                <%=text_field_tag :hour_second_weekday, get_course_feature(@course_features,"second_day_hour"), {:class => "form-control", :id => "timepicker2"}%>
                             </div>
                         </div>
                     </div>
@@ -92,7 +93,7 @@
                         <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Modalidad del Curso</label>
-                                <%=f.select :zoho_product_id, options_for_select(@products.collect{|p| [p["name"],p["item_id"]]}), {:include_blank => true}, {:class => "form-control"}%>
+                                <%=f.select :zoho_product_id, options_for_select(@products.collect{|p| [p["name"],p["item_id"]]}, @course.zoho_product_id), {:include_blank => true}, {:class => "form-control"}%>
                                 <%=f.hidden_field :mode, :class => "form-control"%>
                             </div>
                         </div>
@@ -110,7 +111,7 @@
                         </div>
                     </div>
                     <div class="form-group pull-right">
-                        <%=submit_tag "Crear Curso", :class => "btn btn-default"%>
+                        <%=submit_tag "Editar Curso", :class => "btn btn-default"%>
                     </div>
                     <%end%>
                 </div>

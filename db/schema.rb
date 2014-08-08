@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140801135352) do
+ActiveRecord::Schema.define(version: 20140808170249) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -20,24 +20,10 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.datetime "updated_at"
   end
 
-  create_table "contact_account_types", force: true do |t|
-    t.string   "typename"
-    t.string   "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "contact_accounts", force: true do |t|
-    t.string   "accountname"
-    t.string   "description"
-    t.integer  "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "contact_people", force: true do |t|
     t.string   "zoho_contact_person_id"
     t.integer  "contact_id"
+    t.string   "auth_token"
     t.string   "gender"
     t.string   "salutation"
     t.date     "birthday"
@@ -50,6 +36,9 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.string   "mobile"
     t.boolean  "is_primary_contact"
     t.boolean  "zoho_enabled"
+    t.boolean  "moodle_enabled"
+    t.float    "test_score"
+    t.integer  "course_level_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -139,6 +128,20 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.datetime "updated_at"
   end
 
+  create_table "course_levels", force: true do |t|
+    t.string   "course_level"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_members", force: true do |t|
+    t.integer  "course_id"
+    t.integer  "contact_person_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_sessions", force: true do |t|
     t.integer  "courseid"
     t.datetime "startdatetime"
@@ -164,13 +167,15 @@ ActiveRecord::Schema.define(version: 20140801135352) do
   create_table "courses", force: true do |t|
     t.string   "coursename"
     t.string   "description"
+    t.integer  "course_level_id"
     t.integer  "students_qty"
     t.string   "mode"
+    t.integer  "teacher_user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "productpriceid"
+    t.string   "zoho_product_id"
     t.integer  "coursetemplateid"
-    t.integer  "statusid"
+    t.integer  "course_status_id"
     t.date     "start_date"
     t.string   "location"
     t.integer  "moodleid"
@@ -230,43 +235,6 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.datetime "updated_at"
     t.date     "valid_until"
     t.boolean  "deleted",      default: false
-  end
-
-  create_table "quotation_courses", force: true do |t|
-    t.integer  "quotationid"
-    t.integer  "courseid"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "quotation_statuses", force: true do |t|
-    t.string   "statusname"
-    t.string   "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "quotation_templates", force: true do |t|
-    t.string   "title"
-    t.text     "body"
-    t.text     "footer"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "userid"
-    t.integer  "default"
-  end
-
-  create_table "quotations", force: true do |t|
-    t.integer  "contactid"
-    t.decimal  "discount",   precision: 5, scale: 2
-    t.integer  "price"
-    t.integer  "statusid"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "userid"
-    t.text     "textbody"
-    t.text     "textfooter"
-    t.text     "comments"
   end
 
   create_table "request_default_titles", force: true do |t|
@@ -381,6 +349,7 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.string   "firstname",    limit: 45
     t.string   "lastname",     limit: 45
     t.string   "username",     limit: 45
+    t.string   "auth_token"
     t.integer  "permissionid"
     t.string   "password"
     t.string   "institution",  limit: 45
@@ -409,9 +378,24 @@ ActiveRecord::Schema.define(version: 20140801135352) do
     t.datetime "updated_at"
   end
 
+  create_table "zoho_leads", force: true do |t|
+    t.string   "lead_source"
+    t.string   "company"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "gender"
+    t.string   "email"
+    t.string   "title"
+    t.string   "phone"
+    t.string   "mobile"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "zoho_organization_data", force: true do |t|
     t.string   "authtoken"
     t.string   "organization_name"
+    t.string   "service"
     t.string   "organization_id"
     t.datetime "created_at"
     t.datetime "updated_at"

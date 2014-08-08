@@ -11,10 +11,10 @@ class RequestsController < ApplicationController
 			@active = "solved"
 		end
 		#solicitudes pendientes
-		@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4]).order("updated_at DESC").page(params[:page]).per(10)
+		@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4]).order("updated_at DESC").page(params[:page]).per(10)
 		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => session[:user_id], :statusid => [2,3,]).order("updated_at DESC")
-		@user = User.find(session[:user_id])
+		@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3,]).order("updated_at DESC")
+		@user = User.find(current_user.id)
 		@tags = get_user_tags(@user.id)
 	end
 
@@ -27,11 +27,11 @@ class RequestsController < ApplicationController
 
 	def filter_pending
 		if params[:tag] != ""
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4], :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(10)
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4], :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(10)
 		else
-			@requests = Request.where(:receiverid => session[:user_id], :statusid => [1,4]).order("updated_at ASC").page(params[:page]).per(10)
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4]).order("updated_at ASC").page(params[:page]).per(10)
 		end
-		@tags = get_user_tags(session[:user_id])
+		@tags = get_user_tags(current_user.id)
 		respond_to do |format|
 			format.js
 		end
@@ -62,7 +62,7 @@ class RequestsController < ApplicationController
 	end
 
 	def sent_requests
-		@user = User.find(session[:user_id])
+		@user = User.find(current_user.id)
 		#Hay dos tipos de tabla
 		#La primera es una tabla regular que muestra solicitudes
 		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
@@ -101,7 +101,7 @@ class RequestsController < ApplicationController
 
 	def new_request
 		@request = Request.new()
-		@user = User.where(:id => session[:user_id]).first()
+		@user = User.where(:id => current_user.id).first()
 		@priorities = RequestPriority.all()
 		#temporalmente limitado a enviar solicitudes sólo al área TI
 		@area = Area.find(params[:areaid])
@@ -125,7 +125,7 @@ class RequestsController < ApplicationController
 
 	def edit_request
 		@request = Request.find(params[:id])
-		@user = User.find(session[:user_id])
+		@user = User.find(current_user.id)
 		@priorities = RequestPriority.all()
 		@area = Area.find(@request.areaid)
 		role = area_role(@user.id, @area.id)
@@ -154,7 +154,7 @@ class RequestsController < ApplicationController
 			redirect_to :action => "sent_requests"
 		else
 			flash[:notice] = "No ha podido modificar la solicitud."
-			@user = User.find(session[:user_id])
+			@user = User.find(current_user.id)
 			render "edit_request"
 		end
 	end
@@ -174,7 +174,7 @@ class RequestsController < ApplicationController
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
 		else
-			@user = User.find(session[:user_id])
+			@user = User.find(current_user.id)
 			flash[:notice] = "No se pudo registrar la solicitud."
 			render "new_request"
 		end
@@ -257,7 +257,7 @@ class RequestsController < ApplicationController
 
 	def destroy
 		request = Request.find(params[:id])
-		if request.userid == session[:user_id]
+		if request.userid == current_user.id
 			request.destroy
 			flash[:notice] = "La solicitud fue eliminada de forma exitosa."
 			redirect_to :action => "sent_requests"
@@ -333,7 +333,7 @@ class RequestsController < ApplicationController
 	end
 
 	def check_authentication
-	    if session[:user_id].nil?
+	    if current_user.nil?
 	      redirect_to :controller => "users", :action => "index"
 	    end
 	end

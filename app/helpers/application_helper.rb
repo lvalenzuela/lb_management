@@ -1,6 +1,5 @@
 module ApplicationHelper
 	
-
 	def activate_menu_item(desired,active)
 		if active.include?(desired)
 			return "class=active"
@@ -31,7 +30,7 @@ module ApplicationHelper
 	def areas_for_user
 		#Areas en que el usuario es manager o administrador
 		areas = RoleAssignation.joins("inner join contexts on role_assignations.contextid = contexts.id
-										and role_assignations.userid = #{session[:user_id]}
+										and role_assignations.userid = #{current_user.id}
 										and contexts.typeid = 2
 										and role_assignations.roleid in (1,2)").select("role_assignations.id,
 																				role_assignations.roleid,

@@ -39,7 +39,7 @@ class MainController < ApplicationController
 
     def area_manager
         #Administración de las áreas de Longborun y de los roles de los usuarios en ellas
-        @areas = areas_for_user(session[:user_id])
+        @areas = areas_for_user(current_user.id)
         @active = params[:opt] ? params[:opt].to_s : @areas.first().id.to_s
         @selected_area = @areas.find(@active.to_i)
         @area_users = get_area_users(@selected_area.id)
@@ -175,7 +175,7 @@ class MainController < ApplicationController
     end
 
     def check_authentication
-        if session[:user_id].nil?
+        if current_user.nil?
           redirect_to :controller => "users", :action => "index"
         end
     end

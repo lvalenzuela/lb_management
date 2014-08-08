@@ -15,5 +15,6 @@
 //= require turbolinks
 //= require redactor-rails
 //= require modernizr
+//= require bootstrap-timepicker
 //= require_tree .
 

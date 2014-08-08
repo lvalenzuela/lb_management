@@ -90,15 +90,6 @@
                             <li>
                                 <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
                             </li>
-                            <%if session[:system_role] <= 1%>
-                                <li>
-                                    <%=link_to "Admin. Cuentas Clientes", :controller => "clients", :action => "manage_accounts"%>
-                                </li>
-                            <%end%>
-                            <li>
-                                <%=link_to "Listado de Productos", :controller => "main", :action => "manage_products"%>
-                            </li>
-
                         </ul>
                     </li>
                 <%end%>
