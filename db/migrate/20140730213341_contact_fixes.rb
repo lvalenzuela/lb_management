@@ -7,7 +7,7 @@ class ContactFixes < ActiveRecord::Migration
 
   def down
   	add_column :contacts, :lastname, :string
-  	rename_column :contacts, :contact_name, :firstname
+  	rename_column :contacts, :contact_name, :fistname
   	remove_column :contacts, :company_name
   end
 end
