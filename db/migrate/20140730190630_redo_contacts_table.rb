@@ -1,5 +1,7 @@
 class RedoContactsTable < ActiveRecord::Migration
   def up
+    drop_table :contacts
+    
   	create_table :contacts do |t|
     	t.string :fistname
     	t.string :lastname
