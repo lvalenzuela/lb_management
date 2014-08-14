@@ -75,11 +75,11 @@
                     <%end%>
                     <!-- /input-group -->
                 </li>
-                <%if session[:system_role] <= 2%>
+                <%if current_user.system_role_id <= 2%>
                     <li <%=activate_menu_item("admin", active_item)%>>
                         <a href="#"><i class="fa fa-gears fa-fw"></i> Administración<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <%if session[:system_role] <= 1%>
+                            <%if current_user.system_role_id <= 1%>
                                 <li>
                                     <%=link_to "Sistema", :controller => "main", :action => "system_manager"%>
                                 </li>
@@ -93,7 +93,7 @@
                         </ul>
                     </li>
                 <%end%>
-                <%if session[:system_role] <= 2%>
+                <%if current_user.system_role_id <= 2%>
                     <li <%=activate_menu_item("courses",active_item)%>>
                     <a href="#"><i class="fa fa-graduation-cap fa-fw"></i> Administracion Cursos<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -106,7 +106,7 @@
                         </ul>
                     </li>
                 <%end%>
-                <%if session[:system_role] <= -1%>
+                <%if current_user.system_role_id <= -1%>
                     <li <%=activate_menu_item("clients", active_item)%>>
                         <a href="#"><i class="fa fa-group fa-fw"></i> Clientes<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -126,7 +126,7 @@
                         </ul>
                     </li>
                 <%end%>
-                <%if session[:system_role] <= 2 %>
+                <%if current_user.system_role_id <= 2 %>
                     <li <%=activate_menu_item("reports",active_item)%>>
                         <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">

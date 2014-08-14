@@ -29,7 +29,6 @@ class UsersController < ApplicationController
 				else
 					cookies[:auth_token] = user.auth_token
 				end
-				session[:system_role] = role_in_system(user.id)
 				redirect_to root_path
 			else
 				flash[:notice] = "Contraseña incorrecta, por favor vuelve a intentarlo."
@@ -62,15 +61,5 @@ class UsersController < ApplicationController
 		contexts = Context.where(:typeid => 2)
 		roles = RoleAssignation.where(:userid => user_id, :contextid => contexts.map{|c| c.id})
 		return roles
-	end
-	
-	def role_in_system(userid)
-		u = RoleAssignation.where(:userid => userid, :contextid => 1).first()
-		
-		if u.nil?
-			return 1000 # Mientras mayor es el rol, menores los privilegios
-		else
-			return u.roleid
-		end
 	end
 end

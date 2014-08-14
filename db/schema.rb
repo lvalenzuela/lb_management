@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140814160055) do
+ActiveRecord::Schema.define(version: 20140814194905) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -357,7 +357,7 @@ ActiveRecord::Schema.define(version: 20140814160055) do
     t.string   "lastname",            limit: 45
     t.string   "username",            limit: 45
     t.string   "auth_token"
-    t.integer  "permissionid"
+    t.integer  "system_role_id"
     t.string   "password"
     t.string   "institution",         limit: 45
     t.string   "department",          limit: 45
