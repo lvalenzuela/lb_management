@@ -57,7 +57,7 @@ class CoursesController < ApplicationController
         @course = Course.find(params[:id])
         @course_features = CourseFeature.where(:course_id => @course.id)
         student_list = CourseMember.where(:course_id => @course.id)
-        @students = ContactPerson.where(:id => student_list.map{|s| s.contact_person_id})
+        @students = WebUser.where(:id => student_list.map{|s| s.web_user_id})
     end
 
     def edit

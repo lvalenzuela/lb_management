@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140808170249) do
+ActiveRecord::Schema.define(version: 20140814160055) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 20140808170249) do
 
   create_table "course_members", force: true do |t|
     t.integer  "course_id"
-    t.integer  "contact_person_id"
+    t.integer  "web_user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -180,6 +180,13 @@ ActiveRecord::Schema.define(version: 20140808170249) do
     t.string   "location"
     t.integer  "moodleid"
     t.integer  "course_type_id"
+  end
+
+  create_table "diagnostic_tests", force: true do |t|
+    t.integer  "contact_person_id"
+    t.integer  "score"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "last_request_message_checks", force: true do |t|
@@ -346,15 +353,46 @@ ActiveRecord::Schema.define(version: 20140808170249) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "firstname",    limit: 45
-    t.string   "lastname",     limit: 45
-    t.string   "username",     limit: 45
+    t.string   "firstname",           limit: 45
+    t.string   "lastname",            limit: 45
+    t.string   "username",            limit: 45
     t.string   "auth_token"
     t.integer  "permissionid"
     t.string   "password"
-    t.string   "institution",  limit: 45
-    t.string   "department",   limit: 45
-    t.string   "email",        limit: 45
+    t.string   "institution",         limit: 45
+    t.string   "department",          limit: 45
+    t.string   "email",               limit: 45
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+  end
+
+  create_table "web_users", force: true do |t|
+    t.string   "uid"
+    t.string   "name"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "facebook_email"
+    t.string   "email"
+    t.string   "password"
+    t.string   "gender"
+    t.string   "phone"
+    t.string   "mobile"
+    t.string   "location"
+    t.string   "facebook_location"
+    t.string   "oauth_token"
+    t.datetime "oauth_expires_at"
+    t.string   "provider"
+    t.string   "zoho_contact_person_id"
+    t.string   "zoho_contact_id"
+    t.integer  "moodle_id"
+    t.boolean  "zoho_enabled",           default: false
+    t.boolean  "moodle_enabled",         default: false
+    t.integer  "test_score"
+    t.integer  "course_level_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -371,7 +409,7 @@ ActiveRecord::Schema.define(version: 20140808170249) do
   end
 
   create_table "zoho_invoices", force: true do |t|
-    t.integer  "contact_id"
+    t.integer  "customer_id"
     t.string   "zoho_contact_id"
     t.string   "zoho_invoice_id"
     t.datetime "created_at"

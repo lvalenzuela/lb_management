@@ -7,9 +7,9 @@ class AddPicPaperclip < ActiveRecord::Migration
 	end
 
 	def self.down
-		remove_column :users, :pic_file_name
-		remove_column :users, :pic_content_type
-		remove_column :users, :pic_file_size
-		remove_column :users, :pic_updated_at
+		remove_column :requests, :pic_file_name
+		remove_column :requests, :pic_content_type
+		remove_column :requests, :pic_file_size
+		remove_column :requests, :pic_updated_at
 	end
 end

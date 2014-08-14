@@ -1,0 +1,85 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ""%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Perfil de Usuario Longbourn</h1>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Información Del Usuario
+                </div>
+                <div class="panel-body">
+                	<div class="row">
+                		<div class="col-lg-3">
+		                	<div class="thumbnail">
+		                		<%=image_tag @user.avatar.url%>
+		                		<div class="caption">
+		                			<%=link_to "Cambiar Imagen", "", {:data => {:toggle => "modal", :target => "#avatar-modal"}, :class => "btn btn-block btn-default"}%>
+		                			<%=form_tag change_profile_picture_users_path, :id => "profile-picture-form", :multipart => true do%>
+		                				<%=render :partial => "change_image_modal"%>
+		                			<%end%>
+		                		</div>
+		                	</div>
+		                </div>
+		                <div class="col-lg-9">
+		                	<div class="row">
+		                		<div class="col-lg-12">
+		                			<h2 class="page-header"><%=@user.firstname+" "+@user.lastname%></h2>
+		                		</div>
+		                		<div class="col-lg-12">
+		                			<table class="table table-striped">
+		                				<tr>
+		                					<th>Email</th>
+		                					<td><%=@user.email%></td>
+		                				</tr>
+		                				<tr>
+		                					<th>Institucion</th>
+		                					<td><%=@user.institution%></td>
+		                				</tr>
+		                				<tr>
+		                					<th>Departamento</th>
+		                					<td><%=@user.department%></td>
+		                				</tr>
+		                			</table>
+		                		</div>
+		                	</div>
+		                </div>
+                	</div>
+                	<div class="row">
+                		<div class="col-lg-12">
+                			<h2 class="page-header">Información sobre el Usuario</h2>
+                		</div>
+                		<div class="col-lg-4">
+                			<div class="panel panel-default">
+                				<div class="panel-heading">
+                					Áreas
+                				</div>
+                				<div class="panel-body">
+                					<table class="table">
+                						<thead>
+                							<th>Área Longbourn</th>
+                							<th>Rol del Usuario</th>
+                						</thead>
+                						<tbody>
+                							<%@user_area_roles.each do |r|%>
+                							<tr>
+                								<td><%=get_area_name_by_context(r.contextid)%></td>
+                								<td><%=get_rolename(r.roleid)%></td>
+                							</tr>
+                							<%end%>
+                						</tbody>
+                					</table>
+                				</div>
+                			</div>
+                		</div>
+                	</div>
+                </div>
+            </div>
+    	</div>
+    </div>
+</div>

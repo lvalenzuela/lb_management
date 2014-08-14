@@ -153,6 +153,8 @@ Rails.application.routes.draw do
     collection do 
       get 'index'
       get 'course_members'
+      get "user_profile"
+      post "change_profile_picture"
       post 'login'
       get 'logout'
     end

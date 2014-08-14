@@ -46,7 +46,7 @@
                 <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><%=link_to "<i class='fa fa-user fa-fw'></i> User Profile".html_safe%>
+                <li><%=link_to "<i class='fa fa-user fa-fw'></i> User Profile".html_safe, :controller => :users, :action => :user_profile%>
                 </li>
                 <li><%=link_to "<i class='fa fa-gear fa-fw'></i> Settings".html_safe%>
                 </li>

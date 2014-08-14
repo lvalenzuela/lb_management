@@ -43,11 +43,26 @@ class UsersController < ApplicationController
 	    redirect_to :action => "index"
 	end
 
-	def show
+	def user_profile
+		@user = current_user
+		@user_area_roles = get_user_area_roles(@user.id)
+	end
 
+	def change_profile_picture
+		user = current_user
+		user.avatar = params[:avatar]
+		user.save!
+		redirect_to :action => :user_profile
 	end
 
 	private
+
+	def get_user_area_roles(user_id)
+		#Se identifican todas las areas del sistema
+		contexts = Context.where(:typeid => 2)
+		roles = RoleAssignation.where(:userid => user_id, :contextid => contexts.map{|c| c.id})
+		return roles
+	end
 	
 	def role_in_system(userid)
 		u = RoleAssignation.where(:userid => userid, :contextid => 1).first()
