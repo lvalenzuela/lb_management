@@ -32,7 +32,7 @@
                     <%else%>
                         <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 4, :actionname => action_name}}, {:class => "btn btn-success btn-circle"} %></td>
                     <%end%>
-                    <%if has_unseen_messages(request.last_msg_datetime, request.id, session[:user_id])%>
+                    <%if has_unseen_messages(request.last_msg_datetime, request.id, current_user.id)%>
                         <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
                     <%else%>
                         <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>

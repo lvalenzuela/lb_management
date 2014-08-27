@@ -1,0 +1,57 @@
+<%= render "shared_partials/navigation_menu", :active_item => "requests"%>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Búsqueda de Requerimientos</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Requerimientos Encontrados
+                </div>
+                <div class="panel-body">
+                	<div class="table-responsive">
+                		<table class="table table-striped" id="found-requests-table">
+                			<thead>
+	                			<tr>
+	                				<th>ID</th>
+	                				<th>Tema</th>
+	                				<th>Descripción</th>
+	                				<th>Remitente</th>
+	                				<th>Estado</th>
+	                				<th>Anotaciones</th>
+	                			</tr>
+                			</thead>
+                			<tbody>
+                				<%@requests.each do |r|%>
+                				<tr>
+                					<td><%=r.id%></td>
+                					<td><%=link_to truncate(r.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+r.id.to_s}%></td>
+                					<td><%=excerpt(r.request,@search_term, radius: 20).html_safe%></td>
+                					<td><%=get_username(r.userid)%></td>
+                					<td><%=request_status_desc(r.statusid)%></td>
+				                    <%if has_unseen_messages(r.last_msg_datetime, r.id, current_user.id)%>
+				                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => r.id}}, {:class => "btn btn-primary"} %></td>
+				                    <%else%>
+				                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => r.id}}, {:class => "btn btn-outline btn-primary"} %></td>
+				                    <%end%>
+                				</tr>
+                				<%=render :partial => "modal_request", :locals => {:request => r}%>
+                				<%end%>
+                			</tbody>
+                		</table>
+                	</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#found-requests-table').dataTable();
+});
+</script>

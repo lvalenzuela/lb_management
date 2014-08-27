@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :courses do 
     collection do
+      get "search"
       get "index"
       get "new"
       get "show"
@@ -15,6 +16,7 @@ Rails.application.routes.draw do
 
   resources :clients do
     collection do 
+      get "search"
       get 'index'
       get 'manage_accounts'
       post 'create_account'
@@ -47,6 +49,7 @@ Rails.application.routes.draw do
  
   resources :moodle_courses do
     collection do
+      get "search"
       get "index"
       post "assign"
       post "create_group"
@@ -59,6 +62,7 @@ Rails.application.routes.draw do
 
   resources :main do
     collection do
+      get "search"
       get 'system_manager'
       post "assign_system_manager"
       delete "unassign_system_manager"
@@ -82,6 +86,7 @@ Rails.application.routes.draw do
 
   resources :notifications do
     collection do
+      get "search"
       get 'index'
       get 'new'
       delete 'destroy'
@@ -94,6 +99,7 @@ Rails.application.routes.draw do
 
   resources :reports do
     collection do
+      get "search"
       get 'index'
       get 'clients'
       get 'courses'
@@ -113,6 +119,7 @@ Rails.application.routes.draw do
 
   resources :requests do
     collection do
+      get "search"
       get 'index'
       get 'mark_solution'
       get 'confirm_solution'
@@ -141,7 +148,8 @@ Rails.application.routes.draw do
   end
 
   resources :request_notes do
-    collection do 
+    collection do
+      get "search"
       get "show"
       post "create"
       get "edit"
@@ -150,7 +158,8 @@ Rails.application.routes.draw do
   end
 
   resources :users do
-    collection do 
+    collection do
+      get "search"
       get 'index'
       get 'course_members'
       get "user_profile"

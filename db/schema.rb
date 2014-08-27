@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140814194905) do
+ActiveRecord::Schema.define(version: 20140826152227) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -177,6 +177,8 @@ ActiveRecord::Schema.define(version: 20140814194905) do
     t.integer  "coursetemplateid"
     t.integer  "course_status_id"
     t.date     "start_date"
+    t.string   "discount_pct"
+    t.integer  "discount_factor"
     t.string   "location"
     t.integer  "moodleid"
     t.integer  "course_type_id"

@@ -65,9 +65,9 @@
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
                 <li class="sidebar-search">
-                    <%=form_tag({:controller => "reports", :action => "clients"}, method: :get) do%>
+                    <%=form_tag({:controller => controller_name , :action => :search}, method: :get) do%>
                         <div class="input-group custom-search-form">
-                          <%=text_field_tag "institution_name", nil, class: "form-control", placeholder: "Buscar" %>
+                          <%=text_field_tag :search_words, nil, class: "form-control", placeholder: "Buscar" %>
                           <span class="input-group-btn">
                             <%=button_tag "<i class='fa fa-search'></i>".html_safe, class: "btn btn-default"%>
                           </span>

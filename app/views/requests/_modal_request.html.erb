@@ -14,6 +14,7 @@
                 <%if request.attach.exists? %>
                     <%=link_to "Ver Archivos Adjuntos", request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
                 <%end%>
+                <%=link_to "Comentarios", {:controller => :request_notes, :action => :show, :params => {:id => request.id}}, {:class => "btn btn-default"}%>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

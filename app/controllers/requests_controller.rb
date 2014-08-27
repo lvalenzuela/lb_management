@@ -4,6 +4,11 @@ class RequestsController < ApplicationController
 	layout "dashboard"
 	include RequestsHelper
 
+	def search
+		@search_term = params[:search_words]
+		@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+	end
+
 	def index
 		@active = "pending"
 		case params[:opt] 

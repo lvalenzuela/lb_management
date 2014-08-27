@@ -5,6 +5,18 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header"><%=link_to @request.subject, :controller => "requests", :action => "index"%></h1>
+            <div class="row">
+            	<div class="col-lg-10 col-lg-offset-1 well">
+            		<div class="op-request">
+            			<p><%=simple_format @request.request%></p>
+            		</div>
+            		<div class="pull-right">
+		                <%if @request.attach.exists? %>
+	                    	<%=link_to "Ver Archivos Adjuntos", @request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
+	                	<%end%>
+                	</div>
+            	</div>
+            </div>
         </div>
         <%if !@notes.nil?%>
 	        <%@notes.each do |note|%>
