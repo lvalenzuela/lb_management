@@ -41,8 +41,7 @@
 	            <th>Tema</th>
 	            <th style="text-align: center;">Estado</th>
 	            <th style="text-align: center;">Confirmar</th>
-	            <th style="text-align: center;">Rechazar</th>
-	            <th style="text-align: center;">Cancelar</th>
+	            <th style="text-align: center;">Rechazar Solución</th>
 	        </tr>
 	    </thead>
 	    <tbody>
@@ -51,9 +50,8 @@
 	                <td style="text-align: center;"><%=request.id%></td>
 	                <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
 	                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle", data: {confirm: "¿Está seguro de que éste requerimiento no requiere una nueva revision?"}} %></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 1}}, {:class => "btn btn-warning btn-circle"} %></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 3}}, {:class => "btn btn-danger btn-circle"} %></td>
+	                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle", data: {confirm: "¿Está seguro de que éste requerimiento no requiere una nueva revision?"}} %></td>
+	                <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:class => "btn btn-warning btn-circle"} %></td>
 	            </tr>
 	        <%end%>
 	    </tbody>

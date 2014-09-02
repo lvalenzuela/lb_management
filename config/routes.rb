@@ -122,7 +122,6 @@ Rails.application.routes.draw do
       get "search"
       get 'index'
       get 'mark_solution'
-      get 'confirm_solution'
       get "area_for_request"
       get 'new_request'
       post 'create_request'

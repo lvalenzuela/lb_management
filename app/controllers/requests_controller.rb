@@ -26,7 +26,7 @@ class RequestsController < ApplicationController
 		#Modifica el estado de la solicitud desde el usuario a quien se le asigna
 		change_status(params)
 
-		redirect_to :action => params[:actionname]
+		redirect_to :controller => :request_notes, :action => :show, :id => params[:id]
 	end
 
 	def filter_pending
@@ -68,12 +68,6 @@ class RequestsController < ApplicationController
 		else
 			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
 		end
-	end
-
-	def confirm_solution
-		#Modifica el estado de la solicitud desde el usuario que realiza la solicitud
-		change_status(params)	
-		redirect_to :action => "sent_requests"
 	end
 
 	def area_for_request
