@@ -130,12 +130,12 @@ Rails.application.routes.draw do
       post 'update'
       post 'filter_pending'
       post 'filter_resolved'
-      post 'mark_with_tag'
-      post 'create_tag'
-      post "create_default_title"
-      post "update_default_title"
-      get "edit_default_title"
+      post "create_request_tag"
+      post "update_request_tag"
+      get "edit_request_tag"
+      delete "destroy_request_tag"
       get 'sent_requests'
+      get 'waiting_confirmation'
       get 'filter_sent'
       get 'edit_request'
       get 'show'
@@ -143,7 +143,6 @@ Rails.application.routes.draw do
       get "manage_area_requests"
       post 'assign_requests'
       delete 'destroy'
-      delete "destroy_default_title"
     end
   end
 

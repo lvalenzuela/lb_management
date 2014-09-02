@@ -25,9 +25,9 @@ module RequestsHelper
 
 	def get_tagname(id)
 		if !id.nil?
-			tagname = Tag.find(id).tagname
+			return RequestTag.find(id).tagname
 		else
-			"-"
+			return "-"
 		end
 	end
 

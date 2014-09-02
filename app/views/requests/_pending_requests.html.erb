@@ -3,28 +3,25 @@
         <tr>
             <th style="text-align: center;"> ID</th>
             <th>Tema</th>
-            <th>Tag</th>
+            <th>Categoría</th>
             <th>Remitente</th>
-            <th style="text-align: center;">Prioridad</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
             <th style="text-align: center;">Acciones</th>
-            <th style="text-align: center;">Anotaciones</th>
         </tr>
     </thead>
     <tbody>
         <%if @requests.nil? || @requests.empty?%>
             <tr class="warning">
-                <td colspan="8">No hay solicitudes pendientes asignadas al usuario</td>
+                <td colspan="7">No hay solicitudes pendientes asignadas al usuario</td>
             </tr>
         <%else%>
             <%@requests.each do |request|%>
                 <tr>
                     <td style="text-align: center;"><%=request.id%></td>
-                    <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-                    <td><%=select_tag "r_tagid[]", options_for_select(@tags.collect{|t| [t.tagname, request.id.to_s+";"+t.id.to_s]}, request.id.to_s+";"+request.tagid.to_s), {:class => "form-control"}%></td>
+                    <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
+                    <td><%=get_tagname(request.tagid)%></td>
                     <td><%=get_username(request.userid)%></td>
-                    <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                     <td style="text-align: center;"><%=show_date(request.duedate)%></td>
                     <%if request.statusid == 4%>
@@ -32,13 +29,7 @@
                     <%else%>
                         <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 4, :actionname => action_name}}, {:class => "btn btn-success btn-circle"} %></td>
                     <%end%>
-                    <%if has_unseen_messages(request.last_msg_datetime, request.id, current_user.id)%>
-                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
-                    <%else%>
-                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
-                    <%end%>
                 </tr>
-                <%=render :partial => "modal_request", :locals => {:request => request}%>
             <%end%>
         <%end%>
     </tbody>

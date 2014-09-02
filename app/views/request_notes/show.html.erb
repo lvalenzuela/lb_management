@@ -4,31 +4,45 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header"><%=link_to @request.subject, :controller => "requests", :action => "index"%></h1>
+            <h1 class="page-header"><%=link_to "Requerimientos", :controller => "requests", :action => "index"%> <i class="fa fa-chevron-right"></i> <%=truncate(@request.subject)%></h1>
             <div class="row">
-            	<div class="col-lg-10 col-lg-offset-1 well">
-            		<div class="op-request">
-            			<p><%=simple_format @request.request%></p>
+            	<div class="col-lg-12 well">
+            		<div class="row">
+	            		<div class="col-sm-12 op-request">
+	            			<span class="request-header"><%=@request.subject%></span>
+	            			<p><%=simple_format @request.request%></p>
+	            		</div>
             		</div>
-            		<div class="pull-right">
-		                <%if @request.attach.exists? %>
-	                    	<%=link_to "Ver Archivos Adjuntos", @request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
-	                	<%end%>
-                	</div>
+            		<div class="row">
+            			<div class="col-sm-8">
+            				<%if @request.statusid == 4%>
+            					<%=link_to "Marcar Como Pendiente <i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1, :actionname => "index"}}, {:class => "btn btn-warning"}%>
+            				<%elsif @request.statusid == 1%>
+            					<%=link_to "Marcar Como Resuelto <i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 4, :actionname => "index"}}, {:class => "btn btn-success"}%>
+            				<%end%>
+            			</div>
+	            		<div class="col-sm-4">
+	            			<div class="pull-right">
+				                <%if @request.attach.exists? %>
+			                    	<%=link_to "Ver Archivos Adjuntos", @request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
+			                	<%end%>
+		                	</div>
+	                	</div>
+	                </div>
             	</div>
             </div>
         </div>
         <%if !@notes.nil?%>
 	        <%@notes.each do |note|%>
 		        <div class="row">
-		            <div class="col-lg-12">
+		            <div class="col-lg-11 col-lg-offset-1">
 		                <div class="panel panel-default">
 		                	<div class="panel-heading">
-		                		Re: <%=truncate(note.subject)%>
+		                		<%=note.subject%>
 		                	</div>
 		                	<div class="panel-body">
 		                		<div class="row">
-		                			<div class="col-lg-10 col-lg-offset-1">
+		                			<div class="col-lg-12">
 		                				<%=simple_format note.message%>
 		                				<br>
 		                				<div class="pull-right">

@@ -14,9 +14,6 @@
                 <li <%=activate_tab(@active,"inprogress")%>>
                     <%=link_to "Requerimientos en Proceso", :controller => "requests", :action => "sent_requests", :params => {:f => "inprogress"}%>
                 </li>
-                <li <%=activate_tab(@active,"wconf")%>>
-                    <%=link_to "En Espera de Confirmación", :controller => "requests", :action => "sent_requests", :params => {:f => "wconf"}%>
-                </li>
                 <li <%=activate_tab(@active,"solved")%>>
                     <%=link_to "Requerimientos Resueltos/Cancelados", :controller => "requests", :action => "sent_requests", :params => {:f => "solved"}%>
                 </li>

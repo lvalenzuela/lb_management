@@ -5,11 +5,10 @@
 	            <th style="text-align: center;">ID</th>
 	            <th style="text-align: center;">Tema</th>
 	            <th style="text-align: center;">Área de Destino</th>
-	            <th style="text-align: center;">Prioridad</th>
+	            <th style="text-align: center;">Estado</th>
 	            <th style="text-align: center;">Asignada A</th>
 	            <th style="text-align: center;">Fecha de Solicitud</th>
 	            <th style="text-align: center;">Fecha Límite</th>
-	            <th style="text-align: center;">Anotaciones</th>
 	            <%if editable%>
 		            <th style="text-align: center;">Editar</th>
 		            <th style="text-align: center;">Eliminar</th>
@@ -20,19 +19,17 @@
 	        <%requests.each do |request|%>                                       
 	            <tr>
 	                <td style="text-align: center;"><%=request.id%></td>
-	                <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
+	                <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
 	                <td style="text-align: center;"><%=request_areaname(request.areaid)%></td>
-	                <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+	                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
 	                <td style="text-align: center;"><%=get_username(request.receiverid)%></td>
 	                <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
 	                <td style="text-align: center;"><%=show_date(request.duedate)%></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
 	                <%if editable%>
 			            <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>
 			            <td style="text-align: center;"><%=link_to (image_tag "delete_icon.png", :size => "30x30"), {action: "destroy", id: request.id}, method: :delete, data: {confirm: "Estas seguro?"}%></td>
 			        <%end%>
 	            </tr>
-	            <%=render :partial => "modal_request", :locals => {:request => request}%>
 	        <%end%>
 	    </tbody>
 	</table>
@@ -42,31 +39,22 @@
 	        <tr>
 	            <th style="text-align: center;"> ID</th>
 	            <th>Tema</th>
-	            <th style="text-align: center;">Prioridad</th>
 	            <th style="text-align: center;">Estado</th>
 	            <th style="text-align: center;">Confirmar</th>
 	            <th style="text-align: center;">Rechazar</th>
 	            <th style="text-align: center;">Cancelar</th>
-	            <th style="text-align: center;">Anotaciones</th>
 	        </tr>
 	    </thead>
 	    <tbody>
 	        <%requests.each do |request|%>
 	            <tr>
 	                <td style="text-align: center;"><%=request.id%></td>
-	                <td><%=link_to truncate(request.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+request.id.to_s}%></td>
-	                <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
+	                <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
 	                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle"} %></td>
+	                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle", data: {confirm: "¿Está seguro de que éste requerimiento no requiere una nueva revision?"}} %></td>
 	                <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 1}}, {:class => "btn btn-warning btn-circle"} %></td>
 	                <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => "requests", :action => "confirm_solution" ,:params => {:id => request.id, :statusid => 3}}, {:class => "btn btn-danger btn-circle"} %></td>
-	                <%if has_unseen_messages(request.last_msg_datetime, request.id, session[:user_id])%>
-	                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-primary"} %></td>
-	                <%else%>
-	                    <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-primary"} %></td>
-	                <%end%>
 	            </tr>
-	            <%=render :partial => "modal_request", :locals => {:request => request}%>
 	        <%end%>
 	    </tbody>
 	</table>

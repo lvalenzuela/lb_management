@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140826152227) do
+ActiveRecord::Schema.define(version: 20140902150515) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -268,12 +268,21 @@ ActiveRecord::Schema.define(version: 20140826152227) do
 
   create_table "request_priorities", force: true do |t|
     t.string   "description", limit: 45
+    t.string   "term_desc"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "request_statuses", force: true do |t|
     t.string   "description", limit: 45
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "request_tags", force: true do |t|
+    t.integer  "area_id"
+    t.integer  "default_user_id"
+    t.string   "tagname"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -313,13 +322,6 @@ ActiveRecord::Schema.define(version: 20140826152227) do
   create_table "roles", force: true do |t|
     t.string   "rolename"
     t.string   "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "tags", force: true do |t|
-    t.integer  "userid"
-    t.string   "tagname",    limit: 45
     t.datetime "created_at"
     t.datetime "updated_at"
   end

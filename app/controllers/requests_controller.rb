@@ -20,7 +20,6 @@ class RequestsController < ApplicationController
 		#solocitudes resueltas o canceladas
 		@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3,]).order("updated_at DESC")
 		@user = User.find(current_user.id)
-		@tags = get_user_tags(@user.id)
 	end
 
 	def mark_solution
@@ -36,49 +35,27 @@ class RequestsController < ApplicationController
 		else
 			@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4]).order("updated_at ASC").page(params[:page]).per(10)
 		end
-		@tags = get_user_tags(current_user.id)
 		respond_to do |format|
 			format.js
 		end
 	end
 
-	def mark_with_tag
-		#actualizar campo correspondiente al tag en la solicitud
-		#data[1] = id de la solicitud, data[2] = id del tag
-		params[:r_tagid].each do |rt|
-			if rt != ""
-				data = rt.split(";") 
-				Request.find(data[0].to_i).update_attributes(:tagid => data[1].to_i)
-			end
-		end
-
-		redirect_to :action => params[:actionname]
-	end
-
-	def create_tag
-		tag = Tag.create(tag_params)
-		if tag.valid?
-			flash[:notice] = "La etiqueta fue creada con éxito."
-			redirect_to :action => "index"
-		else
-			flash[:notice] = "No se pudo crear la etiqueta."
-			redirect_to :action => "index"
-		end
+	def waiting_confirmation
+		@user = current_user
+		@editable = false
+		@table = 2
+		@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at ASC")
 	end
 
 	def sent_requests
-		@user = User.find(current_user.id)
+		@user = current_user
 		#Hay dos tipos de tabla
 		#La primera es una tabla regular que muestra solicitudes
 		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
 		@table = 1
 		@editable = false
-		@active = "wconf"
+		@active = "inprogress"
 		case params[:f]
-		when "inprogress"
-			#Solicitudes pendientes que han sido asignadas
-			@active = "inprogress"
-			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
 		when "solved"
 			#Solicitudes resueltas o canceladas
 			@active = "solved"
@@ -89,8 +66,7 @@ class RequestsController < ApplicationController
 			@editable = true
 			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at ASC")
 		else
-			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at ASC")
-			@table = 2
+			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
 		end
 	end
 
@@ -106,46 +82,19 @@ class RequestsController < ApplicationController
 
 	def new_request
 		@request = Request.new()
-		@user = User.where(:id => current_user.id).first()
+		@user = current_user
 		@priorities = RequestPriority.all()
+		@area_tags = RequestTag.where(:area_id => params[:areaid])
 		#temporalmente limitado a enviar solicitudes sólo al área TI
 		@area = Area.find(params[:areaid])
-		role = area_role(@user.id, @area.id)
-		if role
-			if role <= 2
-				#Si el usuario es administrador o manager del sistema
-				@manager = true
-			elsif role <= 3
-				#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
-				@receivers = receiver_list(default_area)
-			else
-				#Si es de otra area, se limitaran los subjects de las solicitudes
-				#que puede realizar
-				@subjects = RequestDefaultTitle.where(:area_id => @area.id)
-			end
-		else
-			@subjects = RequestDefaultTitle.where(:area_id => @area.id)
-		end
 	end
 
 	def edit_request
 		@request = Request.find(params[:id])
-		@user = User.find(current_user.id)
+		@user = current_user
 		@priorities = RequestPriority.all()
 		@area = Area.find(@request.areaid)
-		role = area_role(@user.id, @area.id)
-		if role <= 2
-			#Si el usuario es administrador o manager del sistema
-			@manager = true
-		end
-		if role <= 3
-			#es un miembro del area, asi que puede enviar solicitudes a una persona en específico
-			@receivers = receiver_list(default_area)
-		else
-			#Si es de otra area, se limitaran los subjects de las solicitudes
-			#que puede realizar
-			@subjects = RequestDefaultTitle.where(:area_id => @area.id)
-		end
+		@area_tags = RequestTag.where(:area_id => @request.areaid)
 	end
 
 	def update
@@ -167,6 +116,9 @@ class RequestsController < ApplicationController
 	def create_request
 		@request = Request.create(request_params)
 		if @request.valid?
+			#Se marca el usuario que envió el requerimiento
+			@request.userid = current_user.id
+			@request.save!
 			if !@request.receiverid.nil? && @request.receiverid != ""
 				notify_user(@request.receiverid,@request,true)
 			else
@@ -179,7 +131,10 @@ class RequestsController < ApplicationController
 			flash[:notice] = "La solicitud fue registrada de forma exitosa."
 			redirect_to :action => "sent_requests"
 		else
-			@user = User.find(current_user.id)
+			@user = current_user
+			@priorities = RequestPriority.all()
+			@area = Area.find(@request.areaid)
+			@area_tags = RequestTag.where(:area_id => @request.areaid)
 			flash[:notice] = "No se pudo registrar la solicitud."
 			render "new_request"
 		end
@@ -211,31 +166,33 @@ class RequestsController < ApplicationController
 	def manage_area_requests
 		@area = Area.find(params[:id])
 		@active = "manage"
-		@titles = RequestDefaultTitle.where(:area_id => @area.id).order("created_at ASC")
-		@default_title = RequestDefaultTitle.new()
+		@tags = RequestTag.where(:area_id => @area.id).order("created_at ASC")
+		@default_tag = RequestTag.new()
+		@receivers = receiver_list(default_area)
 	end
 
-	def create_default_title
-		RequestDefaultTitle.create(params.require(:request_default_title).permit(:area_id, :title))
-		redirect_to :action => :manage_area_requests, :id => params[:request_default_title][:area_id]
+	def create_request_tag
+		RequestTag.create(params.require(:request_tag).permit(:area_id, :tagname, :default_user_id))
+		redirect_to :action => :manage_area_requests, :id => params[:request_tag][:area_id]
 	end
 
-	def edit_default_title
+	def edit_request_tag
 		@area = Area.find(params[:id])
 		@active = "manage"
-		@titles = RequestDefaultTitle.where(:area_id => @area.id).order("created_at ASC")
-		@default_title = RequestDefaultTitle.find(params[:titleid])
+		@tags = RequestTag.where(:area_id => @area.id).order("created_at ASC")
+		@default_tag = RequestTag.find(params[:tagid])
+		@receivers = receiver_list(default_area)
 		render :manage_area_requests
 	end
 
-	def update_default_title
-		t = RequestDefaultTitle.find(params[:request_default_title][:id])
-		t.update_attributes(params.require(:request_default_title).permit(:title))
-		redirect_to :action => :manage_area_requests, :id => params[:request_default_title][:area_id]
+	def update_request_tag
+		t = RequestTag.find(params[:request_tag][:id])
+		t.update_attributes(params.require(:request_tag).permit(:tagname, :default_user_id))
+		redirect_to :action => :manage_area_requests, :id => params[:request_tag][:area_id]
 	end
 
-	def destroy_default_title
-		RequestDefaultTitle.find(params[:id]).destroy
+	def destroy_request_tag
+		RequestTag.find(params[:id]).destroy
 		redirect_to :action => :manage_area_requests, :id => params[:area_id]
 	end
 
@@ -348,7 +305,7 @@ class RequestsController < ApplicationController
 	end
 
 	def request_params
-		params.require(:request).permit(:userid, :subject, :receiverid, :areaid, :priorityid, :statusid, :duedate, :request, :attach, :pic)
+		params.require(:request).permit(:subject, :tagid, :receiverid, :areaid, :priorityid, :statusid, :duedate, :request, :attach, :pic)
 	end
 
 	def notify_user(userid,request,new_request)

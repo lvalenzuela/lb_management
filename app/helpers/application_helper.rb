@@ -1,5 +1,22 @@
 module ApplicationHelper
 	
+	def check_user_requests(userid)
+		wconf = Request.where("userid = #{userid} and statusid = 4").order("updated_at ASC").count
+		if wconf.nil?
+			session[:req_waiting_conf] = 0
+		else
+			session[:req_waiting_conf] = wconf
+		end
+
+		pending = Request.where(:receiverid => current_user.id, :statusid => [1]).count
+		if pending.nil?
+			session[:req_pending] = 0
+		else
+			session[:req_pending] = pending
+		end
+		return session[:req_waiting_conf]
+	end
+
 	def activate_menu_item(desired,active)
 		if active.include?(desired)
 			return "class=active"

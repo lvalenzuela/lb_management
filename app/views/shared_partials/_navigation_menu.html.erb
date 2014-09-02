@@ -11,39 +11,37 @@
     <!-- /.navbar-header -->
 
     <ul class="nav navbar-top-links navbar-right">
+        <%check_user_requests(current_user.id)%>
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-envelope fa-fw"></i> <%=unseen_notifications(session[:user_id]).html_safe%> <i class="fa fa-caret-down"></i>
+                <%if session[:req_pending] != 0%>
+                    <i class="fa fa-pencil-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_pending]%></div> <i class="fa fa-caret-down"></i>
+                <%else%>
+                    <i class="fa fa-folder"></i> <i class="fa fa-caret-down"></i>
+                <%end%>
             </a>
             <ul class="dropdown-menu dropdown-messages">
-                <%get_notifications(session[:user_id]).each do |notification|%>
-                    <li>
-                        <%=link_to :controller => "notifications", :action =>"index", :params => {:id => notification.id} do%>
-                            <div>
-                                <%=seen_notification(notification.seen).html_safe%>
-                                <strong><%=notification.subject%></strong>
-                                <span class="pull-right text-muted">
-                                    <em><%=notification.created_at.strftime("%d-%m-%Y")%></em>
-                                </span>
-                            </div>
-                            <div><%=truncate(notification.message, :length => 70, :separator => ' ')%></div>
-                        <%end%>
-                    </li>
-                    <li class="divider"></li> 
-                <%end%>
-                <li>
-                    <%=link_to notifications_path, :class => "text-center" do%>
-                        <strong>Leer Todas</strong>
-                        <i class="fa fa-angle-right"></i>
-                    <%end%>
+                <li><%=link_to "<strong>".html_safe+session[:req_pending].to_s+"</strong> Requerimientos Pendientes".html_safe, {:controller => :requests, :action => :index}%>
                 </li>
             </ul>
-            <!-- /.dropdown-messages -->
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <%if session[:req_waiting_conf] != 0%>
+                    <i class="fa fa-check-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_waiting_conf]%></div> <i class="fa fa-caret-down"></i>
+                <%else%>
+                    <i class="fa fa-folder"></i> <i class="fa fa-caret-down"></i>
+                <%end%>
+            </a>
+            <ul class="dropdown-menu dropdown-messages">
+                <li><%=link_to "<strong>".html_safe+session[:req_waiting_conf].to_s+"</strong> Requerimientos Requieren Confirmación".html_safe, {:controller => :requests, :action => :waiting_confirmation}%>
+                </li>
+            </ul>
         </li>
         <!-- /.dropdown -->
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-lg fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 <li><%=link_to "<i class='fa fa-user fa-fw'></i> User Profile".html_safe, :controller => :users, :action => :user_profile%>
@@ -59,8 +57,6 @@
         <!-- /.dropdown -->
     </ul>
     <!-- /.navbar-top-links -->
-
-
     <div class="navbar-default navbar-static-side" role="navigation">
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
@@ -153,6 +149,9 @@
                         </li>
                         <li>
                             <%=link_to "Requerimientos Enviados".html_safe, :controller => "requests", :action => "sent_requests"%>
+                        </li>
+                        <li>
+                            <%=link_to "Requerimientos en Espera de Confirmación", {:controller => :requests, :action => :waiting_confirmation}%>
                         </li>
                         <%areas = areas_for_user()%>
                         <%if !areas.blank? %>
