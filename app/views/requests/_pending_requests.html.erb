@@ -7,7 +7,7 @@
             <th>Remitente</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
-            <th style="text-align: center;">Acciones</th>
+            <th style="text-align: center;">Ver Solicitud</th>
         </tr>
     </thead>
     <tbody>
@@ -24,10 +24,10 @@
                     <td><%=get_username(request.userid)%></td>
                     <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
                     <td style="text-align: center;"><%=show_date(request.duedate)%></td>
-                    <%if request.statusid == 4%>
-                        <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1, :actionname => action_name}}, {:class => "btn btn-warning btn-circle"}%></td>
+                    <%if has_unseen_messages(request.last_msg_datetime,request.id,current_user.id)%>
+                        <td style="text-align: center;"><%=link_to "<i class='fa fa-exclamation rediconcolor fa-lg'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-info"}%></td>
                     <%else%>
-                        <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 4, :actionname => action_name}}, {:class => "btn btn-success btn-circle"} %></td>
+                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list fa-lg'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-info"}%></td>
                     <%end%>
                 </tr>
             <%end%>

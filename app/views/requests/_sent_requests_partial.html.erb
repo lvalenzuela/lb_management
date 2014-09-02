@@ -40,8 +40,7 @@
 	            <th style="text-align: center;"> ID</th>
 	            <th>Tema</th>
 	            <th style="text-align: center;">Estado</th>
-	            <th style="text-align: center;">Confirmar</th>
-	            <th style="text-align: center;">Rechazar Solución</th>
+	            <th style="text-align: center;">Ver Requerimiento</th>
 	        </tr>
 	    </thead>
 	    <tbody>
@@ -50,8 +49,11 @@
 	                <td style="text-align: center;"><%=request.id%></td>
 	                <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
 	                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-check'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 2}}, {:class => "btn btn-success btn-circle", data: {confirm: "¿Está seguro de que éste requerimiento no requiere una nueva revision?"}} %></td>
-	                <td style="text-align: center;"><%=link_to "<i class='fa fa-mail-reply'></i>".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => request.id, :statusid => 1}}, {:class => "btn btn-warning btn-circle"} %></td>
+	                <%if has_unseen_messages(request.last_msg_datetime,request.id,current_user.id)%>
+	                	<td style="text-align: center;"><%=link_to "<i class='fa fa-exclamation rediconcolor fa-lg'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-info"}%></td>
+	                <%else%>
+	                	<td style="text-align: center;"><%=link_to "<i class='fa fa-list fa-lg'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => request.id}}, {:class => "btn btn-outline btn-info"}%></td>
+	                <%end%>
 	            </tr>
 	        <%end%>
 	    </tbody>
