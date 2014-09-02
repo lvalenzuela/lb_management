@@ -17,7 +17,7 @@
                 <%if session[:req_pending] != 0%>
                     <i class="fa fa-pencil-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_pending]%></div> <i class="fa fa-caret-down"></i>
                 <%else%>
-                    <i class="fa fa-folder"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-pencil-square-o"></i> <i class="fa fa-caret-down"></i>
                 <%end%>
             </a>
             <ul class="dropdown-menu dropdown-messages">
@@ -30,7 +30,7 @@
                 <%if session[:req_waiting_conf] != 0%>
                     <i class="fa fa-check-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_waiting_conf]%></div> <i class="fa fa-caret-down"></i>
                 <%else%>
-                    <i class="fa fa-folder"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-check-square-o"></i> <i class="fa fa-caret-down"></i>
                 <%end%>
             </a>
             <ul class="dropdown-menu dropdown-messages">

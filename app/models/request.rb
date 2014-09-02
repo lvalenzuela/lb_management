@@ -26,17 +26,17 @@ class Request < ActiveRecord::Base
 		case self.priorityid
 		when 1
 			#plazo mínimo de 1 días
-			date = Time.now + 1
+			date = Time.now
 			date += 1.days while weekend.include?(date.wday)
 			self.duedate = date
 		when 2
 			#plazo mínimo de 2 días
-			date = Time.now + 2.days
+			date = Time.now + 1.days
 			date += 1.days while weekend.include?(date.wday)
 			self.duedate = date
 		when 3
 			#plazo mínimo de 3 días
-			date = Time.now + 3.days
+			date = Time.now + 2.days
 			date += 1.days while weekend.include?(date.wday)
 			self.duedate = date
 		else
