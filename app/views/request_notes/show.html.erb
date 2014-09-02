@@ -16,7 +16,7 @@
             		<div class="row">
             			<div class="col-sm-8">
             				<%if @request.statusid == 4 && @request.userid == current_user.id%>
-            					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success", data: {confirm: "¿Confirmas conforme con la solución implementada?"}} %>
+            					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success", data: {confirm: "¿Confirmas que estás conforme con la solución implementada?"}} %>
 
             					<%=link_to "<i class='fa fa-mail-reply'></i> Rechazar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning"}%>
             				<%elsif @request.statusid == 1 && @request.receiverid == current_user.id%>
