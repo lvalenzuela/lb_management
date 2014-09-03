@@ -59,7 +59,7 @@
 		                				<%if note.attach.exists?%>
 		                					<%=link_to "Ver Archivos Adjuntos", note.attach.url, :class =>"btn btn-default",:target => "_blank" %>
 		                				<%end%>
-		                				<%if note.userid == session[:user_id] && (Time.now - note.created_at)/30.minutes <= 1%>
+		                				<%if note.userid == current_user.id && (Time.now - note.created_at)/30.minutes <= 1%>
 		                					<%=link_to "Editar Nota", {:controller => "request_notes", :action => "edit", :params => {:id => note.id, :requestid => @request.id}}, {:class => "btn btn-default"}%>
 		                				<%end%>
 		                			</div>
@@ -82,7 +82,7 @@
 		    					<div class="col-lg-10 col-lg-offset-1">
 		    						<div class="form-group">
 		    							<%=f.hidden_field :requestid, :value => @request.id%>
-		    							<%=f.hidden_field :userid, :value => session[:user_id]%>
+		    							<%=f.hidden_field :userid, :value => current_user.id%>
 		    							<label>Tema:</label>
 		    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
 		    						</div>
