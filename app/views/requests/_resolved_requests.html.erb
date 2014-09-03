@@ -3,8 +3,8 @@
         <tr>
             <th style="text-align: center;"> ID</th>
             <th>Tema</th>
-            <th>Tag</th>
-            <th>Remitente</th>
+            <th style="text-align: center;">Categoría</th>
+            <th style="text-align: center;">Remitente</th>
             <th style="text-align: center;">Estado</th>
             <th style="text-align: center;">Fecha Límite</th>
         </tr>
@@ -14,9 +14,9 @@
             <tr>
                 <td style="text-align: center;"><%=request.id%></td>
                 <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
-                <td><%=get_tagname(request.tagid)%></td>
-                <td><%=get_username(request.userid)%></td>
-                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                <td style="text-align: center;"><%=get_tagname(request.tagid)%></td>
+                <td style="text-align: center;"><%=get_username(request.userid)%></td>
+                <td style="text-align: center;"><span class="label label-<%=request_label_class(request.statusid)%>"><%=request_status_desc(request.statusid)%></span></td>
                 <td style="text-align: center;"><%=show_date(request.duedate)%></td>
             </tr>
         <%end%>

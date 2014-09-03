@@ -19,7 +19,7 @@
                 <td><%=request.subject%></td>
                 <td><%=request_areaname(request.areaid)%></td>
                 <td style="text-align: center;"><%=request_priority_desc(request.priorityid)%></td>
-                <td style="text-align: center;"><%=request_status_desc(request.statusid)%></td>
+                <td style="text-align: center;"><span class="label label-<%=request_label_class(request.statusid)%>"><%=request_status_desc(request.statusid)%></span></td>
                 <td style="text-align: center;"><%=request.created_at.strftime("%d-%m-%Y")%></td>
                 <td style="text-align: center;"><%=show_date(request.duedate)%></td>
 	            <td style="text-align: center;"><%=link_to (image_tag "edit_icon.png", :size => "30x30"), :controller => "requests", :action => "edit_request", :params => {:id => request.id}%></td>

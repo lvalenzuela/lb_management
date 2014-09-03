@@ -151,7 +151,7 @@
                             <%=link_to "Requerimientos Enviados".html_safe, :controller => "requests", :action => "sent_requests"%>
                         </li>
                         <li>
-                            <%=link_to "Requerimientos en Espera de Confirmación", {:controller => :requests, :action => :waiting_confirmation}%>
+                            <%=link_to "Requerimientos Enviados en Espera de Confirmación", {:controller => :requests, :action => :waiting_confirmation}%>
                         </li>
                         <%areas = areas_for_user()%>
                         <%if !areas.blank? %>

@@ -28,18 +28,6 @@ Rails.application.routes.draw do
       get "account_managers"
       post "modify_account_managers"
       post "assign_client"
-      get "quotations"
-      get "quotation_templates"
-      get "generate_quotation"
-      post "create_quotation_format"
-      post "edit_quotation_format"
-      get "set_default_format"
-      get "new_quotation"
-      get "edit_quotation"
-      post "update_quotation"
-      post "set_discount"
-      get "show_quotation"
-      post "create_quotation"
       get "new_products"
       post "create_product"
       delete "destroy_product"
@@ -127,8 +115,6 @@ Rails.application.routes.draw do
       post 'create_request'
       post 'filter_requests'
       post 'update'
-      post 'filter_pending'
-      post 'filter_resolved'
       post "create_request_tag"
       post "update_request_tag"
       get "edit_request_tag"

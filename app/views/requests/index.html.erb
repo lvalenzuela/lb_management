@@ -13,6 +13,9 @@
                 <li <%=activate_tab(@active,"pending")%>>
                     <%=link_to "Requerimientos Pendientes", {:controller => "requests", :action => "index", :params => {:opt => "pending"}}%>
                 </li>
+                <li <%=activate_tab(@active,"wconf")%>>
+                    <%=link_to "Resueltos Esperando Confirmación", {:controller => "requests", :action => "index", :params => {:opt => "wconf"}}%>
+                </li>
                 <li <%=activate_tab(@active,"solved")%>>
                     <%=link_to "Requerimientos Resueltos / Cancelados", {:controller => "requests", :action => "index", :params => {:opt => "solved"}}%>
                 </li>
@@ -30,6 +33,21 @@
     					<div class="table-responsive">
                             <%=render :partial => "pending_requests"%>
     					</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <%elsif @active == "wconf"%>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Requerimientos Esperando Confirmación
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <%=render :partial => "pending_requests"%>
+                        </div>
                     </div>
                 </div>
             </div>

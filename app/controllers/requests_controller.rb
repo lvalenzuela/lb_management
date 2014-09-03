@@ -14,11 +14,16 @@ class RequestsController < ApplicationController
 		case params[:opt] 
 		when "solved"
 			@active = "solved"
+			#solocitudes resueltas o canceladas
+			@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC")
+		when "wconf"
+			#solicitudes esperando confirmacion
+			@active = "wconf"
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [4]).order("updated_at DESC")
+		else
+			#solicitudes pendientes
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [1]).order("updated_at DESC")
 		end
-		#solicitudes pendientes
-		@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4]).order("updated_at DESC").page(params[:page]).per(10)
-		#solocitudes resueltas o canceladas
-		@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3,]).order("updated_at DESC")
 		@user = User.find(current_user.id)
 	end
 
@@ -27,17 +32,6 @@ class RequestsController < ApplicationController
 		change_status(params)
 
 		redirect_to :controller => :request_notes, :action => :show, :id => params[:id]
-	end
-
-	def filter_pending
-		if params[:tag] != ""
-			@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4], :tagid => params[:tag]).order("updated_at ASC").page(params[:page]).per(10)
-		else
-			@requests = Request.where(:receiverid => current_user.id, :statusid => [1,4]).order("updated_at ASC").page(params[:page]).per(10)
-		end
-		respond_to do |format|
-			format.js
-		end
 	end
 
 	def waiting_confirmation

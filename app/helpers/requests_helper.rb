@@ -1,5 +1,18 @@
 module RequestsHelper
 
+	def request_label_class(statusid)
+		case statusid
+		when 1
+			return "info"
+		when 2
+			return "success"
+		when 3
+			return "danger"
+		else
+			return "warning"
+		end
+	end
+
 	def activate_tab(current,desired)
 		if current.include?(desired)
 			return "class=active"
