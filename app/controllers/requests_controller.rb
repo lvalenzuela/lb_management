@@ -38,7 +38,7 @@ class RequestsController < ApplicationController
 		@user = current_user
 		@editable = false
 		@table = 2
-		@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at ASC")
+		@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC")
 	end
 
 	def sent_requests
@@ -53,14 +53,14 @@ class RequestsController < ApplicationController
 		when "solved"
 			#Solicitudes resueltas o canceladas
 			@active = "solved"
-			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at ASC")
+			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at DESC")
 		when "unassigned"
 			#Solicitudes pendientes que no han sido asignadas
 			@active = "unassigned"
 			@editable = true
-			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at ASC")
+			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at DESC")
 		else
-			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at ASC")
+			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at DESC")
 		end
 	end
 
@@ -154,7 +154,7 @@ class RequestsController < ApplicationController
 	def manage_area_requests
 		@area = Area.find(params[:id])
 		@active = "manage"
-		@tags = RequestTag.where(:area_id => @area.id).order("created_at ASC")
+		@tags = RequestTag.where(:area_id => @area.id).order("created_at DESC")
 		@default_tag = RequestTag.new()
 		@receivers = receiver_list(default_area)
 	end
@@ -167,7 +167,7 @@ class RequestsController < ApplicationController
 	def edit_request_tag
 		@area = Area.find(params[:id])
 		@active = "manage"
-		@tags = RequestTag.where(:area_id => @area.id).order("created_at ASC")
+		@tags = RequestTag.where(:area_id => @area.id).order("created_at DESC")
 		@default_tag = RequestTag.find(params[:tagid])
 		@receivers = receiver_list(default_area)
 		render :manage_area_requests
@@ -260,7 +260,7 @@ class RequestsController < ApplicationController
 						and role_assignations.contextid = #{c.id}").select("users.id,
 																			users.firstname,
 																			users.lastname,
-																			role_assignations.roleid").order("roleid ASC")
+																			role_assignations.roleid").order("roleid DESC")
 	end
 
 	def get_areas(id_list)

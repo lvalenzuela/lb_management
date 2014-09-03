@@ -71,7 +71,11 @@
 </div>
 <script>
 $(document).ready(function() {
-    $('#resolved-requests-table').dataTable();
-    $('#pending-requests-table').dataTable();
+    $('#resolved-requests-table').dataTable({
+        "bSort": false
+    });
+    $('#pending-requests-table').dataTable({
+        "bSort": false
+    });
 });
 </script>

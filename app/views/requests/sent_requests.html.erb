@@ -40,6 +40,8 @@
 </div>
 <script>
 $(document).ready(function() {
-    $('#sent-requests-table').dataTable();
+    $('#sent-requests-table').dataTable({
+        "order": [[0,"desc"]]
+    });
 });
 </script>

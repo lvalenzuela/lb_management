@@ -13,7 +13,7 @@
         <%@resolved_requests.each do |request|%>                                       
             <tr>
                 <td style="text-align: center;"><%=request.id%></td>
-                <td><%=link_to truncate(request.subject), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
+                <td><%=link_to truncate(request.subject, length: 50), {:controller => "request_notes", :action => "show", :params => {:id => request.id}}%></td>
                 <td style="text-align: center;"><%=get_tagname(request.tagid)%></td>
                 <td style="text-align: center;"><%=get_username(request.userid)%></td>
                 <td style="text-align: center;"><span class="label label-<%=request_label_class(request.statusid)%>"><%=request_status_desc(request.statusid)%></span></td>

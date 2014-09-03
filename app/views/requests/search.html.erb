@@ -14,25 +14,25 @@
                 </div>
                 <div class="panel-body">
                 	<div class="table-responsive">
-                		<table class="table table-striped" id="found-requests-table">
+                		<table class="table table-striped table-bordered" id="found-requests-table">
                 			<thead>
 	                			<tr>
-	                				<th>ID</th>
+	                				<th style="text-align: center;">ID</th>
 	                				<th>Tema</th>
-	                				<th>Descripción</th>
-	                				<th>Remitente</th>
-	                				<th>Estado</th>
-	                				<th>Anotaciones</th>
+	                				<th style="text-align: center;">Descripción</th>
+	                				<th style="text-align: center;">Remitente</th>
+	                				<th style="text-align: center;">Estado</th>
+	                				<th style="text-align: center;">Anotaciones</th>
 	                			</tr>
                 			</thead>
                 			<tbody>
                 				<%@requests.each do |r|%>
                 				<tr>
-                					<td><%=r.id%></td>
-                					<td><%=link_to truncate(r.subject), "" ,:data => {:toggle => "modal", :target => "#requestModal"+r.id.to_s}%></td>
-                					<td><%=excerpt(r.request,@search_term, radius: 20).html_safe%></td>
-                					<td><%=get_username(r.userid)%></td>
-                					<td><%=request_status_desc(r.statusid)%></td>
+                					<td style="text-align: center;"><%=r.id%></td>
+                					<td><%=link_to truncate(r.subject, length: 50), "" ,:data => {:toggle => "modal", :target => "#requestModal"+r.id.to_s}%></td>
+                					<td style="text-align: center;"><%=excerpt(r.request,@search_term, radius: 20).html_safe%></td>
+                					<td style="text-align: center;"><%=get_username(r.userid)%></td>
+                					<td style="text-align: center;"><span class="label label-<%=request_label_class(r.statusid)%>"><%=request_status_desc(r.statusid)%></span></td>
 				                    <%if has_unseen_messages(r.last_msg_datetime, r.id, current_user.id)%>
 				                        <td style="text-align: center;"><%=link_to "<i class='fa fa-list'></i>".html_safe, {:controller => "request_notes", :action => "show", :params => {:id => r.id}}, {:class => "btn btn-primary"} %></td>
 				                    <%else%>
@@ -52,6 +52,8 @@
 
 <script>
 $(document).ready(function() {
-    $('#found-requests-table').dataTable();
+    $('#found-requests-table').dataTable({
+        "bSort": false
+    });
 });
 </script>
