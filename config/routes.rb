@@ -120,7 +120,6 @@ Rails.application.routes.draw do
       get "edit_request_tag"
       delete "destroy_request_tag"
       get 'sent_requests'
-      get 'waiting_confirmation'
       get 'filter_sent'
       get 'edit_request'
       get 'show'

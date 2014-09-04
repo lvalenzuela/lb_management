@@ -1,33 +1,40 @@
  <!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => "requests"%>
 
-<div id="page-wrapper">
+<section class="content-header">
+    <h1>
+        Creación de Requerimientos
+        <small>Selección de Área</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Requerimientos", :controller => :requests, :action => :index%></li>
+        <li class="active">Creación de Requerimientos</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Selección de Área para Requerimientos</h1>
-            
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Selección de Área
-                </div>
-                <div class="panel-body">
-                    <%=form_tag new_request_requests_path, :method => :get do%>
-                        <h3>Seleción de Área</h3>
-                        <p>Por favor, seleccione el área a la cual desea realizar su solicitud.</p>
-                        <div class="col-lg-6 col-lg-offset-3 form-group">
+        <!-- left column -->
+        <div class="col-md-8 col-md-offset-2">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Selección de Área</h3>
+                </div><!-- /.box-header -->
+                <!-- form start -->
+                <%=form_tag new_request_requests_path, :method => :get do%>
+                    <div class="box-body">
+                        <p>Por favor, selecciona el área de Longbourn a la cual deseas enviar el requerimiento</p>
+                        <div class="form-group">
                             <%=select_tag :areaid, options_for_select(@areas.collect{|a| [a.areaname, a.id]}), :class => "form-control"%>
                         </div>
-                        <div class="col-lg-6 col-lg-offset-3 form-group">
-                            <%=submit_tag "Confirmar", :class => "btn btn-lg btn-block btn-default"%>
-                        </div>
-                    <%end%>
-                </div>
+                    <div class="box-footer">
+                        <%=submit_tag "Seleccionar", :class => "btn btn-primary"%>
+                    </div>
+                <%end%>
+                </div><!-- /.box -->
             </div>
         </div>
     </div>
-</div>
+</section>

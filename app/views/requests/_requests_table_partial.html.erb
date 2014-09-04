@@ -1,0 +1,11 @@
+<table class="table table-mailbox">
+    <%requests.each do |r|%>
+    <tr class="<%=request_display_mode(active)%>">
+        <td class="small-col"><input type="checkbox" /></td>
+        <td class="small-col"><small class="badge <%=req_priority_label(r.priorityid)%>"><%=request_priority_desc(r.priorityid)%></small></td>
+        <td class="name"><%=link_to get_username(r.userid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
+        <td class="subject"><%=link_to truncate(r.subject, :length => 60), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
+        <td class="time"><%=show_date(r.duedate)%></td>
+    </tr>
+    <%end%>
+</table>

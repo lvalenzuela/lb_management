@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require redactor-rails
+//= require bootstrap-wysihtml5
 //= require modernizr
 //= require bootstrap-timepicker
 //= require_tree .

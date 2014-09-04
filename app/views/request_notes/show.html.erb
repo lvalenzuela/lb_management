@@ -1,118 +1,142 @@
 <!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => "requests"%>
+<section class="content-header">
+    <h1>
+        Visualización de Requerimientos
+        <small><%=truncate(@request.subject, :length => 60)%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Requerimientos", :controller => "requests", :action => "index"%></li>
+        <li class="active">Visualización de Requerimientos</li>
+    </ol>
+</section>
 
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header"><%=link_to "Requerimientos", :controller => "requests", :action => "index"%> <i class="fa fa-chevron-right"></i> <%=truncate(@request.subject)%></h1>
-            <div class="row">
-            	<div class="col-lg-12 well">
-            		<div class="row">
-	            		<div class="col-sm-12 op-request">
-	            			<span class="request-header"><%=@request.subject%></span>
-	            			<p><%=simple_format @request.request%></p>
-	            		</div>
-            		</div>
-            		<div class="row">
-            			<div class="col-sm-8">
-            				<%if @request.statusid == 4 && @request.userid == current_user.id%>
-            					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success", data: {confirm: "¿Confirmas que estás conforme con la solución implementada?"}} %>
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title"><%=@request.subject%></h3>
+                </div><!-- /.box-header -->
+                <!-- form start -->
+                <div class="box-body">
+                	<%=simple_format @request.request%>
+                </div>
+                <div class="box-footer clearfix">
+                	<div class="col-sm-6">
+	    				<%if @request.statusid == 4 && @request.userid == current_user.id%>
+	    					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success btn-sm", data: {confirm: "¿Confirmas que estás conforme con la solución implementada?"}} %>
 
-            					<%=link_to "<i class='fa fa-mail-reply'></i> Rechazar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning"}%>
-            				<%elsif @request.statusid == 1 && @request.receiverid == current_user.id%>
-            					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Resuelto".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 4}}, {:class => "btn btn-success"}%>
-            				<%elsif @request.statusid == 4 && @request.receiverid == current_user.id%>
-            					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Pendiente".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning"}%>
-            				<%end%>
-            			</div>
-	            		<div class="col-sm-4">
-	            			<div class="pull-right">
-				                <%if @request.attach.exists? %>
-			                    	<%=link_to "Ver Archivos Adjuntos", @request.attach.url, :class =>"btn btn-default",:target => "_blank" %>
-			                	<%end%>
-		                	</div>
-	                	</div>
-	                </div>
-            	</div>
+	    					<%=link_to "<i class='fa fa-mail-reply'></i> Rechazar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
+	    				<%elsif @request.statusid == 1 && @request.receiverid == current_user.id%>
+	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Resuelto".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 4}}, {:class => "btn btn-primary btn-sm"}%>
+	    				<%elsif @request.statusid == 4 && @request.receiverid == current_user.id%>
+	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Pendiente".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
+	    				<%end%>
+                	</div>
+                	<div class="col-sm-2 pull-right">
+		                <%if @request.attach.exists? %>
+	                    	<%=link_to "Ver Archivos Adjuntos", @request.attach.url, :class =>"btn btn-default btn-sm",:target => "_blank" %>
+	                	<%end%>
+                	</div>
+                </div>
             </div>
         </div>
-        <%if !@notes.nil?%>
-	        <%@notes.each do |note|%>
-		        <div class="row">
-		            <div class="col-lg-11 col-lg-offset-1">
-		                <div class="panel panel-default">
-		                	<div class="panel-heading">
-		                		<%=note.subject%>
-		                	</div>
-		                	<div class="panel-body">
-		                		<div class="row">
-		                			<div class="col-lg-12">
-		                				<%=simple_format note.message%>
-		                				<br>
-		                				<div class="pull-right">
-		                					<%=get_username(note.userid)%>
-		                				</div>
-		                			</div>
-		                		</div>
-		                		<div class="row">
-		                			<div class="col-lg-4">
-		                				<%if note.attach.exists?%>
-		                					<%=link_to "Ver Archivos Adjuntos", note.attach.url, :class =>"btn btn-default",:target => "_blank" %>
-		                				<%end%>
-		                				<%if note.userid == session[:user_id] && (Time.now - note.created_at)/30.minutes <= 1%>
-		                					<%=link_to "Editar Nota", {:controller => "request_notes", :action => "edit", :params => {:id => note.id, :requestid => @request.id}}, {:class => "btn btn-default"}%>
-		                				<%end%>
-		                			</div>
-		                		</div>
-		                	</div>
-		                </div>
-		            </div>
-		        </div>
-	        <%end%>
-	    <%end%>
-	    <div class="row">
-	    	<div class="col-lg-12">
-	    		<div class="panel panel-default">
-	    			<div class="panel-heading">
-	    				Nueva Anotación
-	    			</div>
-	    			<div class="panel-body">
-	    				<%=form_for :request_note, :url => {:controller => "request_notes", :action => "create"} do |f|%>
-		    				<div class="row">
-		    					<div class="col-lg-10 col-lg-offset-1">
-		    						<div class="form-group">
-		    							<%=f.hidden_field :requestid, :value => @request.id%>
-		    							<%=f.hidden_field :userid, :value => session[:user_id]%>
-		    							<label>Tema:</label>
-		    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
-		    						</div>
-		    						<div class="form-group">
-		    							<label>Mensaje:</label>
-		    							<%=f.text_area :message, :id => "redactor1", :class => "redactor", :rows => 20, :cols => 60%>
-		    						</div>
-		    					</div>
-		    				</div>
-		    				<div class="row">
-		    					<div class="col-lg-10 col-lg-offset-1">
-			    					<div class="col-lg-6">
-		                                <label>Adjuntar Archivo:</label>
-		                                <%=f.file_field :attach %>
-			    					</div>
-			    					<div class="col-lg-3 col-lg-offset-3">
-			    						<%=f.submit :class => "btn btn-default"%>
-			    					</div>
-			    				</div>
-		    				</div>
-	    				<%end%>
-	    			</div>
-	    		</div>
-	    	</div>
-	    </div>
+	</div>
+    <!-- row -->
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-10 col-md-offset-1">
+            <!-- The time line -->
+            <ul class="timeline">
+                <!-- timeline time label -->
+                <li class="time-label">
+                    <span class="bg-red">
+                        <%=l(@request.created_at, :format => "%d %b. %Y - %H:%M")%>
+                    </span>
+                </li>
+                <!-- /.timeline-label -->
+                <%@notes.each do |note|%>
+                <!-- timeline item -->
+                <li>
+                    <i class="fa fa-envelope bg-blue"></i>
+                    <div class="timeline-item">
+                        <span class="time"><i class="fa fa-calendar"></i> <%=l(note.created_at, :format => "%d/%m/%Y - %H:%M")%></span>
+                        <h3 class="timeline-header"><strong><%=get_username(note.userid)%></strong> te envió un mensaje:</h3>
+                        <div class="timeline-body">
+                            <%=simple_format note.message%>
+                        </div>
+                        <div class='timeline-footer'>
+	        				<%if note.attach.exists?%>
+	        					<%=link_to "Ver Adjuntos", note.attach.url, :class =>"btn btn-primary btn-xs",:target => "_blank" %>
+	        				<%end%>
+	        				<%if note.userid == session[:user_id] && (Time.now - note.created_at)/30.minutes <= 1%>
+	        					<%=link_to "Editar Nota", {:controller => "request_notes", :action => "edit", :params => {:id => note.id, :requestid => @request.id}}, {:class => "btn btn-danger btn-xs"}%>
+	        				<%end%>
+                        </div>
+                    </div>
+                </li>
+                <%end%>
+                <li class="time-label">
+                    <span class="bg-green">
+                        <%=l(Time.now, :format => "%d %b. %Y - %H:%M")%>
+                    </span>
+                </li>
+                <li>
+                    <i class="fa fa-clock-o"></i>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-<script>
-$('#redactor1').redactor({
-    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
-'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
-});
+    <div class="row" style="margin-top: 20px;">
+        <!-- left column -->
+        <div class="col-md-10 col-md-offset-1">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Nuevo Mensaje</h3>
+                </div><!-- /.box-header -->
+                <!-- form start -->
+                <%=form_for :request_note, :url => {:controller => "request_notes", :action => "create"} do |f|%>
+                    <div class="box-body">
+	    				<div class="row">
+	    					<div class="col-lg-10 col-lg-offset-1">
+	    						<div class="form-group">
+	    							<%=f.hidden_field :requestid, :value => @request.id%>
+	    							<%=f.hidden_field :userid, :value => current_user.id%>
+	    							<label>Tema:</label>
+	    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
+	    						</div>
+	    						<div class="form-group">
+	    							<%=f.text_area :message, :id => "redactor1", :class => "wysihtml5"%>
+	    						</div>
+	    					</div>
+	    				</div>
+                        <div class="box-footer clearfix">
+                            <div class="form-group col-sm-5 col-sm-offset-1">
+                                <label>Adjuntar Archivo:</label>
+                                <%=f.file_field :attach %>
+                            </div>
+                            <div class="col-sm-3 pull-right">
+                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-primary btn-lg"%>
+                            </div>
+                        </div>
+                    </div><!-- /.box -->
+                <%end%>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    $('.wysihtml5').each(function(i, elem) {
+      $(elem).wysihtml5();
+    });
+
+  })
 </script>
+

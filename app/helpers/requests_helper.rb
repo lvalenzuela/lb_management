@@ -1,15 +1,24 @@
 module RequestsHelper
 
-	def request_label_class(statusid)
-		case statusid
-		when 1
-			return "info"
-		when 2
-			return "success"
-		when 3
-			return "danger"
+	def request_display_mode(active)
+		case active
+		when "pending"
+			return "unread"
 		else
-			return "warning"
+			return "read"
+		end
+	end
+
+	def req_priority_label(priorityid)
+		case priorityid
+		when 1
+			return "bg-red"
+		when 2
+			return "bg-yellow"
+		when 3
+			return "bg-blue"
+		else
+			return "bg-green"
 		end
 	end
 

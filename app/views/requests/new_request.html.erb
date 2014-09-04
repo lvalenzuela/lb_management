@@ -2,72 +2,84 @@
  <!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => "requests"%>
 
-<div id="page-wrapper">
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Nuevo Requerimiento
+        <small><%=@area.areaname%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Requerimientos", :controller => :requests, :action => :index%></li>
+        <li><%=link_to "Seleccion de Área", :controller => :requests, :action => :area_for_request%></li>
+        <li class="active">Creación de Requerimientos</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Nuevo Requerimiento: <%=@area.areaname%></h1>
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Formulario de Generacion de Requerimientos
-                </div>
-                <div class="panel-body">
-                    <%if @request.errors.any?%>
-                        <div class="alert alert-warning">
-                            <%=pluralize(@request.errors.count,"error")%> no permitieron llevar a cabo la operacion 
-                            <ul>
-                                <%@request.errors.full_messages.each do |msg|%>
-                                    <li><%= msg %></li>
-                                <%end%>
-                            </ul>
+        <!-- left column -->
+        <div class="col-md-8 col-md-offset-2">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Formulario de Creación de Requerimientos</h3>
+                </div><!-- /.box-header -->
+                <!-- form start -->
+                <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}, :html => { :multipart => true}) do |f|%>
+                    <div class="box-body">
+                        <%if @request.errors.any?%>
+                            <div class="callout callout-warning">
+                                <h4><%=pluralize(@request.errors.count,"error")%> no permitieron llevar a cabo la operacion</h4>
+                                <ul>
+                                    <%@request.errors.full_messages.each do |msg|%>
+                                        <li><%= msg %></li>
+                                    <%end%>
+                                </ul>
+                            </div>
+                        <%end%>
+                        <div class="form-group">
+                            <%=f.hidden_field :areaid, :value => @area.id%>
                         </div>
-                    <%end%>
-                    <div class="col-lg-12">
-                        <%=form_for(@request, :url => {:controller => "requests", :action => "create_request"}, :html => { :multipart => true}) do |f|%>
-                            <div class="form-group">
-                                <%=f.hidden_field :areaid, :value => @area.id%>
+                        <div class="row">
+                            <div class="col-sm-4 form-group">
+                                <label>Categoría:</label>
+                                <%=f.select :tagid, options_for_select(@area_tags.collect{|t| [t.tagname, t.id]}), {}, {:class => "form-control"}%>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-3 form-group">
-                                    <label>Categoría:</label>
-                                    <%=f.select :tagid, options_for_select(@area_tags.collect{|t| [t.tagname, t.id]}), {}, {:class => "form-control"}%>
-                                </div>
-                                <div class="col-sm-9 form-group">
-                                    <label>Título:</label>
-                                    <%=f.text_field :subject, :class => "form-control" %>
-                                </div>
+                            <div class="col-sm-8 form-group">
+                                <label>Título:</label>
+                                <%=f.text_field :subject, :class => "form-control" %>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12 form-group">
-                                    <label>Prioridad:</label>
-                                    <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description+" - "+p.term_desc, p.id]}, 3), {},{:class =>"form-control"}%>
-                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label>Prioridad:</label>
+                                <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description+" - "+p.term_desc, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
-                            <div class="form-group">
-                                <label>Solicitud:</label>
-                                <%=f.text_area :request, :id => "redactor1", :class => "redactor", :placeholder => "Especificar Requerimiento ¿Cual es el problema a resolver? ¿Cómo esperas que sea resuelto?"%>
-                            </div>
-                            <div class="form-group">
+                        </div>
+                        <div class="bod-body pad">
+                            <%=f.text_area :request, :id => "request-textarea", :class => "wysihtml5", :placeholder => "Especificar Requerimiento ¿Cual es el problema a resolver? ¿Cómo esperas que sea resuelto?"%>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <div class="form-group col-sm-6">
                                 <label>Adjuntar Archivo:</label>
                                 <%=f.file_field :attach %>
                             </div>
-                            <div class="form-group pull-right">
-                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-default"%>
+                            <div class="col-sm-3 pull-right">
+                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-primary"%>
                             </div>
-                        <%end%>
-                    </div>
-                </div>
+                        </div>
+                    </div><!-- /.box -->
+                <%end%>
             </div>
         </div>
     </div>
-</div>
-<script>
-$('#redactor1').redactor({
-    buttons: ['html', 'formatting',  'bold', 'italic', 'deleted', 
-'unorderedlist', 'orderedlist', 'outdent', 'indent', 'table', 'link', 'alignment', 'horizontalrule']
-});
+</section><!-- /.content -->
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    $('.wysihtml5').each(function(i, elem) {
+      $(elem).wysihtml5();
+    });
+
+  })
 </script>

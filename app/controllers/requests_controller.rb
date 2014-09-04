@@ -15,7 +15,7 @@ class RequestsController < ApplicationController
 		when "solved"
 			@active = "solved"
 			#solocitudes resueltas o canceladas
-			@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC")
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC")
 		when "wconf"
 			#solicitudes esperando confirmacion
 			@active = "wconf"
@@ -34,21 +34,12 @@ class RequestsController < ApplicationController
 		redirect_to :controller => :request_notes, :action => :show, :id => params[:id]
 	end
 
-	def waiting_confirmation
-		@user = current_user
-		@editable = false
-		@table = 2
-		@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC")
-	end
-
 	def sent_requests
 		@user = current_user
 		#Hay dos tipos de tabla
 		#La primera es una tabla regular que muestra solicitudes
 		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
-		@table = 1
-		@editable = false
-		@active = "inprogress"
+		@active = "wconf"
 		case params[:f]
 		when "solved"
 			#Solicitudes resueltas o canceladas
@@ -57,10 +48,12 @@ class RequestsController < ApplicationController
 		when "unassigned"
 			#Solicitudes pendientes que no han sido asignadas
 			@active = "unassigned"
-			@editable = true
 			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at DESC")
-		else
+		when "inprogress"
+			@active = "inprogress"
 			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at DESC")
+		else
+			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC")
 		end
 	end
 

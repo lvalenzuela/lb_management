@@ -1,202 +1,222 @@
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+<header class="header">
+    <a class="logo" href="#">
+        Longbourn Summit
+    </a>
+    <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Longbourn Dashboard</a>
-    </div>
-    <!-- /.navbar-header -->
-
-    <ul class="nav navbar-top-links navbar-right">
+        </a>
+        <!-- /.navbar-header -->
         <%check_user_requests(current_user.id)%>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <%if session[:req_pending] != 0%>
-                    <i class="fa fa-pencil-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_pending]%></div> <i class="fa fa-caret-down"></i>
-                <%else%>
-                    <i class="fa fa-pencil-square-o"></i> <i class="fa fa-caret-down"></i>
-                <%end%>
-            </a>
-            <ul class="dropdown-menu dropdown-messages">
-                <li><%=link_to "<strong>".html_safe+session[:req_pending].to_s+"</strong> Requerimientos Pendientes".html_safe, {:controller => :requests, :action => :index}%>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <%if session[:req_waiting_conf] != 0%>
-                    <i class="fa fa-check-square-o fa-lg"></i> <div class="notification-badge"><%=session[:req_waiting_conf]%></div> <i class="fa fa-caret-down"></i>
-                <%else%>
-                    <i class="fa fa-check-square-o"></i> <i class="fa fa-caret-down"></i>
-                <%end%>
-            </a>
-            <ul class="dropdown-menu dropdown-messages">
-                <li><%=link_to "<strong>".html_safe+session[:req_waiting_conf].to_s+"</strong> Requerimientos Requieren Confirmación".html_safe, {:controller => :requests, :action => :waiting_confirmation}%>
-                </li>
-            </ul>
-        </li>
-        <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-lg fa-fw"></i>  <i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-                <li><%=link_to "<i class='fa fa-user fa-fw'></i> User Profile".html_safe, :controller => :users, :action => :user_profile%>
-                </li>
-                <li><%=link_to "<i class='fa fa-gear fa-fw'></i> Settings".html_safe%>
-                </li>
-                <li class="divider"></li>
-                <li><%=link_to "<i class='fa fa-sign-out fa-fw'></i> Logout".html_safe, :controller => "users", :action => "logout"%>
-                </li>
-            </ul>
-            <!-- /.dropdown-user -->
-        </li>
-        <!-- /.dropdown -->
-    </ul>
-    <!-- /.navbar-top-links -->
-    <div class="navbar-default navbar-static-side" role="navigation">
-        <div class="sidebar-collapse">
-            <ul class="nav" id="side-menu">
-                <li class="sidebar-search">
-                    <%=form_tag({:controller => controller_name , :action => :search}, method: :get) do%>
-                        <div class="input-group custom-search-form">
-                          <%=text_field_tag :search_words, nil, class: "form-control", placeholder: "Buscar" %>
-                          <span class="input-group-btn">
-                            <%=button_tag "<i class='fa fa-search'></i>".html_safe, class: "btn btn-default"%>
-                          </span>
-                        </div>
-                    <%end%>
-                    <!-- /input-group -->
-                </li>
-                <%if current_user.system_role_id <= 2%>
-                    <li <%=activate_menu_item("admin", active_item)%>>
-                        <a href="#"><i class="fa fa-gears fa-fw"></i> Administración<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <%if current_user.system_role_id <= 1%>
+        <div class="navbar-right">
+            <ul class="nav navbar-nav">
+                <li class="dropdown notifications-menu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <%if session[:req_pending] != 0%>
+                            <i class="fa fa-inbox fa-lg"></i> <span class="label label-danger"><%=session[:req_pending]%></span <i class="fa fa-caret-down"></i>
+                        <%else%>
+                            <i class="fa fa-inbox"></i> <i class="fa fa-caret-down"></i>
+                        <%end%>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Requerimientos Pendientes<li>
+                        <li>
+                            <ul class="menu">
                                 <li>
-                                    <%=link_to "Sistema", :controller => "main", :action => "system_manager"%>
-                                </li>
-                            <%end%>
-                            <li>
-                                <%=link_to "Áreas".html_safe, :controller => "main", :action => "area_manager" %>
-                            </li>
-                            <li>
-                                <%=link_to "Cursos Moodle".html_safe, :controller => "moodle_courses", :action => "index" %>
-                            </li>
-                        </ul>
-                    </li>
-                <%end%>
-                <%if current_user.system_role_id <= 2%>
-                    <li <%=activate_menu_item("courses",active_item)%>>
-                    <a href="#"><i class="fa fa-graduation-cap fa-fw"></i> Administracion Cursos<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <%=link_to "Crear Nuevo Curso", :controller => "courses", :action => "new"%>
-                            </li>
-                            <li>
-                                <%=link_to "Listado de Cursos", :controller => "courses", :action => "index"%>
-                            </li>
-                        </ul>
-                    </li>
-                <%end%>
-                <%if current_user.system_role_id <= -1%>
-                    <li <%=activate_menu_item("clients", active_item)%>>
-                        <a href="#"><i class="fa fa-group fa-fw"></i> Clientes<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <%=link_to "Registrar Cliente", :controller => "clients", :action => "new"%>
-                            </li>
-                            <li>
-                                <%=link_to "Cuentas", :controller => "clients", :action => "index"%>
-                            </li>
-                            <li <%=activate_menu_item("quotations", active_item)%>>
-                            <a href="#">Cotizaciones<span class="fa arrow"></span></a>
-                            <ul class="nav nav-third-level">
-                                <li>
-                                    <%=link_to "Mis Cotizaciones", :controller => "clients", :action => "quotations"%>
+                                    <%=link_to :controller => :requests, :action => :index do%>
+                                        <i class="fa fa-warning danger"></i><strong><%=session[:req_pending].to_s%></strong> Requerimientos Pendientes
+                                    <%end%>
                                 </li>
                             </ul>
-                        </ul>
-                    </li>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown notifications-menu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <%if session[:req_waiting_conf] != 0%>
+                            <i class="fa fa-check-square-o fa-lg"></i> <span class="label label-danger"><%=session[:req_waiting_conf]%></span> <i class="fa fa-caret-down"></i>
+                        <%else%>
+                            <i class="fa fa-check-square-o"></i> <i class="fa fa-caret-down"></i>
+                        <%end%>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Esperando Confirmación</li>
+                        <li>
+                            <ul class="menu">
+                                <li>
+                                    <%=link_to :controller => :requests, :action => :sent_requests, :params => {:f => "wconf"} do%>
+                                    <i class="fa fa-check-square-o warning"></i><strong><%=session[:req_waiting_conf].to_s%></strong> Requerimientos
+                                    <%end%>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown user user-menu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-lg fa-fw"></i>
+                        <span><%=current_user_name%> <i class="fa fa-caret-down"></i></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="user-header bg-light-blue">
+                            <%=image_tag current_user.avatar.url, :class => "img-circle"%>
+                            <p>
+                                <%=current_user_name%></p>
+                        </li>
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <%=link_to "User Profile", {:controller => :users, :action => :user_profile}, {:class => "btn btn-default btn-flat"}%>
+                            </div>
+                            <div class="pull-right">
+                                <%=link_to "Logout", {:controller => :users, :action => :logout}, {:class => "btn btn-default btn-flat"}%>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+        </div>
+    </nav>
+</header>
+<div class="wrapper row-offcanvas row-offcanvas-left">
+    <aside class="left-side sidebar-offcanvas">
+        <section class="sidebar">
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <%=image_tag current_user.avatar.url, :class => "img-circle"%>
+                </div>
+                <div class="pull-left info">
+                    <p>Hola, <%=current_user_name%></p>
+
+                    <i class="fa fa-circle text-success"></i> Online
+                </div>
+            </div>
+            <%=form_tag({:controller => controller_name , :action => :search}, method: :get, :class => "sidebar-form") do%>
+                <div class="input-group">
+                  <%=text_field_tag :search_words, nil, :class => "form-control", placeholder: "Buscar" %>
+                  <span class="input-group-btn">
+                    <%=button_tag "<i class='fa fa-search'></i>".html_safe, class: "btn btn-flat"%>
+                  </span>
+                </div>
+            <%end%>
+            <ul class="sidebar-menu">
+                <%if current_user.system_role_id <= 2%>
+                <li class="treeview <%=activate_menu_item("admin", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span>Administración</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <%if current_user.system_role_id <= 1%>
+                        <li><%=link_to :controller => "main", :action => "system_manager" do%>
+                            <i class="fa fa-angle-double-right"></i> Sistema
+                            <%end%>
+                        </li>
+                        <%end%>
+                        <li><%=link_to :controller => "main", :action => "area_manager" do%>
+                            <i class="fa fa-angle-double-right"></i> Áreas
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "moodle_courses", :action => "index" do%>
+                            <i class="fa fa-angle-double-right"></i> Cursos Moodle
+                            <%end%>
+                        </li>
+                    </ul>
+                </li>
+                <%end%>
+                <%if current_user.system_role_id <= 2%>
+                <li class="treeview <%=activate_menu_item("courses", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-graduation-cap fa-fw"></i> 
+                        <span>Cursos</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => "courses", :action => "new" do%>
+                            <i class="fa fa-angle-double-right"></i> Nuevo Curso
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "courses", :action => "index" do%>
+                            <i class="fa fa-angle-double-right"></i> Listado de Cursos
+                            <%end%>
+                        </li>
+                    </ul>
+                </li>
                 <%end%>
                 <%if current_user.system_role_id <= 2 %>
-                    <li <%=activate_menu_item("reports",active_item)%>>
-                        <a href="#"><i class="fa fa-files-o fa-fw"></i> Reportes<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <%=link_to "Reportes Actuales", :controller => "reports", :action => "clients"%>
-                            </li>
-                            <li>
-                                <%=link_to "Reportes Historicos", :controller => "reports", :action => "historical"%>
-                            </li>
-                            <li>
-                                <%=link_to "Reportes por Grupo", :controller => "reports", :action => "course_groups"%>
-                            </li>
-                        </ul>
-                    </li>
+                <li class="treeview <%=activate_menu_item("reports", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-files-o fa-fw"></i> 
+                        <span>Reportes</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => "reports", :action => "clients" do%>
+                            <i class="fa fa-angle-double-right"></i> Reportes Actuales
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "reports", :action => "historical" do%>
+                            <i class="fa fa-angle-double-right"></i> Reportes Historicos
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "reports", :action => "course_groups" do%>
+                            <i class="fa fa-angle-double-right"></i> Reportes por Grupo
+                            <%end%>
+                        </li>
+                    </ul>
+                </li>
                 <%end%>
-                <li <%=activate_menu_item("requests", active_item)%>>
-                    <a href="#"><i class="fa fa-folder-open-o fa-fw"></i> Operaciones<span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li>
-                            <%=link_to "Mis Trabajos".html_safe, :controller => "requests", :action => "index"%>
+                <li class="treeview <%=activate_menu_item("requests", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-folder-open-o fa-fw"></i> 
+                        <span>Operaciones</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => "requests", :action => "index" do%>
+                            <i class="fa fa-angle-double-right"></i> Mis Trabajos
+                            <%end%>
                         </li>
-                        <li>
-                            <%=link_to "Crear Requerimiento".html_safe, :controller => "requests", :action => "area_for_request"%>
+                        <li><%=link_to :controller => "requests", :action => "area_for_request" do%>
+                            <i class="fa fa-angle-double-right"></i> Crear Requerimiento
+                            <%end%>
                         </li>
-                        <li>
-                            <%=link_to "Requerimientos Enviados".html_safe, :controller => "requests", :action => "sent_requests"%>
+                        <li><%=link_to :controller => "requests", :action => "sent_requests" do%>
+                            <i class="fa fa-angle-double-right"></i> Requerimientos Enviados
+                            <%end%>
                         </li>
+                    </ul>
+                </li>
+                <%areas = areas_for_user()%>
+                <%if !areas.blank? %>
+                <li class="treeview <%=activate_menu_item("area-requests", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-sitemap fa-fw"></i> 
+                        <span>Req. por Área</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <%areas.each do |area|%>
                         <li>
-                            <%=link_to "Requerimientos Enviados en Espera de Confirmación", {:controller => :requests, :action => :waiting_confirmation}%>
-                        </li>
-                        <%areas = areas_for_user()%>
-                        <%if !areas.blank? %>
-                        <li <%=activate_menu_item("area_requests", active_item)%>>
-                            <a href="#">Requerimientos por Área<span class="fa arrow"></span></a>
-                            <%areas.each do |area|%>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <%=link_to get_areaname(area.instanceid), :controller => "requests", :action => "area_requests", :id => area.instanceid%>
-                                    </li>
-                                </ul>
+                            <%=link_to :controller => "requests", :action => "area_requests", :id => area.instanceid do%>
+                                <i class="fa fa-angle-double-right"></i><%=get_areaname(area.instanceid)%>
                             <%end%>
                         </li>
                         <%end%>
                     </ul>
                 </li>
-                <li <%=activate_menu_item("notifications",active_item)%>>
-                    <%=link_to "<i class='fa fa-envelope fa-fw'></i>  Notificaciones".html_safe, :controller => "notifications", :action => "index" %>
-                </li>
+                <%end%>
             </ul>
-            <!-- /#side-menu -->
-        </div>
-        <!-- /.sidebar-collapse -->
-    </div>
-    <!-- /.navbar-static-side -->
-</nav>
+        </section>
+    </aside>
+    <aside class="right-side">
+    <!-- </aside> cierra en footer -->
+<!-- </div> cierra en footer -->
 
-<script>
-$(function () {
-    $('#side-menu').metisMenu({
-      toggle: false
-    });
-});
-
-//Loads the correct sidebar on window load,
-//collapses the sidebar on window resize.
-$(function() {
-    $(window).bind("load resize", function() {
-        width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-        if (width < 768) {
-            $('div.sidebar-collapse').addClass('collapse')
-        } else {
-            $('div.sidebar-collapse').removeClass('collapse')
-        }
-    })
-})
-</script>
 
