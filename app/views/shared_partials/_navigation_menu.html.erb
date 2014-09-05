@@ -1,3 +1,5 @@
+<%check_user_requests(current_user.id)%>
+<%user = current_user%>
 <header class="header">
     <a class="logo" href="#">
         Longbourn Summit
@@ -10,7 +12,6 @@
             <span class="icon-bar"></span>
         </a>
         <!-- /.navbar-header -->
-        <%check_user_requests(current_user.id)%>
         <div class="navbar-right">
             <ul class="nav navbar-nav">
                 <li class="dropdown notifications-menu">
@@ -59,13 +60,13 @@
                 <li class="dropdown user user-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-lg fa-fw"></i>
-                        <span><%=current_user_name%> <i class="fa fa-caret-down"></i></span>
+                        <span><%=user.firstname+" "+user.lastname%> <i class="fa fa-caret-down"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header bg-light-blue">
-                            <%=image_tag current_user.avatar.url, :class => "img-circle"%>
+                            <%=image_tag user.avatar.url, :class => "img-circle"%>
                             <p>
-                                <%=current_user_name%></p>
+                                <%=user.firstname+" "+user.lastname%></p>
                         </li>
                         <li class="user-footer">
                             <div class="pull-left">
@@ -88,15 +89,15 @@
         <section class="sidebar">
             <div class="user-panel">
                 <div class="pull-left image">
-                    <%=image_tag current_user.avatar.url, :class => "img-circle"%>
+                    <%=image_tag user.avatar.url, :class => "img-circle"%>
                 </div>
                 <div class="pull-left info">
-                    <p>Hola, <%=current_user_name%></p>
+                    <p>Hola, <%=user.firstname+" "+user.lastname%></p>
 
                     <i class="fa fa-circle text-success"></i> Online
                 </div>
             </div>
-            <%=form_tag({:controller => controller_name , :action => :search}, method: :get, :class => "sidebar-form") do%>
+            <%=form_tag({:controller => :users , :action => :search}, :class => "sidebar-form") do%>
                 <div class="input-group">
                   <%=text_field_tag :search_words, nil, :class => "form-control", placeholder: "Buscar" %>
                   <span class="input-group-btn">
@@ -105,7 +106,7 @@
                 </div>
             <%end%>
             <ul class="sidebar-menu">
-                <%if current_user.system_role_id <= 2%>
+                <%if user.system_role_id <= 2%>
                 <li class="treeview <%=activate_menu_item("admin", active_item)%>">
                     <a href="#">
                         <i class="fa fa-bar-chart-o"></i>
@@ -113,7 +114,7 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
-                        <%if current_user.system_role_id <= 1%>
+                        <%if user.system_role_id <= 1%>
                         <li><%=link_to :controller => "main", :action => "system_manager" do%>
                             <i class="fa fa-angle-double-right"></i> Sistema
                             <%end%>
@@ -130,7 +131,7 @@
                     </ul>
                 </li>
                 <%end%>
-                <%if current_user.system_role_id <= 2%>
+                <%if user.system_role_id <= 2%>
                 <li class="treeview <%=activate_menu_item("courses", active_item)%>">
                     <a href="#">
                         <i class="fa fa-graduation-cap fa-fw"></i> 
@@ -149,7 +150,7 @@
                     </ul>
                 </li>
                 <%end%>
-                <%if current_user.system_role_id <= 2 %>
+                <%if user.system_role_id <= 2 %>
                 <li class="treeview <%=activate_menu_item("reports", active_item)%>">
                     <a href="#">
                         <i class="fa fa-files-o fa-fw"></i> 
@@ -195,7 +196,7 @@
                 </li>
                 <%areas = areas_for_user()%>
                 <%if !areas.blank? %>
-                <li class="treeview <%=activate_menu_item("area-requests", active_item)%>">
+                <li class="treeview <%=activate_menu_item("area-req", active_item)%>">
                     <a href="#">
                         <i class="fa fa-sitemap fa-fw"></i> 
                         <span>Req. por Área</span>

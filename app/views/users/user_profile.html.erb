@@ -1,85 +1,95 @@
 <!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => ""%>
+<section class="content-header">
+    <h1>
+        Perfil de Usuario
+        <small><%=@user.firstname+" "+@user.lastname%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Longbourn Summit", root_path%></li>
+        <li class="active">Perfil de Usuario</li>
+    </ol>
+</section>
 
-<div id="page-wrapper">
+<section class="content">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Perfil de Usuario Longbourn</h1>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="fa fa-user fa-lg"></i>
+                    <h3 class="box-title">
+                        <%=@user.firstname+" "+@user.lastname%>
+                    </h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="small-box bg-blue">
+                                <%=image_tag @user.avatar.url%>
+                                <a data-toggle="modal" data-target="#avatar-modal" class="small-box-footer" >Cambiar Imagen</a>
+                                <%=form_tag change_profile_picture_users_path, :id => "profile-picture-form", :multipart => true do%>
+                                    <%=render :partial => "change_image_modal"%>
+                                <%end%>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <td><%=@user.firstname+" "+@user.lastname%></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td><%=@user.email%></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Institutción</th>
+                                        <td><%=@user.institution%></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Departamento</th>
+                                        <td><%=@user.department%></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
-    	<div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Información Del Usuario
+        <div class="col-md-4 col-md-offset-1">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        Áreas
+                    </h3>
                 </div>
-                <div class="panel-body">
-                	<div class="row">
-                		<div class="col-lg-3">
-		                	<div class="thumbnail">
-		                		<%=image_tag @user.avatar.url%>
-		                		<div class="caption">
-		                			<%=link_to "Cambiar Imagen", "", {:data => {:toggle => "modal", :target => "#avatar-modal"}, :class => "btn btn-block btn-default"}%>
-		                			<%=form_tag change_profile_picture_users_path, :id => "profile-picture-form", :multipart => true do%>
-		                				<%=render :partial => "change_image_modal"%>
-		                			<%end%>
-		                		</div>
-		                	</div>
-		                </div>
-		                <div class="col-lg-9">
-		                	<div class="row">
-		                		<div class="col-lg-12">
-		                			<h2 class="page-header"><%=@user.firstname+" "+@user.lastname%></h2>
-		                		</div>
-		                		<div class="col-lg-12">
-		                			<table class="table table-striped">
-		                				<tr>
-		                					<th>Email</th>
-		                					<td><%=@user.email%></td>
-		                				</tr>
-		                				<tr>
-		                					<th>Institucion</th>
-		                					<td><%=@user.institution%></td>
-		                				</tr>
-		                				<tr>
-		                					<th>Departamento</th>
-		                					<td><%=@user.department%></td>
-		                				</tr>
-		                			</table>
-		                		</div>
-		                	</div>
-		                </div>
-                	</div>
-                	<div class="row">
-                		<div class="col-lg-12">
-                			<h2 class="page-header">Información sobre el Usuario</h2>
-                		</div>
-                		<div class="col-lg-4">
-                			<div class="panel panel-default">
-                				<div class="panel-heading">
-                					Áreas
-                				</div>
-                				<div class="panel-body">
-                					<table class="table">
-                						<thead>
-                							<th>Área Longbourn</th>
-                							<th>Rol del Usuario</th>
-                						</thead>
-                						<tbody>
-                							<%@user_area_roles.each do |r|%>
-                							<tr>
-                								<td><%=get_area_name_by_context(r.contextid)%></td>
-                								<td><%=get_rolename(r.roleid)%></td>
-                							</tr>
-                							<%end%>
-                						</tbody>
-                					</table>
-                				</div>
-                			</div>
-                		</div>
-                	</div>
+                <div class="box-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Área Longbourn</th>
+                                <th>Rol del Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%@user_area_roles.each do |r|%>
+                            <tr>
+                                <td><%=get_area_name_by_context(r.contextid)%></td>
+                                <td><%=get_rolename(r.roleid)%></td>
+                            </tr>
+                            <%end%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer clearfix">
                 </div>
             </div>
-    	</div>
+        </div>
     </div>
-</div>
+</section>

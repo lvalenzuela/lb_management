@@ -1,5 +1,25 @@
 module RequestsHelper
 
+	def days_left(r_date)
+		if r_date
+			return (r_date - Date.today).to_i
+		else
+			return 0
+		end
+	end
+
+	def is_editable(request)
+		if request.userid == current_user.id
+			if request.statusid != 2 && request.statusid != 3
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+	end
+
 	def request_display_mode(active)
 		case active
 		when "pending"

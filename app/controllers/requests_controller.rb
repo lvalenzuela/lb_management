@@ -5,8 +5,24 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def search
-		@search_term = params[:search_words]
-		@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+		if params
+			@previous_action = params[:parent_action]
+			@active = "search"
+			@search_term = params[:search_term]
+			case params[:parent_action]
+			when "sent_requests"
+				#Se busca entre los requerimientos enviados
+				@requests = Request.where("userid = #{current_user.id} and request like '%#{@search_term}%'")
+				action_to_render = "sent_requests"
+			else
+				#Se busca entre los requerimientos recividos
+				@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+				action_to_render = "index"
+			end
+			render "requests/"+action_to_render
+		else
+			redirect_to :index
+		end
 	end
 
 	def index
@@ -25,6 +41,10 @@ class RequestsController < ApplicationController
 			@requests = Request.where(:receiverid => current_user.id, :statusid => [1]).order("updated_at DESC")
 		end
 		@user = User.find(current_user.id)
+	end
+
+	def bulk_request_status_change
+
 	end
 
 	def mark_solution
@@ -123,19 +143,19 @@ class RequestsController < ApplicationController
 
 	def area_requests
 		@area = Area.find(params[:id])
+		@active = "all"
 		if !@area.nil?
 			case params[:f]
 			when "assigned"
 				#sólo las solicitudes asignadas
 				@active = "assigned"
 				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
-			when "unassigned"
+			when "orphaned"
 				#solo solicitudes sin asignar
-				@active = "unassigned"
+				@active = "orphaned"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC")
 			else
 				#todas las solicitudes
-				@active = "all"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC")
 			end
 			@receivers = receiver_list(@area.id)
@@ -196,6 +216,11 @@ class RequestsController < ApplicationController
 		@request = Request.find(params[:id])
 		@statuses = RequestStatus.all()
 		@receivers = receiver_list(@request.areaid)
+	end
+
+	def delete_request
+		change_status(params)
+		redirect_to :action => params[:p_action]
 	end
 
 	def destroy

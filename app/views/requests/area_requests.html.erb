@@ -1,5 +1,5 @@
 <!-- Barra de navegacion superior e izquierda -->
-<%= render "shared_partials/navigation_menu", :active_item => "area-requests"%>
+<%= render "shared_partials/navigation_menu", :active_item => "area-req"%>
 <section class="content-header no-margin">
     <h1>
         Requerimientos por Área
@@ -37,11 +37,11 @@
                                     </li>
                                     <li <%=activate_tab(@active,"assigned")%>>
                                         <%=link_to :controller => "requests", :action => "area_requests", :params => {:f => "assigned", :id => @area.id} do%>
-                                            <i class="fa fa-cogs"></i> Requerimientos Asignados
+                                            <i class="fa fa-check"></i> Requerimientos Asignados
                                         <%end%>
                                     </li>
-                                    <li <%=activate_tab(@active,"unassigned")%>>
-                                        <%=link_to :controller => "requests", :action => "area_requests", :params => {:f => "unassigned", :id => @area.id}%>
+                                    <li <%=activate_tab(@active,"orphaned")%>>
+                                        <%=link_to :controller => "requests", :action => "area_requests", :params => {:f => "orphaned", :id => @area.id} do%>
                                         <i class="fa fa-check-square-o"></i> Sin Asignar
                                         <%end%>
                                     </li>
@@ -83,71 +83,3 @@
         </div>
     </div>
 </section>
-
-
-
-
-
-
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Requerimientos Realizados Área: <%=@area.areaname%></h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 form-group">
-            <ul class="nav nav-tabs nav-justified" role="tablist">
-                <li <%=activate_tab(@active,"all")%>>
-                    <%=link_to "Todos los Requerimientos del Área", :controller => "requests", :action => "area_requests", :params => {:f => "all", :id => @area.id}%>
-                </li>
-                <li <%=activate_tab(@active,"assigned")%>>
-                    <%=link_to "Sólo Requerimientos Asignados", :controller => "requests", :action => "area_requests", :params => {:f => "assigned", :id => @area.id}%>
-                </li>
-                <li <%=activate_tab(@active,"unassigned")%>>
-                    <%=link_to "Sólo Requerimientos Sin Asignar", :controller => "requests", :action => "area_requests", :params => {:f => "unassigned", :id => @area.id}%>
-                </li>
-                <li <%=activate_tab(@active,"manage")%>>
-                    <%=link_to "Administración", :controller => "requests", :action => "manage_area_requests", :params => {:id => @area.id}%>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Requerimientos de Área
-                </div>
-                <div class="panel-body">
-                    <%=form_tag assign_requests_requests_path do %>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <%=hidden_field_tag :areaid, @area.id%>
-                                <%=select_tag :receiverid, options_for_select(@receivers.collect{|u| [u.firstname+" "+u.lastname, u.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
-                            </div>
-                            <div class="col-md-3">
-                                <%=date_field_tag :duedate, "",:placeholder => "Fecha Límite", :class => "form-control"%>
-                            </div>
-                            <div class="col-md-3">
-                                <%=submit_tag "Asignar a usuario",:class => "btn btn-default"%>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <div id="unassigned-requests-table">
-                            <%=render :partial => "area_requests_table", :locals => {:requests => @requests, :tableid => "area-requests-table"}%>
-                            </div>
-                        </div>
-                    <%end%>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-$(document).ready(function() {
-    $('#area-requests-table').dataTable({
-        "bSort": false
-    });
-});
-</script>

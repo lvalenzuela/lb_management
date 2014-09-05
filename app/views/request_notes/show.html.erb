@@ -61,10 +61,14 @@
                 <%@notes.each do |note|%>
                 <!-- timeline item -->
                 <li>
-                    <i class="fa fa-envelope bg-blue"></i>
+                    <%if my_note(note)%>
+                        <i class="fa fa-envelope bg-yellow"></i>
+                    <%else%>
+                        <i class="fa fa-envelope bg-blue"></i>
+                    <%end%>
                     <div class="timeline-item">
                         <span class="time"><i class="fa fa-calendar"></i> <%=l(note.created_at, :format => "%d/%m/%Y - %H:%M")%></span>
-                        <h3 class="timeline-header"><strong><%=get_username(note.userid)%></strong> te envió un mensaje:</h3>
+                        <h3 class="timeline-header"><strong><%=get_username(note.userid)%></strong> dijo:</h3>
                         <div class="timeline-body">
                             <%=simple_format note.message%>
                         </div>

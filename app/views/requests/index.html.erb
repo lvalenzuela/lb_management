@@ -30,6 +30,13 @@
                             <div style="margin-top: 15px;">
                                 <ul class="nav nav-pills nav-stacked">
                                     <li class="header">Folders</li>
+                                    <%if @active == "search"%>
+                                    <li class="active">
+                                        <%=link_to do%>
+                                        <i class="fa fa-search"></i> Resultados de Búsqueda
+                                        <%end%>
+                                    </li>
+                                    <%end%>
                                     <li <%=activate_tab(@active,"pending")%>>
                                         <%=link_to :controller => "requests", :action => "index", :params => {:opt => "pending"} do%>
                                             <i class="fa fa-inbox"></i> Pendientes
@@ -50,16 +57,7 @@
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-9 col-sm-8">
                             <div class="row pad">
-                                <div class="col-sm-6 col-sm-offset-6 search-form">
-                                    <form action="#" class="text-right">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-sm" placeholder="Search">
-                                            <div class="input-group-btn">
-                                                <button type="submit" name="q" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name}%>
                             </div>
                             <div class="table-responsive">
                                 <%=render :partial => "requests_table_partial", :locals => {:requests => @requests, :active => @active}%>
