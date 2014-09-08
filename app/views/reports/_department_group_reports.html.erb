@@ -1,44 +1,52 @@
 <%if institution %>
     <div class="col-lg-6">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre grupo</th>
-                    <th style="text-align:center;">Último Reporte</th>
-                    <th style="text-align:center;">Ver Reportes Historicos</th>
-                </tr>
-            </thead>
-            <tbody>
-                <%groups.each do |g|%>
-                    <tr>
-                        <td><%=link_to g.department, :controller => "moodle_courses", :action => "show_group", :params => {:id => g.id}%></td>
-                        <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => institution, :department => g.department, :format => "pdf"}}, :target => "_blank"%></td>
-                        <td style="text-align:center;"><%=link_to "<i class='fa fa-clock-o'></i>".html_safe, {:controller => "reports", :action => "course_groups", :params => {:department => g.department, :institution => institution, :opt => "department"}}, {:class => "btn btn-default btn-circle"}%></td>
-                    </tr>
-                <%end%>
-            </tbody>
-        </table>
+        <div class="box box-primary">
+            <div class="box-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre grupo</th>
+                            <th style="text-align:center;">Último Reporte</th>
+                            <th style="text-align:center;">Ver Reportes Historicos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%groups.each do |g|%>
+                            <tr>
+                                <td><%=g.department%></td>
+                                <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => institution, :department => g.department, :format => "pdf"}}, :target => "_blank"%></td>
+                                <td style="text-align:center;"><%=link_to "<i class='fa fa-clock-o'></i>".html_safe, {:controller => "reports", :action => "course_groups", :params => {:department => g.department, :institution => institution, :opt => "department"}}, {:class => "btn btn-default btn-circle"}%></td>
+                            </tr>
+                        <%end%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <%if reports%>
     <div class="col-lg-6">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre Grupo</th>
-                    <th>Fecha</th>
-                    <th>Reporte</th>
-                </tr>
-            </thead>
-            <tbody>
-                <%reports.each do |r|%>
-                    <tr>
-                        <td><%=r.department%></td>
-                        <td><%=r.created_at.strftime("%d-%m-%Y")%></td>
-                        <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => r.institution, :department => r.department, :date => r.created_at, :format => "pdf"}}, :target => "_blank"%></td>
-                    </tr>
-                <%end%>
-            </tbody>
-        </table>
+        <div class="box box-warning">
+            <div class="box-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre Grupo</th>
+                            <th>Fecha</th>
+                            <th>Reporte</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%reports.each do |r|%>
+                            <tr>
+                                <td><%=r.department%></td>
+                                <td><%=r.created_at.strftime("%d-%m-%Y")%></td>
+                                <td style="text-align:center;"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "institution_department_report", :params => {:institution => r.institution, :department => r.department, :date => r.created_at, :format => "pdf"}}, :target => "_blank"%></td>
+                            </tr>
+                        <%end%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <%end%>
 <%else%>

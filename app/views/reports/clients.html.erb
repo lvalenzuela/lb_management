@@ -24,24 +24,28 @@
                         <h4 class="page-header">Clientes Longbourn</h4>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th style="text-align: center"># Cursos Impartidos</th>
-                                            <th style="text-align: center"># Alumnos</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <%@clients.each do |client|%>
-                                            <tr>
-                                                <td><%=link_to client.institution, :controller => 'reports', :action => 'courses', :params => {:group_filter => "1", :institution => client.institution}%></td>
-                                                <td style="text-align: center"><%=client.courses%></td>
-                                                <td style="text-align: center"><%=client.users%></td>
-                                            </tr>
-                                        <%end%>
-                                    </tbody>
-                                </table>
+                                <div class="box box-primary">
+                                    <div class="box-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Empresa</th>
+                                                    <th style="text-align: center"># Cursos Impartidos</th>
+                                                    <th style="text-align: center"># Alumnos</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <%@clients.each do |client|%>
+                                                    <tr>
+                                                        <td><%=link_to client.institution, :controller => 'reports', :action => 'courses', :params => {:group_filter => "1", :institution => client.institution}%></td>
+                                                        <td style="text-align: center"><%=client.courses%></td>
+                                                        <td style="text-align: center"><%=client.users%></td>
+                                                    </tr>
+                                                <%end%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
