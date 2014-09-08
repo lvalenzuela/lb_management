@@ -28,13 +28,13 @@
                 <div class="box-footer clearfix">
                 	<div class="col-sm-6">
 	    				<%if @request.statusid == 4 && @request.userid == current_user.id%>
-	    					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success btn-sm", data: {confirm: "¿Confirmas que estás conforme con la solución implementada?"}} %>
+	    					<%=link_to "<i class='fa fa-check'></i> Confirmar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 2}}, {:class => "btn btn-success btn-sm", data: {confirm: "Al confirmar la solución estás confirmando que: \n 1. Se revisó el resultado de la solución implementada \n 2. Estás conforme con el resultado. \n 3. Asumes la responsabilidad de asociada a los puntos anteriormente mencionados. \n Deseas continuar?"}} %>
 
 	    					<%=link_to "<i class='fa fa-mail-reply'></i> Rechazar Solución".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
 	    				<%elsif @request.statusid == 1 && @request.receiverid == current_user.id%>
 	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Resuelto".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 4}}, {:class => "btn btn-primary btn-sm"}%>
 	    				<%elsif @request.statusid == 4 && @request.receiverid == current_user.id%>
-	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Pendiente".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
+	    					<%=link_to "<i class='fa fa-mail-reply'></i> Volver a Enviar".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
 	    				<%end%>
                 	</div>
                 	<div class="col-sm-2 pull-right">
@@ -114,7 +114,7 @@
 	    							<%=f.text_field :subject, :value => "Re: "+truncate(@request.subject), :class => "form-control"%>
 	    						</div>
 	    						<div class="form-group">
-	    							<%=f.text_area :message, :id => "redactor1", :class => "wysihtml5"%>
+	    							<%=f.text_area :message, :class => "wysihtml5"%>
 	    						</div>
 	    					</div>
 	    				</div>
@@ -135,12 +135,6 @@
 </section>
 
 <script type="text/javascript">
-  $(document).ready(function(){
-
-    $('.wysihtml5').each(function(i, elem) {
-      $(elem).wysihtml5();
-    });
-
-  })
+    $('.wysihtml5').wysihtml5();
 </script>
 

@@ -1,61 +1,59 @@
- 
- <!-- Barra de navegacion superior e izquierda -->
+<!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => "reports"%>
 
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Miembros del <%=@group[:type]%>: <%=@group[:name]%></h1>
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    <!-- /.row -->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-files-o fa-fw"></i> Estudiantes
+<section class="content-header no-margin">
+    <h1>
+        Reportes
+        <small>Reportes por Grupo</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Reportes", :controller => :reports, :action => :clients%></li>
+        <li>Reportes por Grupo</li>
+        <li class="active">Miembros por <%=@group[:type]%></li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#"><%=@group[:type]%></a></li>
+                <li><%=link_to 'Descargar Todos', {:controller => "reports", :action => "bulk_user_reports", :params => {:institution => @group[:institution], :fullname => @group[:fullname], :filter => @group[:filter]}}, :target => "_blank"%></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                        <h4 class="page-header">Miembros por <%=@group[:type]%>: <%=@group[:name]%></h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th style="text-align: center">Empresa</th>
+                                            <th style="text-align: center">Departamento</th>
+                                            <th>Curso</th>
+                                            <th style="text-align: center">Reporte</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%@members.each do |member|%>
+                                            <tr>
+                                                <td><%=member.firstname+" "+member.lastname%></td>
+                                                <td style="text-align: center"><%=member.institution%></td>
+                                                <td style="text-align: center"><%=member.department%></td>
+                                                <td><%=member.coursename%></td>
+                                                <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "user_report", :params => {:user_id => member.userid, :course_id => member.courseid, :format => "pdf"}}, :target => "_blank"%></td>
+                                            </tr>
+                                        <%end%>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-                <!-- /.panel-heading -->
-                <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="students-table">
-                            <thead>
-                                <tr>
-									<th>Nombre</th>
-									<th style="text-align: center">Empresa</th>
-									<th style="text-align: center">Departamento</th>
-									<th>Curso</th>
-									<th style="text-align: center">Reporte</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-								<%@members.each do |member|%>
-									<tr>
-										<td><%=member.firstname+" "+member.lastname%></td>
-										<td style="text-align: center"><%=member.institution%></td>
-										<td style="text-align: center"><%=member.department%></td>
-										<td><%=member.coursename%></td>
-										<td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "user_report", :params => {:user_id => member.userid, :course_id => member.courseid, :format => "pdf"}}, :target => "_blank"%></td>
-									</tr>
-								<%end%>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="well">
-						<%=link_to 'Descargar Todos', {:controller => "reports", :action => "bulk_user_reports", :params => {:institution => @group[:institution], :fullname => @group[:fullname], :filter => @group[:filter]}}, :class => "btn btn-default btn-lg btn-block", :target => "_blank"%>
-                    </div>
-                </div>
-                <!-- /.panel-body -->
             </div>
-            <!-- /.panel -->
         </div>
-        <!-- /.col-lg-12 -->
     </div>
-</div>
-<!-- /#page-wrapper -->
-<script>
-$(document).ready(function() {
-    $('#students-table').dataTable();
-});
-</script>
+</section>
+

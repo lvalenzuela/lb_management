@@ -2,7 +2,12 @@ module RequestsHelper
 
 	def days_left(r_date)
 		if r_date
-			return (r_date - Date.today).to_i
+			d_left = (r_date - Date.today).to_i
+			if d_left < 0
+				return 0
+			else
+				return d_left
+			end
 		else
 			return 0
 		end
@@ -20,9 +25,8 @@ module RequestsHelper
 		end
 	end
 
-	def request_display_mode(active)
-		case active
-		when "pending"
+	def request_display_mode(request)
+		if has_unseen_messages(request.last_msg_datetime, request, current_user.id)
 			return "unread"
 		else
 			return "read"

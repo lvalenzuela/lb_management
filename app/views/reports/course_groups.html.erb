@@ -1,15 +1,21 @@
 <!-- Barra de navegacion superior e izquierda -->
 <%= render "shared_partials/navigation_menu", :active_item => "reports"%>
 
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Agrupaciones de Cursos de Longbourn</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 form-group">
-            <ul class="nav nav-tabs nav-justified" role="tablist">
+<section class="content-header no-margin">
+    <h1>
+        Reportes
+        <small>Por Grupo</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Reportes</li>
+        <li class="active">Reportes por Grupo</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
                 <li <%=activate_tab(@active,"groups")%>>
                     <%=link_to "Por Agrupamiento de Cursos", {:controller => "reports", :action => "course_groups", :params => {:opt => "groups"}}%>
                 </li>
@@ -17,22 +23,19 @@
                     <%=link_to "Por Departamento", {:controller => "reports", :action => "course_groups", :params => {:opt => "department"}}%>
                 </li>
             </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                        <div class="row">
+                            <%if @active == "groups"%>
+                                <%=render :partial => "course_group_reports", :locals => {:groups => @groups, :reports => @reports, :selected_group => @selected_group}%>
+                            <%elsif @active == "department"%>
+                                <%=render :partial => "department_group_reports", :locals => {:groups => @groups, :reports => @reports, :selected_group => @selected_group, :institution => @institution, :institution_list => @institution_list}%>
+                            <%end%>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
-    <%if @active == "groups"%>
-        <%=render :partial => "course_group_reports", :locals => {:groups => @groups, :reports => @reports, :selected_group => @selected_group}%>
-    <%elsif @active == "department"%>
-        <%=render :partial => "department_group_reports", :locals => {:groups => @groups, :reports => @reports, :selected_group => @selected_group, :institution => @institution, :institution_list => @institution_list}%>
-    <%end%>
-</div>
-
-<script>
-$(document).ready(function() {
-    $('#groups-table').dataTable();
-});
-</script>
-<script>
-$(document).ready(function() {
-    $('#reports-table').dataTable();
-});
-</script>
+</section>

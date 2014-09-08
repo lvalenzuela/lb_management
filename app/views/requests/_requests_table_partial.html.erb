@@ -6,7 +6,7 @@
 	</tr>
 	<%else%>
 	    <%requests.each do |r|%>
-	    <tr class="<%=request_display_mode(active)%>">
+	    <tr class="<%=request_display_mode(r)%>">
 	    	<%if is_editable(r)%>
 	    	<td>
 	    		<%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :requests, :action => :delete_request, :params => {:id => r.id, :statusid => 3, :p_action => action_name}}, {data: {confirm: "El requerimiento será marcado como eliminado y se eliminará de la cola de requerimientos del destinatario.¿ Desea continuar ?"}, :class => "btn btn-xs btn-danger"}%>
