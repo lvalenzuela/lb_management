@@ -91,9 +91,4 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-  
-  #precompile fonts
-  config.assets.precompile << lambda do |filename, path|
-    path =~ /vendor\/assets/ && !%w(.js .css).include?(File.extname(filename))
-  end
 end
