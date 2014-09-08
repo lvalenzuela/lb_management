@@ -5,8 +5,24 @@ class RequestsController < ApplicationController
 	include RequestsHelper
 
 	def search
-		@search_term = params[:search_words]
-		@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+		if params
+			@previous_action = params[:parent_action]
+			@active = "search"
+			@search_term = params[:search_term]
+			case params[:parent_action]
+			when "sent_requests"
+				#Se busca entre los requerimientos enviados
+				@requests = Request.where("userid = #{current_user.id} and request like '%#{@search_term}%'")
+				action_to_render = "sent_requests"
+			else
+				#Se busca entre los requerimientos recividos
+				@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+				action_to_render = "index"
+			end
+			render "requests/"+action_to_render
+		else
+			redirect_to :index
+		end
 	end
 
 	def index
@@ -15,7 +31,7 @@ class RequestsController < ApplicationController
 		when "solved"
 			@active = "solved"
 			#solocitudes resueltas o canceladas
-			@resolved_requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC")
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC")
 		when "wconf"
 			#solicitudes esperando confirmacion
 			@active = "wconf"
@@ -27,6 +43,10 @@ class RequestsController < ApplicationController
 		@user = User.find(current_user.id)
 	end
 
+	def bulk_request_status_change
+
+	end
+
 	def mark_solution
 		#Modifica el estado de la solicitud desde el usuario a quien se le asigna
 		change_status(params)
@@ -34,21 +54,12 @@ class RequestsController < ApplicationController
 		redirect_to :controller => :request_notes, :action => :show, :id => params[:id]
 	end
 
-	def waiting_confirmation
-		@user = current_user
-		@editable = false
-		@table = 2
-		@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC")
-	end
-
 	def sent_requests
 		@user = current_user
 		#Hay dos tipos de tabla
 		#La primera es una tabla regular que muestra solicitudes
 		#la segunda corresponde a la tabla con los botones para confirmar o reenviar solicitudes
-		@table = 1
-		@editable = false
-		@active = "inprogress"
+		@active = "wconf"
 		case params[:f]
 		when "solved"
 			#Solicitudes resueltas o canceladas
@@ -57,10 +68,12 @@ class RequestsController < ApplicationController
 		when "unassigned"
 			#Solicitudes pendientes que no han sido asignadas
 			@active = "unassigned"
-			@editable = true
 			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at DESC")
-		else
+		when "inprogress"
+			@active = "inprogress"
 			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at DESC")
+		else
+			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC")
 		end
 	end
 
@@ -130,19 +143,19 @@ class RequestsController < ApplicationController
 
 	def area_requests
 		@area = Area.find(params[:id])
+		@active = "all"
 		if !@area.nil?
 			case params[:f]
 			when "assigned"
 				#sólo las solicitudes asignadas
 				@active = "assigned"
 				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC")
-			when "unassigned"
+			when "orphaned"
 				#solo solicitudes sin asignar
-				@active = "unassigned"
+				@active = "orphaned"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC")
 			else
 				#todas las solicitudes
-				@active = "all"
 				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC")
 			end
 			@receivers = receiver_list(@area.id)
@@ -203,6 +216,11 @@ class RequestsController < ApplicationController
 		@request = Request.find(params[:id])
 		@statuses = RequestStatus.all()
 		@receivers = receiver_list(@request.areaid)
+	end
+
+	def delete_request
+		change_status(params)
+		redirect_to :action => params[:p_action]
 	end
 
 	def destroy

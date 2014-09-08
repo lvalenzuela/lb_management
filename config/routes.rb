@@ -107,20 +107,21 @@ Rails.application.routes.draw do
 
   resources :requests do
     collection do
-      get "search"
+      post "search"
       get 'index'
       get 'mark_solution'
       get "area_for_request"
       get 'new_request'
+      get 'delete_request'
       post 'create_request'
       post 'filter_requests'
       post 'update'
       post "create_request_tag"
       post "update_request_tag"
+      post "bulk_request_status_change"
       get "edit_request_tag"
       delete "destroy_request_tag"
       get 'sent_requests'
-      get 'waiting_confirmation'
       get 'filter_sent'
       get 'edit_request'
       get 'show'
@@ -143,7 +144,7 @@ Rails.application.routes.draw do
 
   resources :users do
     collection do
-      get "search"
+      post "search"
       get 'index'
       get 'course_members'
       get "user_profile"

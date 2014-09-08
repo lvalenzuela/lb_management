@@ -11,10 +11,9 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery.turbolinks
 //= require jquery_ujs
 //= require turbolinks
-//= require redactor-rails
 //= require modernizr
 //= require bootstrap-timepicker
 //= require_tree .
-

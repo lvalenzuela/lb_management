@@ -7,13 +7,11 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
-
-<div id="wrapper">
+<body class="skin-blue">
 
 <%= yield %>
 
-</div>
+<%=render :partial => "shared_partials/footer"%>
 
 </body>
 </html>

@@ -61,3 +61,5 @@ end
 #gem 'rubber'
 gem 'open4'
 
+gem 'bootstrap-wysihtml5-rails'
+gem 'jquery-turbolinks'

@@ -1,0 +1,32 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => ""%>
+<section class="content-header">
+    <h1>
+        Longbourn Summit
+        <small>Búsqueda</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Longbourn Summit", root_path%></li>
+        <li class="active">Búsqueda</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+	        <div class="box box-danger">
+	            <div class="box-header">
+	                <i class="fa fa-warning"></i>
+	                <h3 class="box-title">Funcionalidad en Desarrollo</h3>
+	            </div><!-- /.box-header -->
+	            <div class="box-body">
+	                <div class="alert alert-danger alert-dismissable">
+	                    <i class="fa fa-ban"></i>
+	                    <b>Lo sentimos!</b> Esta funcionalidad no se encuentra disponible por el momento.
+	                    Estamos trabajando para habilitar las búsquedas a travez del sitio.
+	                </div>
+	            </div><!-- /.box-body -->
+	        </div><!-- /.box -->
+	    </div>
+	</div>
+</section>

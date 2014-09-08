@@ -1,5 +1,13 @@
 module RequestNotesHelper
 
+	def my_note(note)
+		if note.userid == current_user.id
+			return true
+		else
+			return false
+		end
+	end
+
 	def get_username(userid)
 		u = User.find(userid)
 		return u.firstname+" "+u.lastname

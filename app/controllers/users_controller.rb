@@ -1,13 +1,17 @@
 class UsersController < ApplicationController
 	protect_from_forgery
 	require 'bcrypt'
-	layout "dashboard"	
+	layout :resolve_layout
 	
 	def index
 	    #Si el usuario ya esta logeado, se redirige al panel de control
 	    if !current_user.nil?
 	      redirect_to :controller => "main", :action => 'index'
 	    end
+	end
+
+	def search
+		
 	end
 
 	def login
@@ -55,6 +59,15 @@ class UsersController < ApplicationController
 	end
 
 	private
+
+	def resolve_layout
+		case action_name
+		when "index"
+			"login_layout"
+		else
+			"dashboard"
+		end
+	end
 
 	def get_user_area_roles(user_id)
 		#Se identifican todas las areas del sistema

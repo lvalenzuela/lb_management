@@ -1,0 +1,27 @@
+<table class="table table-mailbox">
+	<tbody>
+	<%if requests.blank?%>
+	<tr class="read">
+		<td colspan="5">No se encontraron resultados.</td>
+	</tr>
+	<%else%>
+	    <%requests.each do |r|%>
+	    <tr class="<%=request_display_mode(r)%>">
+	    	<%if is_editable(r)%>
+	    	<td>
+	    		<%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :requests, :action => :delete_request, :params => {:id => r.id, :statusid => 3, :p_action => action_name}}, {data: {confirm: "El requerimiento será marcado como eliminado y se eliminará de la cola de requerimientos del destinatario.¿ Desea continuar ?"}, :class => "btn btn-xs btn-danger"}%>
+	    	</td>
+	    	<%else%>
+	    	<td>
+	    		<%=link_to "<i class='fa fa-times'></i>".html_safe, {}, {:class => "btn btn-xs btn-danger disabled"} %>
+	    	</td>
+	    	<%end%>
+	        <td class="small-col"><small class="badge <%=req_priority_label(r.priorityid)%>"><%=request_priority_desc(r.priorityid)%></small></td>
+	        <td class="name"><%=link_to get_username(r.userid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
+	        <td class="subject"><%=link_to truncate(r.subject, :length => 60), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
+	        <td class="time">Vence en <%=days_left(r.duedate)%> días</td>
+	    </tr>
+	    <%end%>
+	<%end%>
+	</tbody>
+</table>

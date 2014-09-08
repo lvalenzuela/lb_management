@@ -1,0 +1,11 @@
+<div class="col-sm-6 col-sm-offset-6 search-form">
+    <%=form_tag :controller => :requests, :action => :search do%>
+        <div class="input-group">
+            <%=hidden_field_tag :parent_action, action%>
+            <%=text_field_tag :search_term, nil, :class => "form-control input-sm" ,:placeholder => "Buscar"%>
+            <div class="input-group-btn">
+                <button type="submit" name="q" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+    <%end%>
+</div>

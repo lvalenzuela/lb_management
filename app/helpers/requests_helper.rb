@@ -1,15 +1,48 @@
 module RequestsHelper
 
-	def request_label_class(statusid)
-		case statusid
-		when 1
-			return "info"
-		when 2
-			return "success"
-		when 3
-			return "danger"
+	def days_left(r_date)
+		if r_date
+			d_left = (r_date - Date.today).to_i
+			if d_left < 0
+				return 0
+			else
+				return d_left
+			end
 		else
-			return "warning"
+			return 0
+		end
+	end
+
+	def is_editable(request)
+		if request.userid == current_user.id
+			if request.statusid != 2 && request.statusid != 3
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+	end
+
+	def request_display_mode(request)
+		if has_unseen_messages(request.last_msg_datetime, request, current_user.id)
+			return "unread"
+		else
+			return "read"
+		end
+	end
+
+	def req_priority_label(priorityid)
+		case priorityid
+		when 1
+			return "bg-red"
+		when 2
+			return "bg-yellow"
+		when 3
+			return "bg-blue"
+		else
+			return "bg-green"
 		end
 	end
 
