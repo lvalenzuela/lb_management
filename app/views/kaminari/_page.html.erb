@@ -7,6 +7,11 @@
     per_page:      number of items to fetch per page
     remote:        data-remote
 -%>
-<li class="paginate_button <%= ' active' if page.current? %>">
-  <%= link_to page, url, {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil} %>
-</li>
+<%#<li class="paginate_button <%= ' active' if page.current? %> <!--">-->
+<%if page.current?%>
+	<small><%=page%></small>
+<%else%>
+  <small><%= link_to page, url, {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil} %></small>
+<%end%>
+
+<!--</li>-->
