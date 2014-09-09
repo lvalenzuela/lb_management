@@ -1,9 +1,12 @@
 <%check_user_requests(current_user.id)%>
 <%user = current_user%>
+<%#
+inicialización de variables para recuperar los datos del
+usuario
+-%>
+
 <header class="header">
-    <a class="logo" href="#">
-        Longbourn Summit
-    </a>
+    <%=link_to "Longbourn Summit", root_path, :class => "logo"%>
     <nav class="navbar navbar-static-top" role="navigation">
         <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
