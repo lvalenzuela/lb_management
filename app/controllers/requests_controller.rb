@@ -31,14 +31,14 @@ class RequestsController < ApplicationController
 		when "solved"
 			@active = "solved"
 			#solocitudes resueltas o canceladas
-			@requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [2,3]).order("updated_at DESC").page(params[:page]).per(10)
 		when "wconf"
 			#solicitudes esperando confirmacion
 			@active = "wconf"
-			@requests = Request.where(:receiverid => current_user.id, :statusid => [4]).order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [4]).order("updated_at DESC").page(params[:page]).per(10)
 		else
 			#solicitudes pendientes
-			@requests = Request.where(:receiverid => current_user.id, :statusid => [1]).order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where(:receiverid => current_user.id, :statusid => [1]).order("updated_at DESC").page(params[:page]).per(10)
 		end
 		@user = User.find(current_user.id)
 	end
@@ -64,16 +64,16 @@ class RequestsController < ApplicationController
 		when "solved"
 			#Solicitudes resueltas o canceladas
 			@active = "solved"
-			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where("userid = #{@user.id} and statusid in (2,3)").order("updated_at DESC").page(params[:page]).per(10)
 		when "unassigned"
 			#Solicitudes pendientes que no han sido asignadas
 			@active = "unassigned"
-			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where("userid = #{@user.id} and receiverid is null and statusid = 1").order("updated_at DESC").page(params[:page]).per(10)
 		when "inprogress"
 			@active = "inprogress"
-			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where("userid = #{@user.id} and receiverid is not null and statusid = 1").order("updated_at DESC").page(params[:page]).per(10)
 		else
-			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC").page(params[:page]).per(5)
+			@requests = Request.where("userid = #{@user.id} and statusid = 4").order("updated_at DESC").page(params[:page]).per(10)
 		end
 	end
 
@@ -149,14 +149,14 @@ class RequestsController < ApplicationController
 			when "assigned"
 				#sólo las solicitudes asignadas
 				@active = "assigned"
-				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC").page(params[:page]).per(5)
+				@requests = Request.where("areaid = #{@area.id} and statusid = 1 and receiverid is not NULL and receiverid <> ''").order("updated_at DESC").page(params[:page]).per(10)
 			when "orphaned"
 				#solo solicitudes sin asignar
 				@active = "orphaned"
-				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC").page(params[:page]).per(5)
+				@requests = Request.where(:areaid => @area.id, :statusid => 1, :receiverid => [nil, ""]).order("updated_at DESC").page(params[:page]).per(10)
 			else
 				#todas las solicitudes
-				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC").page(params[:page]).per(5)
+				@requests = Request.where(:areaid => @area.id, :statusid => 1).order("updated_at DESC").page(params[:page]).per(10)
 			end
 			@receivers = receiver_list(@area.id)
 		else

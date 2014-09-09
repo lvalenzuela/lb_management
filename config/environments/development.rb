@@ -48,6 +48,6 @@ Rails.application.configure do
 
   #precompile fonts
   config.assets.precompile << lambda do |filename, path|
-    path =~ /vendor\/assets/(images|fonts) && !%w(.js .css).include?(File.extname(filename))
+    path =~ /vendor\/assets/ && !%w(.js .css).include?(File.extname(filename))
   end
 end

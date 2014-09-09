@@ -9,9 +9,7 @@
 -%>
 <%#<li class="paginate_button <%= ' active' if page.current? %> <!--">-->
 <%if page.current?%>
-	<small><%=page%></small>
-<%else%>
-  <small><%= link_to page, url, {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil} %></small>
+	<small>Página <%=page%> de <%=total_pages%></small>
 <%end%>
-
+  <!--<small><%# link_to page, url, {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil} %></small>-->
 <!--</li>-->
