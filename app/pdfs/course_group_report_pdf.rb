@@ -137,7 +137,7 @@ class CourseGroupReportPdf < Prawn::Document
 	private
 
 	def find_group_members(groupid)
-		return members = CourseGroupReport.where(:groupid => groupid).select("userid")
+		return members = CourseGroupReport.where(:groupid => groupid).select("userid").group("userid")
 	end
 
 	def grade_parser(grade)
