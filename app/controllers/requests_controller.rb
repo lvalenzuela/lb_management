@@ -12,11 +12,11 @@ class RequestsController < ApplicationController
 			case params[:parent_action]
 			when "sent_requests"
 				#Se busca entre los requerimientos enviados
-				@requests = Request.where("userid = #{current_user.id} and request like '%#{@search_term}%'")
+				@requests = Request.where("userid = #{current_user.id} and request like '%#{@search_term}%'").page(params[:page]).per(10)
 				action_to_render = "sent_requests"
 			else
 				#Se busca entre los requerimientos recividos
-				@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'")
+				@requests = Request.where("receiverid = #{current_user.id} and request like '%#{@search_term}%'").page(params[:page]).per(10)
 				action_to_render = "index"
 			end
 			render "requests/"+action_to_render

@@ -1,25 +1,28 @@
+
 <div class="row">
-    <%=form_tag :controller => "main", :action => "modify_assignation" do%>
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Usuarios del Área
+    <div class="col-md-6">
+        <%=form_tag :controller => "main", :action => "modify_assignation" do%>
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Usuarios del Área</h3>
             </div>
-            <div class="panel-body">
-                <div class="col-md-8 form-group">
-                    <%=select_tag :role, options_for_select(roles.collect{|r| [r.rolename, r.id]}), {:class => "form-control"}%>
-                    <%=hidden_field_tag :area, area.id%>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <%=select_tag :role, options_for_select(roles.collect{|r| [r.rolename, r.id]}), {:class => "form-control"}%>
+                        <%=hidden_field_tag :area, area.id%>
+                    </div>
+                    <div class="col-md-4">
+                        <%=submit_tag "Modificar Roles", :class => "btn btn-primary btn-sm"%>
+                    </div>
                 </div>
-                <div class="col-md-4 form-group">
-                    <%=submit_tag "Modificar Roles", :class => "btn btn-default btn-block"%>
-                </div>
-                <table class="table table-striped table-bordered table-hover" id="areausers-table">
+                <table class="table">
                     <thead>
                         <tr>
                             <th></th>
                             <th>Nombre</th>
                             <th>Rol</th>
-                            <th style="text-align: center;">Eliminar</th>
+                            <th style="text-align: center; width: 100px;">Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,18 +38,18 @@
                 </table>
             </div>
         </div>
+        <%end%>
     </div>
-    <%end%>
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Usuarios de Longbourn
+    <div class="col-md-6">
+        <div class="box box-warning">
+            <div class="box-header">
+                <h3 class="box-title">Usuarios de Longbourn</h3>
             </div>
-            <div class="panel-body">
-                <table class="table table-striped table-bordered table-hover" id="systemusers-table">
+            <div class="box-body">
+                <table class="table">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th style="text-align: center; width: 100px;">Agregar</th>
                             <th>Nombre</th>
                         </tr>
                     </thead>
@@ -63,14 +66,3 @@
         </div>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-    $('#areausers-table').dataTable();
-});
-</script>
-
-<script>
-$(document).ready(function() {
-    $('#systemusers-table').dataTable();
-});
-</script>

@@ -18,7 +18,7 @@ class MainController < ApplicationController
     def system_manager
         @managers = get_system_managers
         @roles = Role.where("id <> 1")
-        @remaining_users = User.where("id not in (?)", @managers.map{|m| m.id})
+        @remaining_users = User.where("id not in (?)", @managers.map{|m| m.id}).page(params[:page]).per(10)
     end
 
     def assign_system_manager

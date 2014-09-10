@@ -1,38 +1,33 @@
 <%= render "shared_partials/navigation_menu", :active_item => "admin"%>
 
-<div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Longbourn Management</h1>
-        </div>
-    </div>
-    <%if @areas.empty?%>
-    <div class="row">
-        <div class="col-lg-6 col-lg-offset-3">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Usuarios de Longbourn
-                </div>
-                <div class="panel-body">
-                    <h3>No hay datos para el usuario.</h3>
-                    <p>Su usuario no tiene privilegios de administración sobre las Áreas del Sistema.
-                        Actualmente no hay datos para mostrar</p>
+<section class="content-header no-margin">
+    <h1>
+        Administración
+        <small>Áreas de Longbourn</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li class="active">Áreas de Longbourn</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <%@areas.each do |a|%>
+                <li <%=activate_tab(@active,a.id.to_s)%>>
+                    <%=link_to a.areaname , {:controller => "main", :action => "area_manager", :params => {:opt => a.id}}%>
+                </li>
+                <%end%>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                        <%=render :partial => "area_dashboard", :locals => {:area => @selected_area, :roles => @roles, :area_users => @area_users, :system_users => @system_users}%>
+                    </section>
                 </div>
             </div>
         </div>
     </div>
-    <%else%>
-        <div class="row">
-            <div class="col-lg-12 form-group">
-                <ul class="nav nav-tabs nav-justified" role="tablist">
-                    <%@areas.each do |a|%>
-                    <li <%=activate_tab(@active,a.id.to_s)%>>
-                        <%=link_to a.areaname , {:controller => "main", :action => "area_manager", :params => {:opt => a.id}}%>
-                    </li>
-                    <%end%>
-                </ul>
-            </div>
-        </div>
-        <%=render :partial => "area_dashboard", :locals => {:area => @selected_area, :roles => @roles, :area_users => @area_users, :system_users => @system_users}%>
-    <%end%>
-</div>
+</section>
