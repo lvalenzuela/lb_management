@@ -3,12 +3,19 @@ class MoodleCoursesController < ApplicationController
     protect_from_forgery
     layout "dashboard"
 
-    def index
-    	@courses = MoodleCourse.all()
-        @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
-                                            on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
-                                                                                        moodle_groups.groupname as groupname,
-                                                                                        count(distinct mga.m_courseid) as courses").group("id")
+    def index        
+        @courses = MoodleCourse.all().page(params[:page]).per(10)
+        if params[:search]
+            @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
+                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
+                                                    moodle_groups.groupname as groupname,
+                                                    count(distinct mga.m_courseid) as courses").where("groupname LIKE '%#{params[:search]}%'").group("moodle_groups.id").page(params[:page]).per(10)
+        else
+            @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
+                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
+                                                    moodle_groups.groupname as groupname,
+                                                    count(distinct mga.m_courseid) as courses").group("moodle_groups.id").page(params[:page]).per(10)
+        end
     end
 
     def assign
@@ -37,12 +44,9 @@ class MoodleCoursesController < ApplicationController
         @courses = MoodleCourse.joins("inner join moodle_group_assignations as mga
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}")
-        @group = params[:id]
-        courselist = []
-        @courses.each do |c|
-            courselist << c.moodleid
-        end
-        @remaining_courses = MoodleCourse.where("moodleid not in (?)", courselist)
+        @group = MoodleGroup.find(params[:id])
+
+        @remaining_courses = MoodleCourse.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
     end
 
     def create_group
