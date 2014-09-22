@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140902150515) do
+ActiveRecord::Schema.define(version: 20140922150537) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -92,12 +92,48 @@ ActiveRecord::Schema.define(version: 20140902150515) do
     t.datetime "updated_at"
   end
 
+  create_table "course_alarm_parameters", force: true do |t|
+    t.string   "param_name"
+    t.string   "param_description"
+    t.string   "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_attendance_reports", force: true do |t|
+    t.integer  "courseid"
+    t.string   "coursename"
+    t.integer  "total_sessions"
+    t.integer  "current_booked_sessions"
+    t.integer  "current_taken_sessions"
+    t.datetime "last_taken_session_date"
+    t.float    "avg_attendance_ratio"
+    t.float    "std_dev_assistance"
+    t.date     "created_at"
+  end
+
   create_table "course_features", force: true do |t|
     t.integer  "course_id"
     t.string   "feature_name"
     t.string   "feature_description"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "course_grades_reports", force: true do |t|
+    t.integer  "courseid"
+    t.integer  "categoryid"
+    t.string   "categoryname"
+    t.integer  "itemid"
+    t.string   "itemname"
+    t.integer  "sortorder"
+    t.datetime "last_modification"
+    t.integer  "hidden"
+    t.integer  "locked"
+    t.float    "mean_grade"
+    t.float    "std_dev_grade"
+    t.integer  "gradetype"
+    t.date     "created_at"
   end
 
   create_table "course_group_reports", force: true do |t|
@@ -157,6 +193,24 @@ ActiveRecord::Schema.define(version: 20140902150515) do
     t.datetime "updated_at"
   end
 
+  create_table "course_template_sessions", force: true do |t|
+    t.integer  "course_template_id"
+    t.integer  "session_number"
+    t.integer  "session_type_id"
+    t.integer  "page"
+    t.string   "contents"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_templates", force: true do |t|
+    t.integer  "course_level_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "deleted",         default: 0
+  end
+
   create_table "course_types", force: true do |t|
     t.string   "typename"
     t.string   "description"
@@ -170,7 +224,6 @@ ActiveRecord::Schema.define(version: 20140902150515) do
     t.integer  "course_level_id"
     t.integer  "students_qty"
     t.string   "mode"
-    t.integer  "teacher_user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "zoho_product_id"
@@ -222,6 +275,16 @@ ActiveRecord::Schema.define(version: 20140902150515) do
 
   create_table "moodle_groups", force: true do |t|
     t.string   "groupname"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "moodle_role_assignations", id: false, force: true do |t|
+    t.integer  "id"
+    t.integer  "userid"
+    t.integer  "courseid"
+    t.integer  "roleid"
+    t.string   "rolename"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -324,6 +387,45 @@ ActiveRecord::Schema.define(version: 20140902150515) do
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "student_attendance_reports", force: true do |t|
+    t.integer  "userid"
+    t.integer  "courseid"
+    t.string   "acronym",     limit: 1
+    t.integer  "statusid"
+    t.integer  "inclasswork"
+    t.integer  "attitude"
+    t.datetime "timetaken"
+    t.integer  "sessionid"
+    t.datetime "sessiondate"
+    t.datetime "lasttaken"
+    t.integer  "lasttakenby"
+    t.integer  "pagenum"
+    t.date     "created_at"
+  end
+
+  create_table "student_general_attendance_reports", force: true do |t|
+    t.integer "userid"
+    t.integer "courseid"
+    t.integer "present_sessions"
+    t.integer "absent_sessions"
+    t.integer "total_sessions"
+    t.date    "created_at"
+  end
+
+  create_table "student_grades_reports", force: true do |t|
+    t.integer "userid"
+    t.integer "courseid"
+    t.integer "categoryid"
+    t.string  "categoryname"
+    t.integer "itemid"
+    t.string  "itemname"
+    t.integer "sortorder"
+    t.integer "hidden"
+    t.float   "finalgrade"
+    t.integer "gradetype"
+    t.date    "created_at"
   end
 
   create_table "user_reports", force: true do |t|

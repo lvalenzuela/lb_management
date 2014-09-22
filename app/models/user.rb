@@ -1,7 +1,6 @@
 class User < ActiveRecord::Base
 	has_attached_file :avatar, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :default_url => "/assets/default_profile_pic.jpg"
 	validates_attachment_content_type :avatar, :content_type => /\Aimage\/.*\Z/
-
 	before_create :set_system_role
 
 	def generate_token(column)

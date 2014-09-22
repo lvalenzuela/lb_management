@@ -103,7 +103,50 @@ class CoursesController < ApplicationController
         redirect_to :action => :index
     end
 
+
+    def course_templates
+        @templates = CourseTemplate.where(:deleted => 0).page(params[:page]).per(10)
+    end
+
+    def new_template
+        @course_levels = CourseLevel.all()
+    end
+
+    def create_template
+        @template = CourseTemplate.create(course_template_params)
+        if @template.valid?
+            redirect_to :action => :course_templates
+        else
+            @course_levels = CourseLevel.all()
+            render :new_template
+        end
+    end
+
+    def delete_template
+
+    end
+
+    def edit_template
+        @template = CourseTemplate.find(params[:id])
+        @course_levels = CourseLevel.all()
+    end
+
+    def update_template
+        @template = CourseTemplate.find(params[:course_template][:id])
+        @template.update_attributes(course_template_params)
+        if @template.valid?
+            redirect_to :action => :course_templates
+        else
+            @course_levels = CourseLevel.all()
+            render :edit_template
+        end
+    end
+
     private
+
+    def course_template_params
+        params.require(:course_template).permit(:course_level_id,:name)
+    end
 
     def modify_course_features
         cf = CourseFeature.where(:course_id => @course.id, :feature_name => "first_day").first()

@@ -76,58 +76,6 @@ class MainController < ApplicationController
         redirect_to :action => "area_manager", :opt => params[:areaid]
     end
 
-    def manage_products
-        @active = "default"
-        case params[:ctrl]
-        when "deleted"
-            #listado de precios eliminados
-            @active = "deleted"
-            @products = ProductPrice.where("valid_until >= curdate() and deleted = 1")
-        when "outdated"
-            #precios fuera de fecha
-            @active = "outdated"
-            @products = ProductPrice.where("valid_until <= curdate() and deleted = 0")
-        when "all"
-            #Todos los precios
-            @active = "all"
-            @products = ProductPrice.all()
-        else
-            #Ni fuera de fecha ni eliminados
-            @products = ProductPrice.where("valid_until >= curdate() and deleted = 0")
-        end
-    end
-
-    def create_product
-        ProductPrice.create(product_price_params)
-        redirect_to :action => "manage_products"
-    end
-
-    def new_product
-        @active = "new"
-    end
-
-    def edit_product
-        @product = ProductPrice.find(params[:id])
-    end
-
-    def update_product
-        p = ProductPrice.find(params[:product_price][:id])
-        p.update_attributes(product_price_params)
-        redirect_to :action => "manage_products"
-    end
-
-    def enable_product
-        p = ProductPrice.find(params[:id])
-        p.update_attributes(:deleted => false)
-        redirect_to :action => "manage_products"
-    end
-
-    def delete_product
-        p = ProductPrice.find(params[:id])
-        p.update_attributes(:deleted => true)
-        redirect_to :action => "manage_products"
-    end
-
     private
 
     def assign_area_member(areaid,userid)
@@ -168,10 +116,6 @@ class MainController < ApplicationController
                                     and ra.roleid in (1,2)")
             return Area.where(:id => ctx.map{|c| c.instanceid})
         end
-    end
-    
-    def product_price_params
-        params.require(:product_price).permit(:modality, :students_qty, :hours_amt, :price, :valid_until, :deleted)
     end
 
     def check_authentication

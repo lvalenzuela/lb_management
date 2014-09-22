@@ -1,0 +1,52 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header">
+    <h1>
+        Administración de Cursos
+       	<small>Plantillas de Cursos</small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Administración de Cursos</li>
+        <li class="active">Plantillas de Cursos</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="col-xs-8 col-xs-offset-2">
+		<div class="box box-info">
+			<div class="box-header">
+				<h3 class="box-title">Plantillas de Cursos Longbourn</h3>
+			</div>
+			<div class="box-body table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Nombre Curso</th>
+							<th>Nivel</th>
+							<th style="text-align: center;">Editar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%@templates.each do |template|%>
+						<tr>
+							<td><%=template.name%></td>
+							<td><%=get_course_level(template.course_level_id)%></td>
+							<td style="text-align: center;">
+								<%=link_to :controller => :courses, :action => :edit_template, :params => {:id => template.id}, :class => "btn" do%>
+								<i class="fa fa-edit"></i>
+								<%end%>
+							</td>
+						</tr>
+						<%end%>
+					</tbody>
+				</table>
+			</div>
+            <div class="box-footer clearfix">
+                <div class="pull-right">
+                    <%=paginate @templates%>
+                </div>
+            </div><!-- box-footer -->
+		</div>
+	</div>
+</section>

@@ -1,0 +1,119 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "dashboard"%>
+
+<section class="content-header">
+    <h1>
+        Desempeño de Cursos	
+       	<small><%=moodle_course_name(@students_info.first().courseid)%></small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Desempeño por Cursos</li>
+        <li class="active"><%=moodle_course_name(@students_info.first().courseid)%></li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">Encargados del curso</h3>
+				</div>
+				<div class="box-body table-responsive no-padding">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Rol</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@user_roles.each do |u|%>
+							<tr>
+								<td><%=user_name(u.userid)%></td>
+								<td><%=u.rolename%></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-6">
+			<div class="box box-warning">
+				<div class="box-header">
+					<h3 class="box-title">Información Adicional</h3>
+				</div>
+				<div class="box-body table-responsive no-padding">
+					<table class="table">
+						<tbody>
+							<tr>
+								<th>Total de Sesiones</th>
+								<td><%=@attendance_reports.total_sessions%></td>
+							</tr>
+							<tr>
+								<th>Sesiones a la Fecha</th>
+								<td><%=@attendance_reports.current_booked_sessions%></td>
+							</tr>
+							<tr>
+								<th>Sesiones Registradas</th>
+								<td><%=@attendance_reports.current_taken_sessions%></td>
+							</tr>
+							<tr>
+								<th>Ultima Sesion Registrada</th>
+								<td><%=l(@attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y")%></td>
+							</tr>
+							<tr>
+								<th>Asistencia Promedio</th>
+								<td><%=(@attendance_reports.avg_attendance_ratio*100).round(1)%>%</td>
+							</tr>
+							<tr>
+								<th>Promedio Curso</th>
+								<td><%=dashboard_grade_parser(@course_grade.mean_grade, @course_grade.gradetype)%></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Listado de Alumnos</h3>
+				</div>
+				<div class="box-body table-responsive no-padding">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th style="text-align: center;">Asistencias</th>
+								<th style="text-align: center;">Ausente</th>
+								<th style="text-align: center;">% Asistencia</th>
+								<th style="text-align: center;">Promedio</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@students_info.each do |si|%>
+							<tr>
+								<td><%=link_to student_name(si.userid), :controller => :dashboard, :action => :student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
+								<td style="text-align: center;"><%=si.present_sessions%></td>
+								<td style="text-align: center;"><%=si.absent_sessions%></td>
+								<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
+								<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

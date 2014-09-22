@@ -56,7 +56,7 @@
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>Profesor</label>
-                                <%=f.select :teacher_user_id, options_for_select(@teachers.collect{|t| [t.firstname+" "+t.lastname,t.id]}), {}, {:class => "form-control"}%>
+                                <%=select_tag :teacher_user_id, options_for_select(@teachers.collect{|t| [t.firstname+" "+t.lastname,t.id]}), {:class => "form-control"}%>
                             </div>
                         </div>
                     </div>

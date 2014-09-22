@@ -1,6 +1,17 @@
 Rails.application.routes.draw do
   root 'requests#sent_requests'
 
+  resources :dashboard do
+    collection do
+      get "courses_list"
+      post "courses_list"
+      get "course"
+      get "student"
+      get "teachers_list"
+      get "teacher"
+    end
+  end
+
   resources :courses do 
     collection do
       get "search"
@@ -11,6 +22,12 @@ Rails.application.routes.draw do
       get "edit"
       post "update"
       post "cancel_course"
+      get "course_templates"
+      get "new_template"
+      post "create_template"
+      post "delete_template"
+      get "edit_template"
+      post "update_template"
     end
   end
 
@@ -151,6 +168,7 @@ Rails.application.routes.draw do
       post "change_profile_picture"
       post 'login'
       get 'logout'
+      get 'not_authorized'
     end
   end
 
