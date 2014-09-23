@@ -14,30 +14,59 @@
 </section>
 
 <section class="content">
-	<div class="col-xs-8 col-xs-offset-2">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">Nueva Plantilla de Curso</h3>
-			</div>
-			<%=form_for :course_template, :url => {:controller => :courses, :action => :create_template} do |f|%>
-			<div class="box-body">
-				<div class="row">
-					<div class="form-group col-xs-4">
-						<label>Nivel</label>
-						<%=f.select :course_level_id, options_for_select(@course_levels.collect{|l| [l.course_level,l.id]}), {:include_blank => true}, {:class => "form-control"}%>
-					</div>
-					<div class="form-group col-xs-8">
-						<label>Nombre de la Plantilla</label>
-						<%=f.text_field :name, :class => "form-control"%>
-					</div>	
-				</div>				
-			</div>
-			<div class="box-footer clearfix">
-				<div class="pull-right">
-					<%=f.submit "Crear Plantilla", :class => "btn btn-primary"%>
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <%=link_to "Plantillas de Cursos" , {:controller => :courses, :action => :course_templates}%>
+                </li>
+                <li class="active">
+                	<%=link_to "Nueva Plantilla", {:controller => :courses, :action => :new_template}%>
+                </li>
+                <li>
+                    <%=link_to "Configuración", {:controller => :courses, :action => :edit_session_types}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                	<section>
+                		<div class="row">
+	                		<div class="col-xs-8 col-xs-offset-2">
+							<%=form_for :course_template, :url => {:controller => :courses, :action => :create_template} do |f|%>
+								<div class="box box-info">
+									<div class="box-header">
+										<h3 class="box-title">Nueva Plantilla de Curso</h3>
+									</div>
+									<div class="box-body">
+										<div class="row">
+											<div class="form-group col-xs-6">
+												<label>Nivel</label>
+												<%=f.select :course_level_id, options_for_select(@course_levels.collect{|l| [l.course_level,l.id]}), {:include_blank => true}, {:class => "form-control"}%>
+											</div>
+											<div class="form-group col-xs-6">
+												<label>Número de Sesiones</label>
+												<%=f.number_field :total_sessions, :class => "form-control"%>
+											</div>
+										</div>
+										<div class="row">
+											<div class="form-group col-xs-12">
+												<label>Nombre de la Plantilla</label>
+												<%=f.text_field :name, :class => "form-control"%>
+											</div>	
+										</div>
+									</div>			
+									<div class="box-footer clearfix">
+										<div class="pull-right">
+											<%=f.submit "Crear Plantilla", :class => "btn btn-primary"%>
+										</div>
+									</div>
+								</div>
+							<%end%>
+							</div>
+						</div>
+					</section>
 				</div>
 			</div>
-			<%end%>
 		</div>
 	</div>
 </section>

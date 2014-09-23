@@ -58,6 +58,19 @@ class DashboardController < ApplicationController
 		@user_roles = MoodleRoleAssignation.where(:courseid => params[:id]).order("roleid ASC")
 		@attendance_reports = CourseAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").first()
 		@course_grade = CourseGradesReport.where("courseid = #{params[:id]} and created_at = curdate() and categoryname = '?' and itemname is null").first()
+		moodle_course = MoodleCourse.where(:moodleid => params[:id]).first()
+		@template_sessions = CourseTemplateSession.where(:course_template_id => moodle_course.course_template_id)
+		if @template_sessions.blank?
+			@template_id = nil
+		else
+			@template_id = @template_sessions.first().course_template_id
+		end
+		#obtencion del contenido de las sesiones
+		ts = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC")
+		@taken_sessions = []
+		ts.each do |sess|
+			@taken_sessions << sess.description
+		end
 	end
 
 	def student
@@ -67,13 +80,22 @@ class DashboardController < ApplicationController
 		@student_info = UserReport.select("userid, firstname, lastname, concat(firstname, ' ', lastname) as name, institution, department, username").where(:userid => params[:studentid]).first()
 		@other_courses = StudentGradesReport.select("distinct(courseid)").where("userid = #{@student_info.userid} and courseid != #{params[:courseid]} and created_at = curdate()")
 		@final_grade = @course_grades.where(:categoryname => "?", :itemname => nil).first()
+		@student_attendance = StudentAttendanceReport.where("courseid = #{params[:courseid]} and userid = #{params[:studentid]} and created_at = curdate()" ).order("sessionid ASC")
 	end
 
 	def teachers_list
-		@teachers = User.joins("inner join moodle_role_assignations as mra
-						on users.id = mra.userid").select("users.*,
-														count(distinct mra.courseid) as courses").where("
-														mra.roleid in(9,4)").group("users.id").page(params[:page]).per(10)
+		if params[:search]
+			@teachers = User.joins("inner join moodle_role_assignations as mra
+							on users.id = mra.userid").select("users.*,
+															count(distinct mra.courseid) as courses").where("
+															mra.roleid in(9,4)
+															and (users.firstname like '%#{params[:search]}%' or users.lastname like '%#{params[:search]}%')").group("users.id").page(params[:page]).per(10)
+		else
+			@teachers = User.joins("inner join moodle_role_assignations as mra
+							on users.id = mra.userid").select("users.*,
+															count(distinct mra.courseid) as courses").where("
+															mra.roleid in(9,4)").group("users.id").page(params[:page]).per(10)
+		end
 	end
 
 	def teacher

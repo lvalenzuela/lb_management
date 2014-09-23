@@ -15,11 +15,21 @@
 <section class="content">
 	<div class="col-xs-12">
 		<div class="box box-primary">
+			<%=form_tag :controller => :dashboard, :action => :teachers_list do%>
 			<div class="box-header">
 				<h3 class="box-title">Listado de Profesores de Longbourn</h3>
+				<div class="box-tools">
+					<div class="input-group">
+							<input type="text" name="search" class="form-control input-sm pull-right" style="width: 300px;" placeholder="Buscar">
+                        	<div class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+				</div>
 			</div>
+			<%end%>
 			<div class="box-body table-responsive no-padding">
-				<table class="table">
+				<table class="table table-striped">
 					<thead>
 						<tr>
 							<th>Nombre</th>

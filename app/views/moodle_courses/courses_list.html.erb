@@ -1,0 +1,92 @@
+  <!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Cursos de Longbourn
+        <small>Cursos de Moodle</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Cursos de Longbourn", :controller => :moodle_courses, :action => :index%></li>
+        <li class="active">Cursos de Moodle</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <%=link_to "Asignación de Grupos", :controller => :moodle_courses, :action => :index%>
+                </li>
+                <li class="active">
+                    <%=link_to "Listado de Cursos", :controller => :moodle_courses, :action => :courses_list%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                    	<div class="row">
+                    		<div class="col-xs-12">
+	                    		<div class="box box-primary">
+	                    			<%=form_tag :controller => :moodle_courses, :action => :courses_list do%>
+	                    			<div class="box-header">
+	                    				<h3 class="box-title">Cursos De Moodle</h3>
+										<div class="box-tools">
+											<div class="input-group">
+													<input type="text" name="search" class="form-control input-sm pull-right" style="width: 300px;" placeholder="Buscar">
+						                        	<div class="input-group-btn">
+						                            <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+						                        </div>
+						                    </div>
+										</div>
+	                    			</div>
+	                    			<%end%>
+	                    			<div class="box-body table-responsive">
+	                    				<%=form_tag :controller => :moodle_courses, :action => :set_template do%>
+	                    				<div class="row">
+	                    					<div class="col-xs-4">
+	                    						<%=select_tag :template_id, options_for_select(@templates.collect{|t| [t.name,t.id]}), {:class => "form-control"}%>
+	                    					</div>
+	                    					<div class="col-xs-3">
+	                    						<%=submit_tag "Asignar Plantilla", :class => "btn btn-primary"%>
+	                    					</div>
+	                    				</div>
+	                    				<div class="row">
+	                    					<div class="col-xs-12">
+			                    				<table class="table">
+			                    					<thead>
+			                    						<tr>
+			                    							<th></th>
+			                    							<th>Nombre</th>
+			                    							<th>Plantilla Asociada</th>
+			                    						</tr>
+			                    					</thead>
+			                    					<tbody>
+			                    						<%@courses.each do |course|%>
+			                    						<tr>
+			                    							<td><%=check_box_tag "courses[]", course.moodleid%></td>
+			                    							<td><%=link_to course.coursename, :controller => :dashboard, :action => :course, :params => {:id => course.moodleid}%></td>
+			                    							<td><%=get_template_name(course.course_template_id)%></td>
+			                    						</tr>
+			                    						<%end%>
+			                    					</tbody>
+			                    				</table>
+		                    				</div>
+	                    				</div>
+	                    				<%end%>
+	                    			</div>
+						            <div class="box-footer clearfix">
+						                <div class="pull-right">
+						                    <%=paginate @courses%>
+						                </div>
+						            </div><!-- box-footer -->
+	                    		</div>
+	                    	</div>
+                    	</div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

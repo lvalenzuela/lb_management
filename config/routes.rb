@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       get "course"
       get "student"
       get "teachers_list"
+      post "teachers_list"
       get "teacher"
     end
   end
@@ -25,9 +26,14 @@ Rails.application.routes.draw do
       get "course_templates"
       get "new_template"
       post "create_template"
-      post "delete_template"
+      delete "delete_template"
       get "edit_template"
       post "update_template"
+      get "template_details"
+      post "update_template_sessions"
+      get "edit_session_types"
+      post "create_session_type"
+      post "update_session_type"
     end
   end
 
@@ -62,6 +68,9 @@ Rails.application.routes.draw do
       delete "destroy_group"
       post "assign_course"
       delete "destroy_assignation"
+      get "courses_list"
+      post "courses_list"
+      post "set_template"
     end
   end
 

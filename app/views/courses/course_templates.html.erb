@@ -13,40 +13,68 @@
 </section>
 
 <section class="content">
-	<div class="col-xs-8 col-xs-offset-2">
-		<div class="box box-info">
-			<div class="box-header">
-				<h3 class="box-title">Plantillas de Cursos Longbourn</h3>
-			</div>
-			<div class="box-body table-responsive">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Nombre Curso</th>
-							<th>Nivel</th>
-							<th style="text-align: center;">Editar</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%@templates.each do |template|%>
-						<tr>
-							<td><%=template.name%></td>
-							<td><%=get_course_level(template.course_level_id)%></td>
-							<td style="text-align: center;">
-								<%=link_to :controller => :courses, :action => :edit_template, :params => {:id => template.id}, :class => "btn" do%>
-								<i class="fa fa-edit"></i>
-								<%end%>
-							</td>
-						</tr>
-						<%end%>
-					</tbody>
-				</table>
-			</div>
-            <div class="box-footer clearfix">
-                <div class="pull-right">
-                    <%=paginate @templates%>
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <%=link_to "Plantillas de Cursos" , {:controller => :courses, :action => :course_templates}%>
+                </li>
+                <li>
+                	<%=link_to "Nueva Plantilla", {:controller => :courses, :action => :new_template}%>
+                </li>
+                <li>
+                    <%=link_to "Configuración", {:controller => :courses, :action => :edit_session_types}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                	<section>
+                		<div class="row">
+							<div class="col-xs-8 col-xs-offset-2">
+								<div class="box box-info">
+									<div class="box-header">
+										<h3 class="box-title">Plantillas de Cursos Longbourn</h3>
+									</div>
+									<div class="box-body table-responsive">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Nombre Curso</th>
+													<th>Nivel</th>
+													<th style="text-align: center;">Sesiones</th>
+													<th style="text-align: center;">Editar</th>
+													<th style="text-align: center;">Eliminar</th>
+												</tr>
+											</thead>
+											<tbody>
+												<%@templates.each do |template|%>
+												<tr>
+													<td><%=link_to template.name, {:controller => :courses, :action => :template_details, :params => {:id => template.id}}%></td>
+													<td><%=get_course_level(template.course_level_id)%></td>
+													<td style="text-align: center;"><%=template.total_sessions%></td>
+													<td style="text-align: center;">
+														<%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:controller => :courses, :action => :edit_template, :params => {:id => template.id}}, {:class => "btn btn-sm btn-warning"}%>
+													</td>
+													<td style="text-align: center;">
+														<%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :courses, :action => :delete_template, :params => {:id => template.id}}, :data => {:confirm => "Estas Seguro?"}, :method => :delete, :class => "btn btn-sm btn-danger"%>
+															
+													</td>
+												</tr>
+												<%end%>
+											</tbody>
+										</table>
+									</div>
+						            <div class="box-footer clearfix">
+						                <div class="pull-right">
+						                    <%=paginate @templates%>
+						                </div>
+						            </div><!-- box-footer -->
+								</div>
+							</div>
+						</div>
+                	</section>
                 </div>
-            </div><!-- box-footer -->
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </section>

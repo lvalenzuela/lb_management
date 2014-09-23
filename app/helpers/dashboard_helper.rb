@@ -1,5 +1,58 @@
 module DashboardHelper
 
+	def inclass_attitude(attitude)
+		case attitude
+		when 1
+			return "Buena"
+		when 2
+			return "Mala"
+		else
+			return "No Registrada"
+		end			
+	end
+
+	def inclass_work(work)
+		case work
+		when 1
+			return "Malo"
+		when 2
+			return "Insuficiente"
+		when 3
+			return "Regular"
+		when 4
+			return "Bueno"
+		when 5
+			return "Excelente"
+		else
+			return "No Registrado"
+		end			
+	end
+
+	def translate_attendance_acronym(acronym)
+		case acronym
+		when 'P'
+			return "<span class='label label-success'>Presente</span>"
+		else
+			return "<span class='label label-danger'>Ausente</span>"
+		end
+	end
+
+	def template_name(template_id)
+		if template_id
+			return CourseTemplate.find(template_id).name
+		else
+			return ""
+		end
+	end
+
+	def taken_session_content(index,array)
+		if array[index-1]
+			return array[index-1]
+		else
+			return "-"
+		end
+	end
+
 	def user_name(userid)
 		user = User.where(:id => userid).first()
 		if user.blank?

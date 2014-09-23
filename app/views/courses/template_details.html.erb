@@ -1,0 +1,90 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header">
+    <h1>
+        Plantillas de Cursos
+       	<small>Detalles de Plantilla</small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Administración de Cursos</li>
+        <li>Plantillas de Cursos</li>
+        <li><%=@template.name%></li>
+        <li class="active">Detalles de Plantilla</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-8 col-xs-offset-2">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">Plantilla de Curso</h3>
+				</div>
+				<div class="box-body">
+					<div class="row">
+						<div class="form-group col-xs-6">
+							<label>Nivel</label>
+							<%=text_field_tag :course_level_id, get_course_level(@template.course_level_id) ,:disabled => true, :class => "form-control"%>
+						</div>
+						<div class="form-group col-xs-6">
+							<label>Número de Sesiones</label>
+							<%=number_field_tag :total_sessions, @template.total_sessions, :class => "form-control", :disabled => true%>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<label>Nombre de la Plantilla</label>
+							<%=text_field_tag :name, @template.name, :class => "form-control", :disabled => true%>
+						</div>	
+					</div>			
+				</div>
+				<div class="box-footer clearfix">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-8 col-xs-offset-2">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Detalles de la Plantilla</h3>
+					<div class="box-tools">
+						<%=link_to "Editar Tipos de Sesión", {:controller => :courses, :action => :edit_session_types}, :class => "btn btn-default pull-right"%>
+					</div>	
+				</div>
+				<%=form_tag :controller => :courses, :action => :update_template_sessions do%>
+				<%=hidden_field_tag :template_id, @template.id%>
+				<div class="box-body table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th style="text-align: center;">N° Sesión</th>
+								<th>Tipo de Sesión</th>
+								<th>Página del Libro</th>
+								<th>Contenido</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@template_sessions.each do |ts|%>
+							<tr>
+								<td style="text-align: center;"><%=ts.session_number%></td>
+								<td><%=select_tag "session_type_id_"+ts.session_number.to_s, options_for_select(@session_types.collect{|s| [s.type_name,s.id]},ts.session_type_id), {:include_blank => true, :class => "form-control"}%></td>
+								<td><%=number_field_tag "page_"+ts.session_number.to_s, ts.page, :class => "form-control"%></td>
+								<td><%=text_field_tag "contents_"+ts.session_number.to_s, ts.contents, :class => "form-control"%></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer clearfix">
+					<div class="pull-right">
+						<%=link_to "Editar Datos Generales", {:controller => :courses, :action => :edit_template, :params => {:id => @template.id}}, {:class => "btn btn-default"}%>
+						<%=submit_tag "Guardar Sesiones", :class => "btn btn-primary"%>
+					</div>
+				</div>
+				<%end%>
+			</div>
+		</div>
+	</div>
+</section>

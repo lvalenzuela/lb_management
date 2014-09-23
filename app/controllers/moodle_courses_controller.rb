@@ -45,7 +45,6 @@ class MoodleCoursesController < ApplicationController
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}")
         @group = MoodleGroup.find(params[:id])
-
         @remaining_courses = MoodleCourse.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
     end
 
@@ -61,6 +60,24 @@ class MoodleCoursesController < ApplicationController
         MoodleGroup.find(params[:id]).destroy
         flash[:notice] = "Grupo eliminado."
         redirect_to :action => "index"
+    end
+
+    def courses_list
+        @templates = CourseTemplate.all()
+        if params[:search]
+            @courses = MoodleCourse.where("coursename like '%#{params[:search]}%'").page(params[:page]).per(10)
+        else
+            @courses = MoodleCourse.all().page(params[:page]).per(10)
+        end
+    end
+
+    def set_template
+        params[:courses].each do |c|
+            course = MoodleCourse.where(:moodleid => c).first()
+            course.course_template_id = params[:template_id]
+            course.save!
+        end
+        redirect_to :action => :courses_list
     end
 
     private

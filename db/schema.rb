@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140922150537) do
+ActiveRecord::Schema.define(version: 20140923173250) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -178,6 +178,13 @@ ActiveRecord::Schema.define(version: 20140922150537) do
     t.datetime "updated_at"
   end
 
+  create_table "course_session_types", force: true do |t|
+    t.string   "type_name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_sessions", force: true do |t|
     t.integer  "courseid"
     t.datetime "startdatetime"
@@ -206,6 +213,7 @@ ActiveRecord::Schema.define(version: 20140922150537) do
   create_table "course_templates", force: true do |t|
     t.integer  "course_level_id"
     t.string   "name"
+    t.integer  "total_sessions"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "deleted",         default: 0
@@ -262,6 +270,7 @@ ActiveRecord::Schema.define(version: 20140922150537) do
   create_table "moodle_courses", force: true do |t|
     t.integer  "moodleid"
     t.string   "coursename"
+    t.integer  "course_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

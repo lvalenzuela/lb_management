@@ -1,0 +1,131 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header">
+    <h1>
+        Plantillas de Cursos
+        <small>Nueva Plantilla</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración de Cursos</li>
+        <li>Plantillas de Cursos</li>
+        <li class="active">Configuración</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <%=link_to "Plantillas de Cursos" , {:controller => :courses, :action => :course_templates}%>
+                </li>
+                <li>
+                    <%=link_to "Nueva Plantilla", {:controller => :courses, :action => :new_template}%>
+                </li>
+                <li class="active">
+                    <%=link_to "Configuración", {:controller => :courses, :action => :edit_session_types}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                        <div class="row">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <div class="box box-warning">
+                                    <div class="box-header">
+                                        <h3 class="box-title">Tipos de Sesión</h3>
+                                    </div>
+                                    <div class="box-body table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Tipo de Sesión</th>
+                                                    <th>Descripción</th>
+                                                    <th>Editar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <%@session_types.each do |st|%>
+                                                <tr>
+                                                    <td><%=st.id%></td>
+                                                    <td><%=st.type_name%></td>
+                                                    <td><%=st.description%></td>
+                                                    <td><%=link_to "<i class='fa fa-pencil'></i>".html_safe, {:action => :edit_session_types, :params => {:id => st.id}}, {:class => "btn btn-warning btn-sm"}%></td>
+                                                </tr>
+                                                <%end%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <%if @editable%>
+                            <%=form_for :course_session_type, :url => {:action => :update_session_type} do |f|%>
+                            <%=f.hidden_field :id, :value => @editable.id%>
+                            <div class="row">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <div class="box box-primary">
+                                        <div class="box-header">
+                                            <h3 class="box-title">Editar Tipo de Sesión</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-xs-4 form-group">
+                                                    <label>Tipo de Sesión</label>
+                                                    <%=f.text_field :type_name, :value => @editable.type_name, :class => "form-control"%>
+                                                </div>
+                                                <div class="col-xs-8 form-group">
+                                                    <label>Descripción</label>
+                                                    <%=f.text_field :description, :value => @editable.description, :class => "form-control"%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-footer clearfix">
+                                            <div class="pull-right">
+                                                <%=f.submit "Editar", :class => "btn btn-primary"%>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%end%>
+                        <%else%>
+                            <%=form_for :course_session_type, :url => {:action => :create_session_type} do |f|%>
+                            <div class="row">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <div class="box box-primary">
+                                        <div class="box-header">
+                                            <h3 class="box-title">Nuevo Tipo de Sesión</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-xs-4 form-group">
+                                                    <label>Tipo de Sesión</label>
+                                                    <%=f.text_field :type_name, :class => "form-control"%>
+                                                </div>
+                                                <div class="col-xs-8 form-group">
+                                                    <label>Descripción</label>
+                                                    <%=f.text_field :description, :class => "form-control"%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-footer clearfix">
+                                            <div class="pull-right">
+                                                <%=f.submit "Crear", :class => "btn btn-primary"%>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%end%>
+                        <%end%>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

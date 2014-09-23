@@ -123,12 +123,16 @@ class CoursesController < ApplicationController
     end
 
     def delete_template
-
+        t = CourseTemplate.find(params[:id])
+        t.deleted = 1
+        t.save!
+        redirect_to :action => :course_templates
     end
 
     def edit_template
         @template = CourseTemplate.find(params[:id])
         @course_levels = CourseLevel.all()
+        @template_sessions = CourseTemplateSession.where(:course_template_id => params[:id])
     end
 
     def update_template
@@ -142,10 +146,49 @@ class CoursesController < ApplicationController
         end
     end
 
+    def template_details
+        @template = CourseTemplate.find(params[:id])
+        @template_sessions = CourseTemplateSession.where(:course_template_id => params[:id])
+        @session_types = CourseSessionType.all()
+    end
+
+    def update_template_sessions
+        template_sessions = CourseTemplateSession.where(:course_template_id => params[:template_id])
+        template_sessions.each do |ts|
+            ts.session_type_id = params["session_type_id_"+ts.session_number.to_s]
+            ts.page = params["page_"+ts.session_number.to_s]
+            ts.contents = params["contents_"+ts.session_number.to_s]
+            ts.save!
+        end
+        redirect_to :action => :edit_template, :id => params[:template_id]
+    end
+
+    def edit_session_types
+        @session_types = CourseSessionType.all()
+        if params[:id]
+            @editable = CourseSessionType.find(params[:id])
+        end
+    end
+
+    def create_session_type
+        CourseSessionType.create(course_session_type_params)
+        redirect_to :action => :edit_session_types
+    end
+
+    def update_session_type
+        session_type = CourseSessionType.find(params[:course_session_type][:id])
+        session_type.update_attributes(course_session_type_params)
+        redirect_to :action => :edit_session_types
+    end
+
     private
 
+    def course_session_type_params
+        params.require(:course_session_type).permit(:type_name, :description)
+    end
+
     def course_template_params
-        params.require(:course_template).permit(:course_level_id,:name)
+        params.require(:course_template).permit(:course_level_id,:name,:total_sessions)
     end
 
     def modify_course_features

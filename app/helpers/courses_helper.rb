@@ -1,5 +1,13 @@
 module CoursesHelper
 
+	def get_session_type(session_type_id)
+		if session_type_id
+			return CourseSessionType.find(session_type_id).type_name
+		else
+			return ""
+		end
+	end
+
 	def get_course_level(level_id)
 		if level_id
 			return CourseLevel.find(level_id).course_level
