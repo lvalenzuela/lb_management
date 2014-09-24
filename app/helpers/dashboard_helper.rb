@@ -45,6 +45,10 @@ module DashboardHelper
 		end
 	end
 
+	def min_attendance()
+		return CourseAlarmParameter.where(:param_name => "min_attendance").first().value
+	end
+
 	def taken_session_content(index,array)
 		if array[index-1]
 			return array[index-1]

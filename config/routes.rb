@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       get "teachers_list"
       post "teachers_list"
       get "teacher"
+      get "configuration"
+      post "update_alarm_parameters"
     end
   end
 

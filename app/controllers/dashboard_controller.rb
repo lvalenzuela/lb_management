@@ -123,6 +123,23 @@ class DashboardController < ApplicationController
 																car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]}").group("mra.courseid").order("mra.roleid ASC").page(params[:page]).per(10)
 	end
 
+	def configuration
+		parameters = CourseAlarmParameter.all()
+		@min_grade = parameters.where(:param_name => "approve_grade").first().value
+		@min_attendance = parameters.where(:param_name => "min_attendance").first().value
+	end
+
+	def update_alarm_parameters
+		grade = CourseAlarmParameter.where(:param_name => "approve_grade").first()
+		grade.value = params[:min_grade]
+		grade.save!
+
+		attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first()
+		attendance.value = params[:min_attendance]
+		attendance.save!
+		redirect_to :action => :configuration
+	end
+
 	private
     def check_authentication
         if current_user.nil?
