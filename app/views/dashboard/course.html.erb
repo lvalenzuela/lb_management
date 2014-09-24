@@ -4,11 +4,11 @@
 <section class="content-header">
     <h1>
         Desempeño de Cursos	
-       	<small><%=moodle_course_name(@students_info.first().courseid)%></small>
+       	<small><%=moodle_course_name(@courseid)%></small>
     </h1>
     <ol class="breadcrumb">
     	<li>Desempeño por Cursos</li>
-        <li class="active"><%=moodle_course_name(@students_info.first().courseid)%></li>
+        <li class="active"><%=moodle_course_name(@courseid)%></li>
     </ol>
 </section>
 
@@ -83,23 +83,23 @@
 					<tbody>
 						<tr>
 							<th>Total de Sesiones</th>
-							<td><%=@attendance_reports.total_sessions%></td>
+							<td><%=@attendance_reports ? @attendance_reports.total_sessions : "-"%></td>
 						</tr>
 						<tr>
 							<th>Sesiones a la Fecha</th>
-							<td><%=@attendance_reports.current_booked_sessions%></td>
+							<td><%=@attendance_reports ? @attendance_reports.current_booked_sessions : "-"%></td>
 						</tr>
 						<tr>
 							<th>Sesiones Registradas</th>
-							<td><%=@attendance_reports.current_taken_sessions%></td>
+							<td><%=@attendance_reports ? @attendance_reports.current_taken_sessions : "-"%></td>
 						</tr>
 						<tr>
 							<th>Ultima Sesion Registrada</th>
-							<td><%=l(@attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y")%></td>
+							<td><%=@attendance_reports ? l(@attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y") : "-"%></td>
 						</tr>
 						<tr>
 							<th>Asistencia Promedio</th>
-							<td><%=(@attendance_reports.avg_attendance_ratio*100).round(1)%>%</td>
+							<td><%=@attendance_reports ? (@attendance_reports.avg_attendance_ratio*100).round(1) : "-"%>%</td>
 						</tr>
 						<tr>
 							<th>Promedio Curso</th>

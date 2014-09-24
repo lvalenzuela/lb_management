@@ -42,6 +42,7 @@ class DashboardController < ApplicationController
 	end
 
 	def course
+		@courseid = params[:id]
 		@students_info = StudentGradesReport.joins("as sgr
 						inner join student_general_attendance_reports as sgar
 						on sgr.userid = sgar.userid and sgr.courseid = sgar.courseid 
