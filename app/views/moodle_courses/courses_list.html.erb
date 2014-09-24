@@ -57,7 +57,7 @@
 			                    				<table class="table">
 			                    					<thead>
 			                    						<tr>
-			                    							<th></th>
+			                    							<th style="width:80px; text-align: center;"><%=check_box_tag "check-all", "check-all"%></th>
 			                    							<th>Nombre</th>
 			                    							<th>Plantilla Asociada</th>
 			                    						</tr>
@@ -65,7 +65,7 @@
 			                    					<tbody>
 			                    						<%@courses.each do |course|%>
 			                    						<tr>
-			                    							<td><%=check_box_tag "courses[]", course.moodleid%></td>
+			                    							<td style="text-align: center;"><%=check_box_tag "courses[]", course.moodleid%></td>
 			                    							<td><%=link_to course.coursename, :controller => :dashboard, :action => :course, :params => {:id => course.moodleid}%></td>
 			                    							<td><%=get_template_name(course.course_template_id)%></td>
 			                    						</tr>
@@ -90,3 +90,20 @@
         </div>
     </div>
 </section>
+<script type="text/javascript">
+$(function() {
+
+    "use strict";
+
+    //When unchecking the checkbox
+    $("#check-all").on('ifUnchecked', function(event) {
+        //Uncheck all checkboxes
+        $("input[type='checkbox']").iCheck("uncheck");
+    });
+    //When checking the checkbox
+    $("#check-all").on('ifChecked', function(event) {
+        //Check all checkboxes
+        $("input[type='checkbox']").iCheck("check");
+    });
+});
+</script>

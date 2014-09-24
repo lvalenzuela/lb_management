@@ -67,7 +67,7 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th></th>
+                                                    <th style="width:80px; text-align: center;"><%=check_box_tag "check-all", "check-all"%></th>
                                                     <th>Nombre Curso</th>
                                                 </tr>
                                             </thead>
@@ -131,3 +131,20 @@
         </div>
     </div>
 </section>
+<script type="text/javascript">
+$(function() {
+
+    "use strict";
+
+    //When unchecking the checkbox
+    $("#check-all").on('ifUnchecked', function(event) {
+        //Uncheck all checkboxes
+        $("input[type='checkbox']").iCheck("uncheck");
+    });
+    //When checking the checkbox
+    $("#check-all").on('ifChecked', function(event) {
+        //Check all checkboxes
+        $("input[type='checkbox']").iCheck("check");
+    });
+});
+</script>
