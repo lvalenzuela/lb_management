@@ -20,7 +20,7 @@ class DashboardController < ApplicationController
 							 cgr.mean_grade,
 							 cgr.std_dev_grade,
 							 cgr.gradetype,
-							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null and car.coursename like '%#{params[:search]}%'").page(params[:page]).per(10)
+							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null and car.coursename like '%#{params[:search]}%'").group("car.courseid").page(params[:page]).per(10)
 		else
 			@courses_list = CourseAttendanceReport.joins("as car 
 							left join course_grades_reports as cgr
@@ -37,7 +37,7 @@ class DashboardController < ApplicationController
 							 cgr.mean_grade,
 							 cgr.std_dev_grade,
 							 cgr.gradetype,
-							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null").page(params[:page]).per(10)
+							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null").group("car.courseid").page(params[:page]).per(10)
 		end
 	end
 
@@ -54,7 +54,7 @@ class DashboardController < ApplicationController
 						sgar.present_sessions,
 						sgar.absent_sessions,
 						sgar.total_sessions,
-						sgar.created_at").where("sgr.categoryname = '?' and sgr.itemname is null").order("sgr.courseid ASC")
+						sgar.created_at").where("sgr.categoryname = '?' and sgr.itemname is null").group("sgr.userid").order("sgr.courseid ASC")
 		@user_roles = MoodleRoleAssignation.where(:courseid => params[:id]).order("roleid ASC")
 		@attendance_reports = CourseAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").first()
 		@course_grade = CourseGradesReport.where("courseid = #{params[:id]} and created_at = curdate() and categoryname = '?' and itemname is null").first()

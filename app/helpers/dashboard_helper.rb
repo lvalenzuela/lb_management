@@ -90,7 +90,7 @@ module DashboardHelper
 
 	def failing_grades_students(course)
 		#Todas las notas de los alumnos del curso seleccionado
-		students_grades = StudentGradesReport.where(:courseid => course.courseid, :created_at => course.created_at, :categoryname => "?", :itemname => nil)
+		students_grades = StudentGradesReport.where("courseid = #{course.courseid} and created_at = '#{course.created_at}' and categoryname = '?' and itemname is null and finalgrade is not null")
 		min_grade = CourseAlarmParameter.where(:param_name => "approve_grade").first().value
 		min_grade = grade_to_points(min_grade)
 		total_students = students_grades.distinct.count(:userid)
