@@ -127,6 +127,26 @@ usuario
                             <i class="fa fa-angle-double-right"></i> Áreas
                             <%end%>
                         </li>
+                    </ul>
+                </li>
+                <%end%>
+
+                <%if user.system_role_id <= 2%>
+                <li class="treeview <%=activate_menu_item("courses", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-group fa-fw"></i>  
+                        <span>Cursos</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => "courses", :action => "new" do%>
+                            <i class="fa fa-angle-double-right"></i> Nuevo Curso [Comercial]
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "courses", :action => "index" do%>
+                            <i class="fa fa-angle-double-right"></i> Listado de Cursos
+                            <%end%>
+                        </li>
                         <li><%=link_to :controller => "moodle_courses", :action => "index" do%>
                             <i class="fa fa-angle-double-right"></i> Cursos Moodle
                             <%end%>
@@ -160,26 +180,6 @@ usuario
                         <li>
                             <%=link_to :controller => :dashboard, :action => :configuration do%>
                                 <i class="fa fa-angle-double-right"></i> Configuración
-                            <%end%>
-                        </li>
-                    </ul>
-                </li>
-                <%end%>
-
-                <%if user.system_role_id <= 2%>
-                <li class="treeview <%=activate_menu_item("courses", active_item)%>">
-                    <a href="#">
-                        <i class="fa fa-group fa-fw"></i>  
-                        <span>Cursos</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><%=link_to :controller => "courses", :action => "new" do%>
-                            <i class="fa fa-angle-double-right"></i> Nuevo Curso
-                            <%end%>
-                        </li>
-                        <li><%=link_to :controller => "courses", :action => "index" do%>
-                            <i class="fa fa-angle-double-right"></i> Listado de Cursos
                             <%end%>
                         </li>
                     </ul>
