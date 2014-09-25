@@ -7,7 +7,7 @@ class CourseTemplate < ActiveRecord::Base
 		self.deleted = 0
 	end
 
-	def create_sessions
+	def create_template_sessions
 		#Se crean las sesiones correspondientes al curso
 		for session in 1..(self.total_sessions)
 			CourseTemplateSession.create(:course_template_id => self.id, :session_number => session)
