@@ -43,7 +43,7 @@ class MainController < ApplicationController
         @active = params[:opt] ? params[:opt].to_s : @areas.first().id.to_s
         @selected_area = @areas.find(@active.to_i)
         @area_users = get_area_users(@selected_area.id)
-        @system_users = User.where("id not in (?)", @area_users.map{|u| u.id})
+        @system_users = @area_users.blank? ? User.all() : User.where("id not in (?)", @area_users.map{|u| u.id})
         @roles = Role.all()
     end
 
@@ -66,14 +66,14 @@ class MainController < ApplicationController
 
     def destroy
         r = RoleAssignation.find(params[:id])
-        if session[:system_role] <= 2
+        if current_user.system_role_id <= 2
             r.destroy
             flash[:notice] = "El usuario ha sido eliminado del Área."
             
         else
             flash[:notice] = "No estas autorizado para realizar esta acción."
         end
-        redirect_to :action => "area_manager", :opt => params[:areaid]
+        redirect_to :action => "area_manager", :opt => params[:area]
     end
 
     private
