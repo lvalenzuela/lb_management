@@ -15,5 +15,4 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require modernizr
-//= require bootstrap-timepicker
 //= require_tree .

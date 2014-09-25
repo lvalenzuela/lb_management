@@ -15,7 +15,7 @@ class UsersController < ApplicationController
 	end
 
 	def login
-	    user = User.where(:username => params[:username]).first()
+	    user = UserV.find_by_username(params[:username])
 	    if user.blank? || user.nil?
 	      flash[:notice] = "Nombre de usuario incorrecto, por favor vuelve a intentarlo"
 	      redirect_to :action => :index
@@ -29,9 +29,9 @@ class UsersController < ApplicationController
 			password = BCrypt::Password.new(user.password)
 			if password == params[:password]
 				if params[:remember_me]
-					cookies.permanent[:auth_token] = user.check_auth_token
+					cookies.permanent[:auth_token] = User.find(user.id).check_auth_token
 				else
-					cookies[:auth_token] = user.check_auth_token
+					cookies[:auth_token] = User.find(user).check_auth_token
 				end
 				redirect_to root_path
 			else
@@ -49,16 +49,31 @@ class UsersController < ApplicationController
 	def user_profile
 		@user = current_user
 		@user_area_roles = get_user_area_roles(@user.id)
+		@disponibility = UserDisponibility.where("user_id = #{@user.id} and (end_date >= curdate() or end_date is null)")
 	end
 
 	def change_profile_picture
-		user = current_user
+		user = User.find(current_user.id)
 		user.avatar = params[:avatar]
 		user.save!
 		redirect_to :action => :user_profile
 	end
 
+	def add_disponibility
+		UserDisponibility.create(user_disponibility_params)
+		redirect_to :action => :user_profile
+	end
+
+	def delete_disponibility
+		UserDisponibility.find(params[:id]).destroy
+		redirect_to :action => :user_profile
+	end
+
 	private
+
+	def user_disponibility_params
+		params.require(:user_disponibility).permit(:user_id, :day_number, :start_time, :end_time, :start_date, :end_date)
+	end
 
 	def resolve_layout
 		case action_name

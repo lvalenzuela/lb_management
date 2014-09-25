@@ -18,7 +18,7 @@ class MainController < ApplicationController
     def system_manager
         @managers = get_system_managers
         @roles = Role.where("id <> 1")
-        @remaining_users = User.where("id not in (?)", @managers.map{|m| m.id}).page(params[:page]).per(10)
+        @remaining_users = UserV.where("id not in (?)", @managers.map{|m| m.id}).page(params[:page]).per(10)
     end
 
     def assign_system_manager
@@ -43,7 +43,7 @@ class MainController < ApplicationController
         @active = params[:opt] ? params[:opt].to_s : @areas.first().id.to_s
         @selected_area = @areas.find(@active.to_i)
         @area_users = get_area_users(@selected_area.id)
-        @system_users = @area_users.blank? ? User.all() : User.where("id not in (?)", @area_users.map{|u| u.id})
+        @system_users = @area_users.blank? ? UserV.all() : UserV.where("id not in (?)", @area_users.map{|u| u.id})
         @roles = Role.all()
     end
 
@@ -91,7 +91,7 @@ class MainController < ApplicationController
 
     def get_area_users(areaid)
         c = get_area_context(areaid)
-        return User.joins("inner join role_assignations as ra
+        return UserV.joins("as users inner join role_assignations as ra
                                 on users.id = ra.userid and 
                                 ra.contextid = #{c.id}").select("users.id, 
                                                                 users.firstname, 
@@ -129,7 +129,7 @@ class MainController < ApplicationController
     end
 
     def get_system_managers
-        admins = User.joins("inner join role_assignations as ra
+        admins = UserV.joins("as users inner join role_assignations as ra
                             on users.id = ra.userid
                             and ra.contextid = 1
                             and ra.roleid in (1,2)").select("users.id,

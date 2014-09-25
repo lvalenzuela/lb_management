@@ -4,7 +4,7 @@ class MoodleCoursesController < ApplicationController
     layout "dashboard"
 
     def index        
-        @courses = MoodleCourse.all().page(params[:page]).per(10)
+        @courses = MoodleCourseV.all().page(params[:page]).per(10)
         if params[:search]
             @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
                 on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
@@ -41,11 +41,11 @@ class MoodleCoursesController < ApplicationController
     end
 
     def show_group
-        @courses = MoodleCourse.joins("inner join moodle_group_assignations as mga
+        @courses = MoodleCourseV.joins("as moodle_courses inner join moodle_group_assignations as mga
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}")
         @group = MoodleGroup.find(params[:id])
-        @remaining_courses = MoodleCourse.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+        @remaining_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
     end
 
     def create_group
@@ -65,15 +65,15 @@ class MoodleCoursesController < ApplicationController
     def courses_list
         @templates = CourseTemplate.all()
         if params[:search]
-            @courses = MoodleCourse.where("coursename like '%#{params[:search]}%'").page(params[:page]).per(10)
+            @courses = MoodleCourseV.where("coursename like '%#{params[:search]}%'").page(params[:page]).per(10)
         else
-            @courses = MoodleCourse.all().page(params[:page]).per(10)
+            @courses = MoodleCourseV.all().page(params[:page]).per(10)
         end
     end
 
     def set_template
         params[:courses].each do |c|
-            course = MoodleCourse.where(:moodleid => c).first()
+            course = MoodleCourse.find_by_moodleid(c)
             course.course_template_id = params[:template_id]
             course.save!
         end

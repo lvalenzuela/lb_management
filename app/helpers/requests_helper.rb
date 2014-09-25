@@ -109,7 +109,7 @@ module RequestsHelper
 		if userid.nil?
 			nil
 		else
-			user = User.find(userid)
+			user = UserV.find(userid)
 			username = user.firstname+" "+user.lastname
 		end
 	end

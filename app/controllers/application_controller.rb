@@ -6,11 +6,11 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-  	@current_user ||= User.find_by_auth_token!(cookies[:auth_token]) if cookies[:auth_token]
+  	@current_user ||= UserV.find_by_auth_token!(cookies[:auth_token]) if cookies[:auth_token]
   end
 
   def current_user_name
-  	@current_user ||= User.find_by_auth_token!(cookies[:auth_token]) if cookies[:auth_token]
+  	@current_user ||= UserV.find_by_auth_token!(cookies[:auth_token]) if cookies[:auth_token]
 	return @current_user.firstname+" "+@current_user.lastname
   end
 

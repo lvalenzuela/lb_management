@@ -56,10 +56,10 @@ class DashboardController < ApplicationController
 						sgar.absent_sessions,
 						sgar.total_sessions,
 						sgar.created_at").where("sgr.categoryname = '?' and sgr.itemname is null").group("sgr.userid").order("sgr.courseid ASC")
-		@user_roles = MoodleRoleAssignation.where(:courseid => params[:id]).order("roleid ASC")
+		@user_roles = MoodleRoleAssignationV.where(:courseid => params[:id]).order("roleid ASC")
 		@attendance_reports = CourseAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").first()
 		@course_grade = CourseGradesReport.where("courseid = #{params[:id]} and created_at = curdate() and categoryname = '?' and itemname is null").first()
-		moodle_course = MoodleCourse.where(:moodleid => params[:id]).first()
+		moodle_course = MoodleCourseV.find_by_moodleid(params[:id])
 		@template_sessions = CourseTemplateSession.where(:course_template_id => moodle_course.course_template_id)
 		if @template_sessions.blank?
 			@template_id = nil
@@ -86,13 +86,13 @@ class DashboardController < ApplicationController
 
 	def teachers_list
 		if params[:search]
-			@teachers = User.joins("inner join moodle_role_assignations as mra
+			@teachers = User.joins("inner join moodle_role_assignation_vs as mra
 							on users.id = mra.userid").select("users.*,
 															count(distinct mra.courseid) as courses").where("
 															mra.roleid in(9,4)
 															and (users.firstname like '%#{params[:search]}%' or users.lastname like '%#{params[:search]}%')").group("users.id").page(params[:page]).per(10)
 		else
-			@teachers = User.joins("inner join moodle_role_assignations as mra
+			@teachers = User.joins("inner join moodle_role_assignation_vs as mra
 							on users.id = mra.userid").select("users.*,
 															count(distinct mra.courseid) as courses").where("
 															mra.roleid in(9,4)").group("users.id").page(params[:page]).per(10)
@@ -101,7 +101,7 @@ class DashboardController < ApplicationController
 
 	def teacher
 		@user = User.find(params[:id])
-		@courses = MoodleRoleAssignation.joins("as mra inner join moodle_courses as mc
+		@courses = MoodleRoleAssignationV.joins("as mra inner join moodle_courses as mc
 						on mra.courseid = mc.moodleid
 						left join course_attendance_reports as car
 						on mra.courseid = car.courseid

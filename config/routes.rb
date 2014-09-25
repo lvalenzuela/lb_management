@@ -180,6 +180,8 @@ Rails.application.routes.draw do
       post 'login'
       get 'logout'
       get 'not_authorized'
+      post "add_disponibility"
+      delete "delete_disponibility"
     end
   end
 

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MoodleRoleAssignationTest < ActiveSupport::TestCase
+class MoodleRoleAssignationVTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

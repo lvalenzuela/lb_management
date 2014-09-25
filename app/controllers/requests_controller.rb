@@ -40,7 +40,7 @@ class RequestsController < ApplicationController
 			#solicitudes pendientes
 			@requests = Request.where(:receiverid => current_user.id, :statusid => [1]).order("updated_at DESC").page(params[:page]).per(10)
 		end
-		@user = User.find(current_user.id)
+		@user = current_user
 	end
 
 	def bulk_request_status_change
@@ -109,7 +109,7 @@ class RequestsController < ApplicationController
 			redirect_to :action => "sent_requests"
 		else
 			flash[:notice] = "No ha podido modificar la solicitud."
-			@user = User.find(current_user.id)
+			@user = current_user
 			render "edit_request"
 		end
 	end
@@ -252,7 +252,7 @@ class RequestsController < ApplicationController
 
 	def get_area_managers(area)
 		c = Context.where(:typeid => 2, :instanceid => area).first()
-		return User.joins("inner join role_assignations
+		return UserV.joins("as users inner join role_assignations
 						on role_assignations.userid = users.id
 						and role_assignations.contextid = #{c.id}
 						and role_assignations.roleid in (1,2)")
@@ -273,7 +273,7 @@ class RequestsController < ApplicationController
 	def receiver_list(area)
 		c = Context.where(:typeid => 2, :instanceid => area).first()
 
-		return User.joins("inner join role_assignations
+		return UserV.joins("as users inner join role_assignations
 						on role_assignations.userid = users.id
 						and role_assignations.contextid = #{c.id}").select("users.id,
 																			users.firstname,
@@ -315,7 +315,7 @@ class RequestsController < ApplicationController
 	end
 
 	def notify_user(userid,request,new_request)
-		@user = User.find(userid)
+		@user = current_user
 		case request.statusid
 		when 1
 			if new_request
