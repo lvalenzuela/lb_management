@@ -55,7 +55,7 @@
 							<td style="text-align: center;"><%=c.current_taken_sessions.to_s+" de "+c.current_booked_sessions.to_s%></td>
 							<td style="text-align: center;"><%=c.total_sessions%></td>
 							<td>
-								<div class="progress progress-striped active">
+								<div class="progress xs progress-striped active">
 									<div class="<%=course_progress_bar(c)%>" style="width: <%=progress_bar_pct(c)%>"></div>
 								</div>
 							</td>
