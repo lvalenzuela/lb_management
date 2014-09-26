@@ -35,8 +35,8 @@ module CoursesHelper
 
 	def get_user_name(user_id)
 		if user_id
-			user = User.find(user_id)
-			return user.firstname+" "+user.lastname
+			user = UserV.find(user_id)
+			return user.name
 		else
 			return ""
 		end

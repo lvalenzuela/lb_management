@@ -80,6 +80,22 @@ class MoodleCoursesController < ApplicationController
         redirect_to :action => :courses_list
     end
 
+    def course_calendar
+        @course = MoodleCourseV.find_by_moodleid(params[:id])
+        @all_sessions = MoodleCourseSessionV.where(:courseid => params[:id])
+        calendar_events = []
+        @all_sessions.each do |s|
+            calendar_events << {
+                "title" => "Clases",
+                "start" => s.session_date,
+                "allDay" => false,
+                "backgroundColor" => "#0073b7",
+                "borderColor" => "#0073b7"
+            }
+        end
+        gon.events = calendar_events
+    end
+
     private
 
     def assign_to_group(groupid,courseid)

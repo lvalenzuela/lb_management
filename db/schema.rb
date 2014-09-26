@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140925195437) do
+ActiveRecord::Schema.define(version: 20140926162105) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -269,6 +269,17 @@ ActiveRecord::Schema.define(version: 20140925195437) do
     t.datetime "updated_at"
   end
 
+  create_table "moodle_course_session_vs", id: false, force: true do |t|
+    t.integer  "id",            limit: 8,          default: 0, null: false
+    t.integer  "courseid",      limit: 8,          default: 0
+    t.datetime "session_date"
+    t.integer  "duration",      limit: 8,          default: 0, null: false
+    t.datetime "last_taken"
+    t.integer  "last_taken_by", limit: 8,          default: 0, null: false
+    t.datetime "time_modified"
+    t.text     "description",   limit: 2147483647,             null: false
+  end
+
   create_table "moodle_course_vs", id: false, force: true do |t|
     t.integer  "moodleid"
     t.string   "coursename",         limit: 254, default: "",   null: false
@@ -495,6 +506,13 @@ ActiveRecord::Schema.define(version: 20140925195437) do
     t.datetime "created_at"
   end
 
+  create_table "user_teacher_levels", force: true do |t|
+    t.string   "level_label"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "user_vs", id: false, force: true do |t|
     t.integer  "id",                  limit: 8,          default: 0,           null: false
     t.string   "auth",                limit: 20,         default: "manual",    null: false
@@ -562,6 +580,7 @@ ActiveRecord::Schema.define(version: 20140925195437) do
   create_table "users", force: true do |t|
     t.string   "auth_token"
     t.integer  "system_role_id"
+    t.integer  "teacher_level_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar_file_name"

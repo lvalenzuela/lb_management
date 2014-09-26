@@ -76,6 +76,10 @@ class MainController < ApplicationController
         redirect_to :action => "area_manager", :opt => params[:area]
     end
 
+    def teachers_manager
+        @teachers = TeacherV.all()
+    end
+
     private
 
     def assign_area_member(areaid,userid)

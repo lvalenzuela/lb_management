@@ -1,0 +1,48 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Administración
+        <small>Profesores de Longbourn</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li class="active">Profesores de Longbourn</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-8">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Pofesores de Longbourn</h3>
+				</div>
+				<div class="box-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Correo</th>
+								<th>Cursos</th>
+								<th>Nivel</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@teachers.each do |t|%>
+							<tr>
+								<td><%=t.name%></td>
+								<td><%=t.email%></td>
+								<td></td>
+								<td></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

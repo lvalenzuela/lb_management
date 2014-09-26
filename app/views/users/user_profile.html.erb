@@ -3,7 +3,7 @@
 <section class="content-header">
     <h1>
         Perfil de Usuario
-        <small><%=@user.firstname+" "+@user.lastname%></small>
+        <small><%=@user.name%></small>
     </h1>
     <ol class="breadcrumb">
         <li><%=link_to "Longbourn Summit", root_path%></li>
@@ -18,14 +18,14 @@
                 <div class="box-header">
                     <i class="fa fa-user fa-lg"></i>
                     <h3 class="box-title">
-                        <%=@user.firstname+" "+@user.lastname%>
+                        <%=@user.name%>
                     </h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="small-box bg-blue">
-                                <%=image_tag @user.avatar.url%>
+                                <%=image_tag user_avatar(@user.id)%>
                                 <a data-toggle="modal" data-target="#avatar-modal" class="small-box-footer" >Cambiar Imagen</a>
                                 <%=form_tag change_profile_picture_users_path, :id => "profile-picture-form", :multipart => true do%>
                                     <%=render :partial => "change_image_modal"%>
@@ -37,7 +37,7 @@
                                 <tbody>
                                     <tr>
                                         <th>Nombre</th>
-                                        <td><%=@user.firstname+" "+@user.lastname%></td>
+                                        <td><%=@user.name%></td>
                                     </tr>
                                     <tr>
                                         <th>Email</th>
@@ -83,10 +83,10 @@
                             <%@disponibility.each do |disp|%>
                             <tr>
                                 <td><%=disp.day_number%></td>
-                                <td><%=l(disp.start_time, :format => "%H:%M")%></td>
-                                <td><%=l(disp.end_time, :format => "%H:%M")%></td>
-                                <td><%=l(disp.start_date, :format => "%d / %b / %Y")%></td>
-                                <td><%=l(disp.end_date, :format => "%d / %b / %Y")%></td>
+                                <td><%=disp.start_time ? l(disp.start_time, :format => "%H:%M") : "-"%></td>
+                                <td><%=disp.end_time ? l(disp.end_time, :format => "%H:%M") : "-"%></td>
+                                <td><%=disp.start_date ? l(disp.start_date, :format => "%d / %b / %Y") : "-"%></td>
+                                <td><%=disp.end_date ? l(disp.end_date, :format => "%d / %b / %Y") : "-"%></td>
                                 <td><%=link_to "<i class='fa fa-times'></i>".html_safe, {:action => :delete_disponibility, :params => {:id => disp.id}}, {:class => "btn btn-sm btn-danger", :method => :delete}%></td>
                             </tr>
                             <%end%>
@@ -98,18 +98,22 @@
                             <tr>
                                 <td><%=f.select :day_number, options_for_select([["Lunes",1],["Martes",2],["Miércoles",3],["Jueves",4],["Viernes",5],["Sábado",6]],1), {}, {:class => "form-control"}%></td>
                                 <td>
-                                    <div class="input-group">
-                                        <%=f.text_field :start_time, :class => "form-control", :id => "timepicker1"%>
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-clock-o"></i>
+                                    <div class="bootstrap-timepicker">
+                                        <div class="input-group">
+                                            <%=f.text_field :start_time, :class => "form-control", :id => "timepicker1"%>
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="input-group">
-                                        <%=f.text_field :end_time, :class => "form-control", :id => "timepicker2"%>
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-clock-o"></i>
+                                    <div class="bootstrap-timepicker">
+                                        <div class="input-group">
+                                            <%=f.text_field :end_time, :class => "form-control", :id => "timepicker2"%>
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -177,10 +181,12 @@
 $(function() {
     //Timepicker
     $("#timepicker1").timepicker({
-        showInputs: false
+        showInputs: false,
+        showMeridian: false 
     });
     $("#timepicker2").timepicker({
-        showInputs: false
+        showInputs: false,
+        showMeridian: false 
     });
 });
 </script>

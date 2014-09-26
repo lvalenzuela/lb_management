@@ -63,13 +63,12 @@ usuario
                 <li class="dropdown user user-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-lg fa-fw"></i>
-                        <span><%=user.firstname+" "+user.lastname%> <i class="fa fa-caret-down"></i></span>
+                        <span><%=user.name%> <i class="fa fa-caret-down"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header bg-light-blue">
-                            <%=image_tag user.avatar.url, :class => "img-circle"%>
-                            <p>
-                                <%=user.firstname+" "+user.lastname%></p>
+                            <%=image_tag user_avatar(user.id), :class => "img-circle"%>
+                            <p><%=user.name%></p>
                         </li>
                         <li class="user-footer">
                             <div class="pull-left">
@@ -92,10 +91,10 @@ usuario
         <section class="sidebar">
             <div class="user-panel">
                 <div class="pull-left image">
-                    <%=image_tag user.avatar.url, :class => "img-circle"%>
+                    <%=image_tag user_avatar(user.id), :class => "img-circle"%>
                 </div>
                 <div class="pull-left info">
-                    <p>Hola, <%=user.firstname+" "+user.lastname%></p>
+                    <p>Hola, <%=user.name%></p>
 
                     <i class="fa fa-circle text-success"></i> Online
                 </div>
@@ -127,6 +126,11 @@ usuario
                             <i class="fa fa-angle-double-right"></i> Áreas
                             <%end%>
                         </li>
+                        <li><%=link_to :controller => :main, :action => :teachers_manager do%>
+                            <i class="fa fa-angle-double-right"></i> Profesores
+                            <%end%>
+
+                        </li>
                     </ul>
                 </li>
                 <%end%>
@@ -147,7 +151,7 @@ usuario
                             <i class="fa fa-angle-double-right"></i> Listado de Cursos
                             <%end%>
                         </li>
-                        <li><%=link_to :controller => "moodle_courses", :action => "index" do%>
+                        <li><%=link_to :controller => "moodle_courses", :action => :courses_list do%>
                             <i class="fa fa-angle-double-right"></i> Cursos Moodle
                             <%end%>
                         </li>

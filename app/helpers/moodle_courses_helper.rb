@@ -6,4 +6,8 @@ module MoodleCoursesHelper
 			return "-"
 		end
 	end
+
+	def course_total_sessions(courseid)
+		MoodleCourseSessionV.where(:courseid => courseid).count()
+	end
 end

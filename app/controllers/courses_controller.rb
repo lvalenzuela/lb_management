@@ -233,7 +233,7 @@ class CoursesController < ApplicationController
 
     def get_teachers_list
         c = get_area_context(2)
-        return User.joins("inner join role_assignations as ra
+        return UserV.joins("as users inner join role_assignations as ra
                                 on users.id = ra.userid and 
                                 ra.contextid = #{c.id}").select("users.id, 
                                                                 users.firstname, 

@@ -65,7 +65,7 @@
                             <div class="col-sm-5">
                                 <div class="form-group">
                                     <label>Usuario Predeterminado</label>
-                                    <%=f.select :default_user_id, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname,r.id]}), {:include_blank => true}, {:class => "form-control"} %>
+                                    <%=f.select :default_user_id, options_for_select(@receivers.collect{|r| [r.name,r.id]}), {:include_blank => true}, {:class => "form-control"} %>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +91,7 @@
                             <div class="col-sm-5">
                                 <div class="form-group">
                                     <label>Usuario Predeterminado</label>
-                                    <%=f.select :default_user_id, options_for_select(@receivers.collect{|r| [r.firstname+" "+r.lastname,r.id]}, @default_tag.default_user_id), {:include_blank => true}, {:class => "form-control"} %>
+                                    <%=f.select :default_user_id, options_for_select(@receivers.collect{|r| [r.name,r.id]}, @default_tag.default_user_id), {:include_blank => true}, {:class => "form-control"} %>
                                 </div>
                             </div>
                         </div>

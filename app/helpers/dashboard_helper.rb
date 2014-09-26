@@ -58,20 +58,20 @@ module DashboardHelper
 	end
 
 	def user_name(userid)
-		user = User.where(:id => userid).first()
+		user = UserV.where(:id => userid).first()
 		if user.blank?
 			return "-"
 		else
-			return user.firstname+" "+user.lastname
+			return user.name
 		end
 	end
 
 	def user_mail(userid)
-		user = User.where(:id => userid).first()
+		user = UserV.where(:id => userid).first()
 		if user.blank?
 			return "-"
 		else
-			return user.username
+			return user.email
 		end
 	end
 
@@ -85,7 +85,7 @@ module DashboardHelper
 	end
 
 	def moodle_course_name(courseid)
-		return MoodleCourse.where(:moodleid => courseid).first().coursename
+		return MoodleCourseV.find_by_moodleid(courseid).coursename
 	end
 
 	def attendance_pct(student_info)

@@ -1,5 +1,9 @@
 module ApplicationHelper
 	
+	def user_avatar(userid)
+		return User.find(userid).avatar.url
+	end
+
 	def check_user_requests(userid)
 		wconf = Request.where("userid = #{userid} and statusid = 4").order("updated_at ASC").count
 		if wconf.nil?

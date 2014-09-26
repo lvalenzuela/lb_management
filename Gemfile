@@ -62,3 +62,5 @@ gem 'open4'
 
 gem 'bootstrap-wysihtml5-rails'
 gem 'jquery-turbolinks'
+
+gem "gon"

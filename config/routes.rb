@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       get "courses_list"
       post "courses_list"
       post "set_template"
+      get "course_calendar"
     end
   end
 
@@ -97,6 +98,7 @@ Rails.application.routes.draw do
       post "create_product"
       delete "delete_product"
       get "enable_product"
+      get "teachers_manager"
     end
   end
 
