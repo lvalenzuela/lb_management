@@ -148,10 +148,12 @@ module DashboardHelper
 			color = nil
 		end
 
+		max_attendance_delay = CourseAlarmParameter.find_by_param_name("max_attendance_delay")
+
 		case color
 		when 0
 			return "progress-bar progress-bar-success"
-		when 1..3
+		when 1..max_attendance_delay.value
 			return "progress-bar progress-bar-warning" 
 		else
 			return "progress-bar progress-bar-danger"

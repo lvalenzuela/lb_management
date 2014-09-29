@@ -109,18 +109,23 @@ class DashboardController < ApplicationController
 
 	def configuration
 		parameters = CourseAlarmParameter.all()
-		@min_grade = parameters.where(:param_name => "approve_grade").first().value
-		@min_attendance = parameters.where(:param_name => "min_attendance").first().value
+		@min_grade = parameters.find_by_param_name("approve_grade").value
+		@min_attendance = parameters.find_by_param_name("min_attendance").value
+		@max_attendance_delay = parameters.find_by_param_name("max_attendance_delay").value
 	end
 
 	def update_alarm_parameters
-		grade = CourseAlarmParameter.where(:param_name => "approve_grade").first()
+		grade = CourseAlarmParameter.find_by_param_name("approve_grade")
 		grade.value = params[:min_grade]
 		grade.save!
 
-		attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first()
+		attendance = CourseAlarmParameter.find_by_param_name("min_attendance")
 		attendance.value = params[:min_attendance]
 		attendance.save!
+
+		max_att_delay = CourseAlarmParameter.find_by_param_name("max_attendance_delay")
+		max_att_delay.value = params[:max_attendance_delay]
+		max_att_delay.save!
 		redirect_to :action => :configuration
 	end
 
