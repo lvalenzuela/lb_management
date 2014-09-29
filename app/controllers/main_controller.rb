@@ -80,6 +80,28 @@ class MainController < ApplicationController
         @teachers = TeacherV.all()
     end
 
+    def teacher_availability
+        @teacher = TeacherV.find(params[:id])
+        @disponibility = UserDisponibility.where("user_id = #{params[:id]} and (end_date >= curdate() or end_date is null)")
+        course_ids = MoodleRoleAssignationV.where(:userid => params[:id]).map{|c| c.courseid}
+        sessions = MoodleCourseSessionV.joins("as mcs inner join moodle_course_vs as courses
+                                                on mcs.courseid = courses.moodleid").where("
+                                                mcs.courseid in (?)",course_ids).select("
+                                                                                        mcs.*,
+                                                                                        courses.coursename").order("courses.coursename")
+        calendar_events = []
+        sessions.each do |s|
+            calendar_events << {
+                "title" => s.coursename,
+                "start" => s.session_date,
+                "allDay" => false,
+                "backgroundColor" => "#0073b7",
+                "borderColor" => "#0073b7"
+            }
+        end
+        gon.events = calendar_events
+    end
+
     private
 
     def assign_area_member(areaid,userid)

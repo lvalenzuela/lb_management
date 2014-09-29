@@ -141,29 +141,26 @@ module DashboardHelper
 		end
 	end
 
-	def course_progress_bar(course)
-		if course.total_sessions != 0 and !course.total_sessions.nil?
-			progress = (course.current_booked_sessions*100/course.total_sessions).round(0)
+	def course_current_progress_bar(course)
+		if !course.current_booked_sessions.nil? && !course.current_taken_sessions.nil?
 			color = course.current_booked_sessions - course.current_taken_sessions
-		else 
-			progress = 0
+		else
+			color = nil
 		end
 
 		case color
 		when 0
 			return "progress-bar progress-bar-success"
-		when 1..2
-			return "progress-bar progress-bar-primary"
-		when 2..3
+		when 1..3
 			return "progress-bar progress-bar-warning" 
 		else
 			return "progress-bar progress-bar-danger"
 		end
 	end
 
-	def progress_bar_pct(course)
-		if course.total_sessions != 0 and !course.total_sessions.nil?
-			pct = (course.current_booked_sessions*100/course.total_sessions).round(0)
+	def progress_bar_pct(progress,total)
+		if total != 0 and !total.nil?
+			pct = (progress*100/total).round(0)
 		else
 			pct = 0
 		end

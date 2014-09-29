@@ -104,7 +104,12 @@
 						<tr>
 							<th>Promedio Curso</th>
 							<td>
-								<span class="badge <%=grade_badge_class(@course_grade.mean_grade,@course_grade.gradetype)%>"><%=dashboard_grade_parser(@course_grade.mean_grade, @course_grade.gradetype)%></span></td>
+								<%if @course_grade%>
+								<span class="badge <%=grade_badge_class(@course_grade.mean_grade,@course_grade.gradetype)%>"><%=dashboard_grade_parser(@course_grade.mean_grade, @course_grade.gradetype)%></span>
+								<%else%>
+								-
+								<%end%>
+							</td>
 						</tr>
 					</tbody>
 				</table>

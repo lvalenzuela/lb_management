@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       delete "delete_product"
       get "enable_product"
       get "teachers_manager"
+      get "teacher_availability"
     end
   end
 

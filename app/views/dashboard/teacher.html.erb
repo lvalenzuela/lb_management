@@ -42,8 +42,11 @@
 							<td style="text-align: center;"><%=failing_attendance_students(c)%></td>
 							<td style="text-align: center;"><%=failing_grades_students(c)%></td>
 							<td>
-								<div class="progress progress-striped active">
-									<div class="<%=course_progress_bar(c)%>" style="width: <%=progress_bar_pct(c)%>"></div>
+								<div class="progress xs progress-striped active">
+									<div class="<%=course_current_progress_bar(c)%>" style="width: <%=progress_bar_pct(c.current_taken_sessions,c.total_sessions)%>;"></div>
+								</div>
+								<div class="progress xs progress-striped active">
+									<div class="progress-bar progress-bar-info" style="width: <%=progress_bar_pct(c.current_booked_sessions,c.total_sessions)%>;"></div>
 								</div>
 							</td>
 						</tr>

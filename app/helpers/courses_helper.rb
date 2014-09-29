@@ -21,12 +21,12 @@ module CoursesHelper
 	end
 
 	def weekday_options
-		return [["Lunes","Lunes"],
-				["Martes","Martes"],
-				["Miercoles","Miercoles"],
-				["Jueves","Jueves"],
-				["Viernes","Viernes"],
-				["Sabado","Sabado"]]
+		return [["Lunes",1],
+				["Martes",2],
+				["Miercoles",3],
+				["Jueves",4],
+				["Viernes",5],
+				["Sabado",6]]
 	end
 
 	def get_course_status(statusid)

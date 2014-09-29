@@ -4,40 +4,24 @@ class DashboardController < ApplicationController
 	layout "dashboard"
 
 	def courses_list
+		@filters = []
 		if params[:search]
-			@courses_list = CourseAttendanceReport.joins("as car 
-							left join course_grades_reports as cgr
-							on car.courseid = cgr.courseid 
-							and car.created_at = cgr.created_at
-							and car.created_at = curdate()").select(
-							"car.courseid,
-							 car.coursename,
-							 car.total_sessions,
-							 car.current_booked_sessions,
-							 car.current_taken_sessions,
-							 car.avg_attendance_ratio,
-							 car.std_dev_assistance,
-							 cgr.mean_grade,
-							 cgr.std_dev_grade,
-							 cgr.gradetype,
-							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null and car.coursename like '%#{params[:search]}%'").group("car.courseid").page(params[:page]).per(10)
+			courses = DashboardCoursesV.where("coursename like '%#{params[:search]}%'")
 		else
-			@courses_list = CourseAttendanceReport.joins("as car 
-							left join course_grades_reports as cgr
-							on car.courseid = cgr.courseid 
-							and car.created_at = cgr.created_at
-							and car.created_at = curdate()").select(
-							"car.courseid,
-							 car.coursename,
-							 car.total_sessions,
-							 car.current_booked_sessions,
-							 car.current_taken_sessions,
-							 car.avg_attendance_ratio,
-							 car.std_dev_assistance,
-							 cgr.mean_grade,
-							 cgr.std_dev_grade,
-							 cgr.gradetype,
-							 car.created_at").where("cgr.categoryname = '?' and cgr.itemname is null").group("car.courseid").page(params[:page]).per(10)
+			courses = DashboardCoursesV.all()
+		end
+		#filtros
+		if params[:filter]
+			if params[:filter][:hide_invisible]
+				f_courses = courses.where(:visible => 1)
+				@hide_invis = true
+			else
+				f_courses = courses
+			end
+			@courses_list = f_courses.order("courseid ASC").page(params[:page]).per(10)
+		else
+			#todos los cursos encontrados
+			@courses_list = courses.order("courseid ASC").page(params[:page]).per(10)
 		end
 	end
 
@@ -101,7 +85,7 @@ class DashboardController < ApplicationController
 
 	def teacher
 		@user = User.find(params[:id])
-		@courses = MoodleRoleAssignationV.joins("as mra inner join moodle_courses as mc
+		@courses = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
 						on mra.courseid = mc.moodleid
 						left join course_attendance_reports as car
 						on mra.courseid = car.courseid
@@ -141,6 +125,7 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
     def check_authentication
         if current_user.nil?
           redirect_to :controller => "users", :action => "index"
