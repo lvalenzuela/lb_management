@@ -153,7 +153,7 @@ module DashboardHelper
 		case color
 		when 0
 			return "progress-bar progress-bar-success"
-		when 1..4
+		when 1..max_attendance_delay.value.to_i
 			return "progress-bar progress-bar-warning" 
 		else
 			return "progress-bar progress-bar-danger"
