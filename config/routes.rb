@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       get "edit_session_types"
       post "create_session_type"
       post "update_session_type"
+      get "assign_teacher"
     end
   end
 

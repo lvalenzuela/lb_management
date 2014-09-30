@@ -1,0 +1,45 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "courses"%>
+<section class="content-header">
+    <h1>
+        <%=@course.coursename%>
+        <small>Asignacion de Profesores</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Cursos de Longbourn</li>
+        <li>Nuevo Curso</li>
+        <li class="active">Asignación de Profesor</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="javascript:;">Datos Generales</a>
+                </li>
+                <li class="active">
+                    <a href="javascript:;">Asignación de Profesor</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table>
+                                    <%@teachers.each do |t|%>
+                                    <tr>
+                                        <td><%=t.name%></td>
+                                    </tr>
+                                    <%end%>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

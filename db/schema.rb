@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926162105) do
+ActiveRecord::Schema.define(version: 20140929194856) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -237,7 +237,7 @@ ActiveRecord::Schema.define(version: 20140926162105) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "zoho_product_id"
-    t.integer  "coursetemplateid"
+    t.integer  "course_template_id"
     t.integer  "course_status_id"
     t.date     "start_date"
     t.string   "discount_pct"
@@ -245,6 +245,23 @@ ActiveRecord::Schema.define(version: 20140926162105) do
     t.string   "location"
     t.integer  "moodleid"
     t.integer  "course_type_id"
+  end
+
+  create_table "dashboard_courses_vs", id: false, force: true do |t|
+    t.integer "courseid"
+    t.string  "coursename"
+    t.integer "total_sessions"
+    t.integer "current_booked_sessions"
+    t.integer "current_taken_sessions"
+    t.float   "avg_attendance_ratio"
+    t.float   "std_dev_assistance"
+    t.float   "mean_grade"
+    t.float   "std_dev_grade"
+    t.integer "gradetype"
+    t.date    "created_at"
+    t.boolean "visible",                 default: true, null: false
+    t.integer "status_id"
+    t.date    "end_date"
   end
 
   create_table "diagnostic_tests", force: true do |t|
@@ -288,7 +305,7 @@ ActiveRecord::Schema.define(version: 20140926162105) do
     t.integer  "course_template_id"
     t.integer  "status_id"
     t.integer  "location_id"
-    t.integer  "start_date",         limit: 8,   default: 0,    null: false
+    t.datetime "start_date"
     t.date     "end_date"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -465,6 +482,73 @@ ActiveRecord::Schema.define(version: 20140926162105) do
     t.date    "created_at"
   end
 
+  create_table "teacher_vs", id: false, force: true do |t|
+    t.integer  "id",                  limit: 8,          default: 0,           null: false
+    t.string   "auth",                limit: 20,         default: "manual",    null: false
+    t.boolean  "confirmed",                              default: false,       null: false
+    t.boolean  "policyagreed",                           default: false,       null: false
+    t.boolean  "deleted",                                default: false,       null: false
+    t.boolean  "suspended",                              default: false,       null: false
+    t.integer  "mnethostid",          limit: 8,          default: 0,           null: false
+    t.string   "username",            limit: 100,        default: "",          null: false
+    t.string   "password",                               default: "",          null: false
+    t.string   "idnumber",                               default: "",          null: false
+    t.string   "firstname",           limit: 100,        default: "",          null: false
+    t.string   "lastname",            limit: 100,        default: "",          null: false
+    t.string   "name",                limit: 201
+    t.string   "email",               limit: 100,        default: "",          null: false
+    t.boolean  "emailstop",                              default: false,       null: false
+    t.string   "icq",                 limit: 15,         default: "",          null: false
+    t.string   "skype",               limit: 50,         default: "",          null: false
+    t.string   "yahoo",               limit: 50,         default: "",          null: false
+    t.string   "aim",                 limit: 50,         default: "",          null: false
+    t.string   "msn",                 limit: 50,         default: "",          null: false
+    t.string   "phone1",              limit: 20,         default: "",          null: false
+    t.string   "phone2",              limit: 20,         default: "",          null: false
+    t.string   "institution",                            default: "",          null: false
+    t.string   "department",                             default: "",          null: false
+    t.string   "address",                                default: "",          null: false
+    t.string   "city",                limit: 120,        default: "",          null: false
+    t.string   "country",             limit: 2,          default: "",          null: false
+    t.string   "lang",                limit: 30,         default: "en",        null: false
+    t.string   "theme",               limit: 50,         default: "",          null: false
+    t.string   "timezone",            limit: 100,        default: "99",        null: false
+    t.integer  "firstaccess",         limit: 8,          default: 0,           null: false
+    t.integer  "lastaccess",          limit: 8,          default: 0,           null: false
+    t.integer  "lastlogin",           limit: 8,          default: 0,           null: false
+    t.integer  "currentlogin",        limit: 8,          default: 0,           null: false
+    t.string   "lastip",              limit: 45,         default: "",          null: false
+    t.string   "secret",              limit: 15,         default: "",          null: false
+    t.integer  "picture",             limit: 8,          default: 0,           null: false
+    t.string   "url",                                    default: "",          null: false
+    t.text     "description",         limit: 2147483647
+    t.integer  "descriptionformat",   limit: 1,          default: 1,           null: false
+    t.boolean  "mailformat",                             default: true,        null: false
+    t.boolean  "maildigest",                             default: false,       null: false
+    t.integer  "maildisplay",         limit: 1,          default: 2,           null: false
+    t.boolean  "autosubscribe",                          default: true,        null: false
+    t.boolean  "trackforums",                            default: false,       null: false
+    t.integer  "timecreated",         limit: 8,          default: 0,           null: false
+    t.integer  "timemodified",        limit: 8,          default: 0,           null: false
+    t.integer  "trustbitmask",        limit: 8,          default: 0,           null: false
+    t.string   "imagealt"
+    t.string   "lastnamephonetic"
+    t.string   "firstnamephonetic"
+    t.string   "middlename"
+    t.string   "alternatename"
+    t.string   "calendartype",        limit: 30,         default: "gregorian", null: false
+    t.string   "auth_token"
+    t.integer  "system_role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.integer  "roleid"
+    t.integer  "assignationid",                          default: 0,           null: false
+  end
+
   create_table "user_disponibilities", force: true do |t|
     t.integer  "user_id"
     t.integer  "day_number"
@@ -526,6 +610,7 @@ ActiveRecord::Schema.define(version: 20140926162105) do
     t.string   "idnumber",                               default: "",          null: false
     t.string   "firstname",           limit: 100,        default: "",          null: false
     t.string   "lastname",            limit: 100,        default: "",          null: false
+    t.string   "name",                limit: 201
     t.string   "email",               limit: 100,        default: "",          null: false
     t.boolean  "emailstop",                              default: false,       null: false
     t.string   "icq",                 limit: 15,         default: "",          null: false

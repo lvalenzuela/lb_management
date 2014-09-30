@@ -30,6 +30,7 @@ class CoursesController < ApplicationController
     	@types = CourseType.all()
     	@course = Course.new()
         @course_levels = CourseLevel.all()
+        @templates = CourseTemplate.where(:deleted => 0)
         @teachers = get_teachers_list
     end
 
@@ -38,7 +39,7 @@ class CoursesController < ApplicationController
     	if @course.valid?
             #generacion de course_features
             modify_course_features
-            redirect_to :action => :index
+            redirect_to :action => :assign_teacher, :id => @course.id
     	else
     		raw_products = zoho_product_list
 	    	if raw_products["code"] == 0
@@ -49,8 +50,16 @@ class CoursesController < ApplicationController
 	    	@types = CourseType.all()
             @teachers = get_teachers_list
             @course_levels = CourseLevel.all()
+            @templates = CourseTemplate.where(:deleted => 0)
 	    	render :new
     	end
+    end
+
+    def assign_teacher
+        @course = Course.find(params[:id])
+        features = CourseFeature.where(:course_id => params[:id])
+        tchrs = UserDisponibility.where("day_number = #{features.find_by_feature_name('first_day').feature_description} and id in (select id from user_disponibilities where day_number = #{features.find_by_feature_name('second_day').feature_description})")
+        @teachers = TeacherV.where(:id => tchrs.map{|t| t.id})
     end
 
     def show 
@@ -250,7 +259,7 @@ class CoursesController < ApplicationController
     end
 
     def course_params
-    	params.require(:course).permit(:coursename, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :start_date, :location, :course_type_id)
+    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :start_date, :location, :course_type_id)
     end
 
     def check_authentication
