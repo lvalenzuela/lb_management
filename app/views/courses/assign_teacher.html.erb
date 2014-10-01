@@ -17,7 +17,7 @@
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
                 <li>
-                    <a href="javascript:;">Datos Generales</a>
+                    <%=link_to "Datos Generales", :action => :edit, :params => {:id => @course.id}%>
                 </li>
                 <li class="active">
                     <a href="javascript:;">Asignación de Profesor</a>
@@ -27,14 +27,39 @@
                 <div class="tab-pane active">
                     <section>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <table>
-                                    <%@teachers.each do |t|%>
-                                    <tr>
-                                        <td><%=t.name%></td>
-                                    </tr>
-                                    <%end%>
-                                </table>
+                            <div class="col-xs-8">
+                                <div class="box box-info">
+                                    <div class="box-body">
+                                        <div id="calendar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="box box-primary">
+                                    <div class="box-header">
+                                        <h3 class="box-title">Profesores Disponibles</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Dia 1</th>
+                                                    <th>Dia 2</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <%@teachers.each do |t|%>
+                                                <tr>
+                                                    <td><%=t.name%></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            <%end%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>

@@ -4,151 +4,231 @@
 <section class="content-header">
     <h1>
         Desempeño de Cursos	
-       	<small><%=moodle_course_name(@courseid)%></small>
+       	<small><%=moodle_course_name(@course.moodleid)%></small>
     </h1>
     <ol class="breadcrumb">
     	<li>Desempeño por Cursos</li>
-        <li class="active"><%=moodle_course_name(@courseid)%></li>
+        <li class="active"><%=moodle_course_name(@course.moodleid)%></li>
     </ol>
 </section>
 
 <section class="content">
-	<div class="col-xs-7">
-		<div class="box box-primary">
-			<div class="box-header">
-				<h3 class="box-title">Encargados del curso</h3>
+	<div class="row">
+		<div class="col-xs-7">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">Encargados del curso</h3>
+				</div>
+				<div class="box-body table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Rol</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@user_roles.each do |u|%>
+							<tr>
+								<td><%=user_name(u.userid)%></td>
+								<td><%=u.rolename%></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
 			</div>
-			<div class="box-body table-responsive">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Nombre</th>
-							<th>Rol</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%@user_roles.each do |u|%>
-						<tr>
-							<td><%=user_name(u.userid)%></td>
-							<td><%=u.rolename%></td>
-						</tr>
-						<%end%>
-					</tbody>
-				</table>
+		</div>
+		<div class="col-xs-5 pull-right">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Carta Gantt: <%=template_name(@template_id)%></h3>
+				</div>
+				<div class="box-body table-responsive transversal-column">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th style="text-align: center;">Sesión</th>
+								<th style="text-align: center;">Tipo de Clase</th>
+								<th style="text-align: center;">Contenido</th>
+								<th style="text-align: center;">Pag.</th>
+								<th style="text-align: center;">Contenido Cubierto</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@template_sessions.each do |ts|%>
+							<tr>
+								<td style="text-align: center;"><%=ts.session_number%></td>
+								<td style="text-align: center;"><%=get_session_type(ts.session_type_id)%></td>
+								<td style="text-align: center;"><%=ts.contents%></td>
+								<td style="text-align: center;"><%=ts.page%></td>
+								<td style="text-align: center;"><%=taken_session_content(ts.session_number,@taken_sessions)%></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
 			</div>
-			<div class="box-footer">
+		</div>
+		<div class="col-xs-7">
+			<div class="box box-warning">
+				<div class="box-header">
+					<h3 class="box-title">Información Adicional</h3>
+				</div>
+				<div class="box-body table-responsive">
+					<table class="table">
+						<tbody>
+							<tr>
+								<th>Total de Sesiones</th>
+								<td><%=@attendance_reports ? @attendance_reports.total_sessions : "-"%></td>
+							</tr>
+							<tr>
+								<th>Sesiones a la Fecha</th>
+								<td><%=@attendance_reports ? @attendance_reports.current_booked_sessions : "-"%></td>
+							</tr>
+							<tr>
+								<th>Sesiones Registradas</th>
+								<td><%=@attendance_reports ? @attendance_reports.current_taken_sessions : "-"%></td>
+							</tr>
+							<tr>
+								<th>Ultima Sesion Registrada</th>
+								<td><%=@attendance_reports ? l(@attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y") : "-"%></td>
+							</tr>
+							<tr>
+								<th>Asistencia Promedio</th>
+								<td><%=@attendance_reports ? (@attendance_reports.avg_attendance_ratio*100).round(1) : "-"%>%</td>
+							</tr>
+							<tr>
+								<th>Promedio Curso</th>
+								<td>
+									<%if @course_grade%>
+									<span class="badge <%=grade_badge_class(@course_grade.mean_grade,@course_grade.gradetype)%>"><%=dashboard_grade_parser(@course_grade.mean_grade, @course_grade.gradetype)%></span>
+									<%else%>
+									-
+									<%end%>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-7">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Listado de Alumnos</h3>
+				</div>
+				<div class="box-body table-responsive">
+					<table class="table table-hover table-striped">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th style="text-align: center;">Asistencias</th>
+								<th style="text-align: center;">Ausente</th>
+								<th style="text-align: center;">% Asistencia</th>
+								<th style="text-align: center;">Promedio</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@students_info.each do |si|%>
+							<tr>
+								<td><%=link_to student_name(si.userid), :controller => :dashboard, :action => :student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
+								<td style="text-align: center;"><%=si.present_sessions%></td>
+								<td style="text-align: center;"><%=si.absent_sessions%></td>
+								<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
+								<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-xs-5 pull-right">
-		<div class="box">
-			<div class="box-header">
-				<h3 class="box-title">Carta Gantt: <%=template_name(@template_id)%></h3>
-			</div>
-			<div class="box-body table-responsive transversal-column">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th style="text-align: center;">Sesión</th>
-							<th style="text-align: center;">Tipo de Clase</th>
-							<th style="text-align: center;">Contenido</th>
-							<th style="text-align: center;">Pag.</th>
-							<th style="text-align: center;">Contenido Cubierto</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%@template_sessions.each do |ts|%>
-						<tr>
-							<td style="text-align: center;"><%=ts.session_number%></td>
-							<td style="text-align: center;"><%=get_session_type(ts.session_type_id)%></td>
-							<td style="text-align: center;"><%=ts.contents%></td>
-							<td style="text-align: center;"><%=ts.page%></td>
-							<td style="text-align: center;"><%=taken_session_content(ts.session_number,@taken_sessions)%></td>
-						</tr>
-						<%end%>
-					</tbody>
-				</table>
-			</div>
-			<div class="box-footer">
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-7">
-		<div class="box box-warning">
-			<div class="box-header">
-				<h3 class="box-title">Información Adicional</h3>
-			</div>
-			<div class="box-body table-responsive">
-				<table class="table">
-					<tbody>
-						<tr>
-							<th>Total de Sesiones</th>
-							<td><%=@attendance_reports ? @attendance_reports.total_sessions : "-"%></td>
-						</tr>
-						<tr>
-							<th>Sesiones a la Fecha</th>
-							<td><%=@attendance_reports ? @attendance_reports.current_booked_sessions : "-"%></td>
-						</tr>
-						<tr>
-							<th>Sesiones Registradas</th>
-							<td><%=@attendance_reports ? @attendance_reports.current_taken_sessions : "-"%></td>
-						</tr>
-						<tr>
-							<th>Ultima Sesion Registrada</th>
-							<td><%=@attendance_reports ? l(@attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y") : "-"%></td>
-						</tr>
-						<tr>
-							<th>Asistencia Promedio</th>
-							<td><%=@attendance_reports ? (@attendance_reports.avg_attendance_ratio*100).round(1) : "-"%>%</td>
-						</tr>
-						<tr>
-							<th>Promedio Curso</th>
-							<td>
-								<%if @course_grade%>
-								<span class="badge <%=grade_badge_class(@course_grade.mean_grade,@course_grade.gradetype)%>"><%=dashboard_grade_parser(@course_grade.mean_grade, @course_grade.gradetype)%></span>
-								<%else%>
-								-
-								<%end%>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="box-footer">
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-7">
-		<div class="box">
-			<div class="box-header">
-				<h3 class="box-title">Listado de Alumnos</h3>
-			</div>
-			<div class="box-body table-responsive">
-				<table class="table table-hover table-striped">
-					<thead>
-						<tr>
-							<th>Nombre</th>
-							<th style="text-align: center;">Asistencias</th>
-							<th style="text-align: center;">Ausente</th>
-							<th style="text-align: center;">% Asistencia</th>
-							<th style="text-align: center;">Promedio</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%@students_info.each do |si|%>
-						<tr>
-							<td><%=link_to student_name(si.userid), :controller => :dashboard, :action => :student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
-							<td style="text-align: center;"><%=si.present_sessions%></td>
-							<td style="text-align: center;"><%=si.absent_sessions%></td>
-							<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
-							<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
-						</tr>
-						<%end%>
-					</tbody>
-				</table>
-			</div>
-			<div class="box-footer">
-			</div>
-		</div>
-	</div>
+	<h4 class="page-header"> Comentarios Sobre el Curso</h4>
+    <!-- row -->
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-10 col-md-offset-1">
+            <!-- The time line -->
+            <ul class="timeline">
+                <!-- timeline time label -->
+                <li class="time-label">
+                    <span class="bg-red">
+                        <%=l(@course.start_date, :format => "%d %b. %Y")%>
+                    </span>
+                </li>
+                <%@course_observations.each do |cobs|%>
+                <li>
+                	<i class="fa fa-comments bg-yellow"></i>
+                    <div class="timeline-item">
+                        <span class="time"><i class="fa fa-calendar"></i> <%=l(cobs.created_at, :format => "%d/%m/%Y - %H:%M")%></span>
+                        <h3 class="timeline-header"><strong><%=get_username(cobs.user_id)%></strong> anotó:</h3>
+                        <div class="timeline-body">
+                            <%=simple_format cobs.message%>
+                        </div>
+                        <div class='timeline-footer'>
+	        				<%if cobs.attachment.exists?%>
+	        					<%=link_to "Ver Adjuntos", cobs.attachment.url, :class =>"btn btn-primary btn-xs",:target => "_blank" %>
+	        				<%end%>
+	        				<%if cobs.user_id == current_user.id && (Time.now - cobs.created_at)/30.minutes <= 1%>
+	        					<%=link_to "Editar Nota", {:controller => :dashboard, :action => :edit_course_observation, :params => {:id => cobs.id, :courseid => @course.id}}, {:class => "btn btn-danger btn-xs"}%>
+	        				<%end%>
+                        </div>
+                    </div>
+                </li>
+                <%end%>
+                <li class="time-label">
+                    <span class="bg-green">
+                        <%=l(Time.now, :format => "%d %b. %Y")%>
+                    </span>
+                </li>
+                <li>
+                    <i class="fa fa-clock-o"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+    	<div class="col-xs-10 col-xs-offset-1">
+    		<%=form_for :course_observation, :url => {:action => :create_course_observation} do |f|%>
+    		<div class="box box-info">
+    			<div class="box-header">
+    				<h3 class="box-title">Nueva Observacion</h3>
+    			</div>
+    			<div class="box-body">
+    				<div class="row">
+    					<div class="col-lg-10 col-lg-offset-1">
+    						<div class="form-group">
+    							<%=f.hidden_field :course_id, :value => @course.moodleid%>
+    							<%=f.hidden_field :user_id, :value => current_user.id%>
+    							<%=f.text_area :message, :class => "wysihtml5"%>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+                <div class="box-footer clearfix">
+                    <div class="form-group col-sm-5 col-sm-offset-1">
+                        <label>Adjuntar Archivo:</label>
+                        <%=f.file_field :attachment %>
+                    </div>
+                    <div class="col-sm-3 pull-right">
+                        <%=f.submit :value=> "Anotar Observación", :class => "btn btn-primary btn-lg"%>
+                    </div>
+                </div>
+    		</div>
+    		<%end%>
+    	</div>
+    </div>
 </section>
+
+<script type="text/javascript">
+    $('.wysihtml5').wysihtml5();
+</script>

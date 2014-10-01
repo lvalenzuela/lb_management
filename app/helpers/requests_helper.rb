@@ -107,7 +107,7 @@ module RequestsHelper
 
 	def get_username(userid)
 		if userid.nil?
-			nil
+			""
 		else
 			user = UserV.find(userid)
 			username = user.firstname+" "+user.lastname

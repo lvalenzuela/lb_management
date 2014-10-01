@@ -57,7 +57,7 @@
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-9 col-sm-8">
                             <div class="row pad">
-                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name}%>
+                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name, :id => nil}%>
                             </div>
                             <div class="table-responsive">
                                 <%=render :partial => "requests_table_partial", :locals => {:requests => @requests, :active => @active}%>

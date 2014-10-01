@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140929194856) do
+ActiveRecord::Schema.define(version: 20141001184630) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -178,6 +178,19 @@ ActiveRecord::Schema.define(version: 20140929194856) do
     t.datetime "updated_at"
   end
 
+  create_table "course_observations", force: true do |t|
+    t.integer  "course_id"
+    t.integer  "user_id"
+    t.string   "subject"
+    t.text     "message"
+    t.string   "attachment_file_name"
+    t.string   "attachment_content_type"
+    t.integer  "attachment_file_size"
+    t.datetime "attachment_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_session_types", force: true do |t|
     t.string   "type_name"
     t.string   "description"
@@ -240,6 +253,7 @@ ActiveRecord::Schema.define(version: 20140929194856) do
     t.integer  "course_template_id"
     t.integer  "course_status_id"
     t.date     "start_date"
+    t.date     "end_date"
     t.string   "discount_pct"
     t.integer  "discount_factor"
     t.string   "location"

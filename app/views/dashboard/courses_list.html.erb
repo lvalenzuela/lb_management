@@ -20,16 +20,24 @@
 				<h3 class="box-title">Listado de Cursos de Longbourn</h3>
 				<div class="box-tools">
 					<div class="input-group">
-						<input type="text" name="search" class="form-control input-sm pull-right" style="width: 300px;" placeholder="Buscar">
+						<input type="text" name="search" class="form-control input-sm pull-right" style="width: 400px;" placeholder="Buscar">
                     	<div class="input-group-btn">
-                        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        	<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                     	</div>
                     </div>
-					<div class="checkbox pull-right">
-						<label>
-						<%=check_box_tag "filter[hide_invisible]", true, @hide_invis ? true : false%>
-						Ocultar No Visibles
-						</label>
+					<div class="pull-right">
+						<div class="checkbox">
+							<label>
+								<%=check_box_tag "filter[show_hidden]", true, @filters[:show_hidden] ? true : false%>
+								Mostrar Ocultos
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<%=check_box_tag "filter[show_late]", true, @filters[:show_late] ? true : false%>
+								Cursos Atrasados
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>

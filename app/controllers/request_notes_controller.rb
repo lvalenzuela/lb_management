@@ -52,10 +52,10 @@ class RequestNotesController < ApplicationController
 		r = Request.find(requestid)
 		if r.userid == userid
 			#el usuario que escribe el mensaje es el mismo que envía la solicitud
-			user = User.find(r.receiverid)
+			user = UserV.find(r.receiverid)
 		else
 			#el usuario que escribe el mensaje es el receptor de la solicitud
-			user = User.find(r.userid)
+			user = UserV.find(r.userid)
 		end
 		NotificationMailer.new_forum_msg(user,r).deliver
 	end

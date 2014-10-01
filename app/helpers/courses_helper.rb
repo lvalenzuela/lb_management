@@ -1,5 +1,9 @@
 module CoursesHelper
 
+	def course_feature_value(features,f_name)
+		return features.find_by_feature_name(f_name).feature_description
+	end
+
 	def get_session_type(session_type_id)
 		if session_type_id
 			return CourseSessionType.find(session_type_id).type_name

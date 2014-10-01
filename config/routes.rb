@@ -10,8 +10,12 @@ Rails.application.routes.draw do
       get "teachers_list"
       post "teachers_list"
       get "teacher"
+      post "teacher"
       get "configuration"
       post "update_alarm_parameters"
+      get "edit_course_observation"
+      post "update_course_observation"
+      post "create_course_observation"
     end
   end
 
@@ -37,6 +41,7 @@ Rails.application.routes.draw do
       post "create_session_type"
       post "update_session_type"
       get "assign_teacher"
+      post "template_selector_options"
     end
   end
 

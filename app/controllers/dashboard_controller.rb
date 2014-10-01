@@ -4,29 +4,32 @@ class DashboardController < ApplicationController
 	layout "dashboard"
 
 	def courses_list
-		@filters = []
-		if params[:search]
-			courses = DashboardCoursesV.where("coursename like '%#{params[:search]}%'")
-		else
-			courses = DashboardCoursesV.all()
-		end
-		#filtros
+		@filters = {}
 		if params[:filter]
-			if params[:filter][:hide_invisible]
-				f_courses = courses.where(:visible => 1)
-				@hide_invis = true
+			if params[:filter][:show_hidden]
+				courses = DashboardCoursesV.all()
+				@filters[:show_hidden] = true
 			else
-				f_courses = courses
+				courses = DashboardCoursesV.where(:visible => 1)
 			end
-			@courses_list = f_courses.order("courseid ASC").page(params[:page]).per(10)
+			if params[:filter][:show_late]
+				max_attendance_delay = CourseAlarmParameter.find_by_param_name("max_attendance_delay").value.to_i
+				courses = courses.where("(current_booked_sessions - current_taken_sessions) > #{max_attendance_delay}")
+				@filters[:show_late] = true
+			end
 		else
-			#todos los cursos encontrados
-			@courses_list = courses.order("courseid ASC").page(params[:page]).per(10)
+			courses = DashboardCoursesV.where(:visible => 1)
 		end
+
+		if params[:search]
+			f_courses = courses.where("coursename like '%#{params[:search]}%'")
+		else
+			f_courses = courses
+		end
+		@courses_list = f_courses.order("courseid ASC").page(params[:page]).per(10)
 	end
 
 	def course
-		@courseid = params[:id]
 		@students_info = StudentGradesReport.joins("as sgr
 						inner join student_general_attendance_reports as sgar
 						on sgr.userid = sgar.userid and sgr.courseid = sgar.courseid 
@@ -43,19 +46,31 @@ class DashboardController < ApplicationController
 		@user_roles = MoodleRoleAssignationV.where(:courseid => params[:id]).order("roleid ASC")
 		@attendance_reports = CourseAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").first()
 		@course_grade = CourseGradesReport.where("courseid = #{params[:id]} and created_at = curdate() and categoryname = '?' and itemname is null").first()
-		moodle_course = MoodleCourseV.find_by_moodleid(params[:id])
-		@template_sessions = CourseTemplateSession.where(:course_template_id => moodle_course.course_template_id)
+		@course = MoodleCourseV.find_by_moodleid(params[:id])
+		@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
 		if @template_sessions.blank?
 			@template_id = nil
 		else
 			@template_id = @template_sessions.first().course_template_id
 		end
 		#obtencion del contenido de las sesiones
-		ts = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC")
-		@taken_sessions = []
-		ts.each do |sess|
-			@taken_sessions << sess.description
-		end
+		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
+		@course_observations = CourseObservation.where(:course_id => params[:id])
+	end
+
+	def create_course_observation
+		c = CourseObservation.create(course_observation_params)
+		redirect_to :action => :course, :id => c.course_id
+	end
+
+	def edit_course_observation
+		@course_obs = CourseObservation.where(:id => params[:id], :course_id => params[:courseid]).first()
+	end
+
+	def update_course_observation
+		c_obs = CourseObservation.find(params[:course_observation][:id])
+		c_obs.update_attributes(course_observation_params)
+		redirect_to :action => :course, :id => c_obs.course_id
 	end
 
 	def student
@@ -85,26 +100,80 @@ class DashboardController < ApplicationController
 
 	def teacher
 		@user = User.find(params[:id])
-		@courses = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
-						on mra.courseid = mc.moodleid
-						left join course_attendance_reports as car
-						on mra.courseid = car.courseid
-						left join course_grades_reports as cgr
-						on car.courseid = cgr.courseid 
-						and car.created_at = cgr.created_at
-						and car.created_at = curdate()").select("mra.roleid, 
-																mra.rolename, 
-																mra.courseid,
-																mc.coursename,
-																car.current_booked_sessions,
-																car.current_taken_sessions,
-																car.total_sessions,
-																car.last_taken_session_date,
-																car.avg_attendance_ratio,
-																cgr.mean_grade,
-																cgr.std_dev_grade,
-																cgr.gradetype,
-																car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]}").group("mra.courseid").order("mra.roleid ASC").page(params[:page]).per(10)
+		if params[:filter]
+			if params[:filter][:show_hidden]
+				@show_hidden = true
+				c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
+								on mra.courseid = mc.moodleid
+								left join course_attendance_reports as car
+								on mra.courseid = car.courseid
+								left join course_grades_reports as cgr
+								on car.courseid = cgr.courseid 
+								and car.created_at = cgr.created_at
+								and car.created_at = curdate()").select("mra.roleid, 
+																		mra.rolename, 
+																		mra.courseid,
+																		mc.coursename,
+																		car.current_booked_sessions,
+																		car.current_taken_sessions,
+																		car.total_sessions,
+																		car.last_taken_session_date,
+																		car.avg_attendance_ratio,
+																		cgr.mean_grade,
+																		cgr.std_dev_grade,
+																		cgr.gradetype,
+																		car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]}").group("mra.courseid")
+			else
+				c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
+							on mra.courseid = mc.moodleid
+							left join course_attendance_reports as car
+							on mra.courseid = car.courseid
+							left join course_grades_reports as cgr
+							on car.courseid = cgr.courseid 
+							and car.created_at = cgr.created_at
+							and car.created_at = curdate()").select("mra.roleid, 
+																	mra.rolename, 
+																	mra.courseid,
+																	mc.coursename,
+																	car.current_booked_sessions,
+																	car.current_taken_sessions,
+																	car.total_sessions,
+																	car.last_taken_session_date,
+																	car.avg_attendance_ratio,
+																	cgr.mean_grade,
+																	cgr.std_dev_grade,
+																	cgr.gradetype,
+																	car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]} and mc.visible = 1").group("mra.courseid")
+			end
+		else
+			c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
+							on mra.courseid = mc.moodleid
+							left join course_attendance_reports as car
+							on mra.courseid = car.courseid
+							left join course_grades_reports as cgr
+							on car.courseid = cgr.courseid 
+							and car.created_at = cgr.created_at
+							and car.created_at = curdate()").select("mra.roleid, 
+																	mra.rolename, 
+																	mra.courseid,
+																	mc.coursename,
+																	car.current_booked_sessions,
+																	car.current_taken_sessions,
+																	car.total_sessions,
+																	car.last_taken_session_date,
+																	car.avg_attendance_ratio,
+																	cgr.mean_grade,
+																	cgr.std_dev_grade,
+																	cgr.gradetype,
+																	car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]} and mc.visible = 1").group("mra.courseid")
+		end
+
+		if params[:search]
+			f_c = c.where("mc.coursename like '%#{params[:search]}%'")
+		else
+			f_c = c
+		end
+		@courses = f_c.order("mra.roleid ASC").page(params[:page]).per(10)
 	end
 
 	def configuration
@@ -130,6 +199,10 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
+	def course_observation_params
+		params.require(:course_observation).permit(:course_id, :user_id, :subject, :message, :attachment)
+	end
 
     def check_authentication
         if current_user.nil?

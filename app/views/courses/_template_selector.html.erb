@@ -1,0 +1,7 @@
+<div id="template_options">
+	<%if templates%>
+		<%=select_tag "course[course_template_id]", options_for_select(templates.collect{|t| [t.name,t.id]}, selected), {:class => "form-control", :include_blank => true}%>
+	<%else%>
+		<%=select_tag "course[course_template_id]", options_for_select([nil]), {:class => "form-control", :prompt => "Selecciona un Nivel"}%>
+	<%end%>
+</div>

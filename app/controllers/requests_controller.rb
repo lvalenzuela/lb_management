@@ -10,6 +10,10 @@ class RequestsController < ApplicationController
 			@active = "search"
 			@search_term = params[:search_term]
 			case params[:parent_action]
+			when "area_requests"
+				@area = Area.find(params[:id])
+				@requests = Request.where(:areaid => @area.id).order("updated_at DESC").page(params[:page]).per(10)
+				action_to_render = "area_requests"
 			when "sent_requests"
 				#Se busca entre los requerimientos enviados
 				@requests = Request.where("userid = #{current_user.id} and request like '%#{@search_term}%'").page(params[:page]).per(10)
@@ -275,10 +279,7 @@ class RequestsController < ApplicationController
 
 		return UserV.joins("as users inner join role_assignations
 						on role_assignations.userid = users.id
-						and role_assignations.contextid = #{c.id}").select("users.id,
-																			users.firstname,
-																			users.lastname,
-																			role_assignations.roleid").order("roleid DESC")
+						and role_assignations.contextid = #{c.id}").select("users.*").order("users.id ASC")
 	end
 
 	def get_areas(id_list)
@@ -315,7 +316,7 @@ class RequestsController < ApplicationController
 	end
 
 	def notify_user(userid,request,new_request)
-		@user = current_user
+		@user = UserV.find(current_user.id)
 		case request.statusid
 		when 1
 			if new_request

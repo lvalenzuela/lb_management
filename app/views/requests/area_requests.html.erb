@@ -19,8 +19,6 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-3 col-sm-4">
-                            <!-- BOXES are complex enough to move the .box-header around.
-                                 This is an example of having the box header within the box body -->
                             <div class="box-header">
                                 <i class="fa fa-inbox"></i>
                                 <h3 class="box-title">INBOX</h3>
@@ -55,19 +53,10 @@
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-9 col-sm-8">
                             <div class="row pad">
-                                <div class="col-sm-6 col-sm-offset-6 search-form">
-                                    <form action="#" class="text-right">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-sm" placeholder="Search">
-                                            <div class="input-group-btn">
-                                                <button type="submit" name="q" class="btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name, :id => @area.id}%>
                             </div>
                             <div class="table-responsive">
-                                <%=render :partial => "requests_table_partial", :locals => {:requests => @requests, :active => @active}%>
+                                <%=render :partial => "area_manager_request_table", :locals => {:requests => @requests, :active => @active}%>
                             </div>
                         </div><!-- /.col (RIGHT) -->
                     </div>

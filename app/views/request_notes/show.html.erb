@@ -76,7 +76,7 @@
 	        				<%if note.attach.exists?%>
 	        					<%=link_to "Ver Adjuntos", note.attach.url, :class =>"btn btn-primary btn-xs",:target => "_blank" %>
 	        				<%end%>
-	        				<%if note.userid == session[:user_id] && (Time.now - note.created_at)/30.minutes <= 1%>
+	        				<%if note.userid == current_user.id && (Time.now - note.created_at)/30.minutes <= 1%>
 	        					<%=link_to "Editar Nota", {:controller => "request_notes", :action => "edit", :params => {:id => note.id, :requestid => @request.id}}, {:class => "btn btn-danger btn-xs"}%>
 	        				<%end%>
                         </div>

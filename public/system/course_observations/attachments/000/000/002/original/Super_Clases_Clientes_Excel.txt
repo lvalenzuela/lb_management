@@ -1,0 +1,3 @@
+=IF(OR(ISNUMBER(SEARCH("Agrícola",M2)), ISNUMBER(SEARCH("Energ",M2)), ISNUMBER(SEARCH("Miner",M2)), ISNUMBER(SEARCH("Aliment",M2)), ISNUMBER(SEARCH("Forest",M2)), ISNUMBER(SEARCH("Metal",M2))),"Materias Primas", 
+IF(OR(ISNUMBER(SEARCH("Fábrica",M2)),ISNUMBER(SEARCH("Text",M2)),ISNUMBER(SEARCH("Envase",M2)),ISNUMBER(SEARCH("Productos",M2))),"Manufactura",
+IF(OR(ISNUMBER(SEARCH("No Clasificado",M2))),"No Clasificado","Servicios")))

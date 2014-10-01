@@ -62,7 +62,7 @@
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-9 col-sm-8">
                             <div class="row pad">
-                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name}%>
+                                <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name, :id => nil}%>
                             </div>
                             <div class="table-responsive">
                                 <%=form_tag bulk_request_status_change_requests_path, :id => "change-request-status-form" do%>

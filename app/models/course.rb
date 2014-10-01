@@ -1,7 +1,8 @@
 class Course < ActiveRecord::Base
 	before_create :set_defaults
 	after_create :init_instance
-	validates :coursename, :start_date, :mode, :course_level_id, presence: true
+	before_destroy :destroy_features, :destroy_sessions
+	validates :coursename, :start_date, :mode, :course_level_id, :course_template_id, presence: true
 
 	def set_defaults
 		#Un curso creado no es activo instantaneamente, hay que activarlo posteriormente
@@ -20,5 +21,13 @@ class Course < ActiveRecord::Base
 		#3. Cursos
 		#4. Comercial
 		Context.create(:typeid => 3, :instanceid => self.id)
+	end
+
+	def destroy_features
+		CourseFeature.where(:course_id => self.id).destroy_all
+	end
+
+	def destroy_sessions
+		CourseSession.where(:commerce_course_id => self.id).destroy_all
 	end
 end

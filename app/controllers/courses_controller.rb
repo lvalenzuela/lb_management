@@ -20,6 +20,13 @@ class CoursesController < ApplicationController
         end
     end
 
+    def template_selector_options
+        @templates = CourseTemplate.where(:course_level_id => params[:courselevel], :deleted => 0)
+        respond_to do |format|
+            format.js
+        end
+    end
+
     def new
     	raw_products = zoho_product_list
     	if raw_products["code"] == 0
@@ -30,7 +37,7 @@ class CoursesController < ApplicationController
     	@types = CourseType.all()
     	@course = Course.new()
         @course_levels = CourseLevel.all()
-        @templates = CourseTemplate.where(:deleted => 0)
+        @templates = nil
         @teachers = get_teachers_list
     end
 
@@ -39,6 +46,8 @@ class CoursesController < ApplicationController
     	if @course.valid?
             #generacion de course_features
             modify_course_features
+            #creacion de las sesiones correspondientes al curso
+            create_course_sessions(@course)
             redirect_to :action => :assign_teacher, :id => @course.id
     	else
     		raw_products = zoho_product_list
@@ -57,9 +66,19 @@ class CoursesController < ApplicationController
 
     def assign_teacher
         @course = Course.find(params[:id])
-        features = CourseFeature.where(:course_id => params[:id])
-        tchrs = UserDisponibility.where("day_number = #{features.find_by_feature_name('first_day').feature_description} and id in (select id from user_disponibilities where day_number = #{features.find_by_feature_name('second_day').feature_description})")
-        @teachers = TeacherV.where(:id => tchrs.map{|t| t.id})
+        @features = CourseFeature.where(:course_id => params[:id])
+        day1 = @features.find_by_feature_name('first_day').feature_description.to_i
+        day1_hour = @features.find_by_feature_name('first_day_hour').feature_description
+        day2 = @features.find_by_feature_name('second_day').feature_description.to_i
+        day2_hour = @features.find_by_feature_name('second_day_hour').feature_description
+        tchrs = UserDisponibility.where("day_number = #{day1} 
+                                        and time('#{day1_hour}') between time(start_time) and time(end_time)
+                                        and user_id in 
+                                        (select user_id 
+                                            from user_disponibilities 
+                                            where day_number = #{day2}
+                                                and time('#{day2_hour}') between time(start_time) and time(end_time))")
+        @teachers = TeacherV.where(:id => tchrs.map{|t| t.user_id})
     end
 
     def show 
@@ -79,6 +98,7 @@ class CoursesController < ApplicationController
         @types = CourseType.all()
         @course = Course.find(params[:id])
         @course_features = CourseFeature.where(:course_id => @course.id)
+        @templates = CourseTemplate.where(:course_level_id => @course.course_level_id, :deleted => 0)
         @course_levels = CourseLevel.all()
         @teachers = get_teachers_list
     end
@@ -89,6 +109,10 @@ class CoursesController < ApplicationController
         if @course.valid?
             #modificacion de course_features
             modify_course_features
+            #eliminacion de las sesiones antiguas del curso
+            CourseSession.where(:commerce_course_id => @course.id).destroy_all
+            #creacion de las nuevas sesiones correspondientes al curso
+            create_course_sessions(@course)
             redirect_to :action => :index
         else
             raw_products = zoho_product_list
@@ -238,6 +262,45 @@ class CoursesController < ApplicationController
                 CourseFeature.create(:course_id => @course.id, :feature_name => "price", :feature_description => selected_item["item"]["rate"])
             end
         end
+    end
+
+    def create_course_sessions(course)
+        #Se crean las sesiones correspondientes al curso 
+        #aun no se le asocia ningun curso de moodle
+        total_sessions = CourseTemplate.find(course.course_template_id).total_sessions.to_i
+        day1 = CourseFeature.where(:course_id => course.id, :feature_name => "first_day").first().feature_description.to_i
+        hour_day1 = CourseFeature.where(:course_id => course.id, :feature_name => "first_day_hour").first().feature_description
+        day2 = CourseFeature.where(:course_id => course.id, :feature_name => "second_day").first().feature_description.to_i
+        hour_day2 = CourseFeature.where(:course_id => course.id, :feature_name => "second_day_hour").first().feature_description
+        for session_number in 1..total_sessions
+            new_session = CourseSession.new()
+            new_session.commerce_course_id = course.id
+            new_session.session_number = session_number
+            if session_number == 1
+                current_session_date = session_datetime(course.start_date,day1,day2,hour_day1,hour_day2)
+            else
+                current_session_date = session_datetime(current_session_date + 1.days,day1,day2,hour_day1,hour_day2)
+            end
+            new_session.startdatetime = current_session_date
+            new_session.save!
+        end
+        #ultima sesion del curso corresponde a la fecha de término del mismo
+        course.end_date = current_session_date
+        course.save!
+    end
+
+    def session_datetime(session_date, day1, day2, hour_day1, hour_day2)
+        desired_days = [day1,day2]
+        session_date = DateTime.parse(l(session_date, :format => "%d-%m-%Y"))
+        session_date += 1.days while !desired_days.include?(session_date.wday)
+        if session_date.wday == day1
+            hour = hour_day1.split(":")
+            session_date = session_date.change(:hour => hour[0].to_i, :min => hour[1].to_i)
+        else
+            hour = hour_day2.split(":")
+            session_date = session_date.change(:hour => hour[0].to_i, :min => hour[1].to_i)
+        end
+        return session_date
     end
 
     def get_teachers_list

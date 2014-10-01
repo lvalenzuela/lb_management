@@ -137,7 +137,7 @@
                                             </div>
                                             <div class="col-xs-4">
                                                 <div class="form-group">
-                                                <%=f.select :course_template_id, options_for_select(@templates.collect{|t| [t.name,t.id]}), {:include_blank => true}, {:class => "form-control"}%>
+                                                    <%=render :partial => "template_selector", :locals => {:templates => @templates, :selected => nil}%>
                                                 </div>
                                             </div>
                                         </div>
@@ -215,11 +215,20 @@
         </div>
     </div>
 </section>
+<%=form_tag template_selector_options_courses_path, :remote => true, :id => "template_options_form" do%>
+<%=hidden_field_tag :courselevel%>
+<%end%>
 
 <script>
 $( "#course_zoho_product_id" ).change(function() {
   var text = $( "#course_zoho_product_id option:selected" ).text();
   $( "#course_mode" ).val( text );
+});
+$( "#course_course_level_id" ).change(function(){
+    var level_id = $("#course_course_level_id option:selected").val();
+    $( "#courselevel" ).val(level_id);
+    $( "#template_options_form" ).submit();
+
 });
 </script>
 <script type="text/javascript">
