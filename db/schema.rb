@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141001184630) do
+ActiveRecord::Schema.define(version: 20141001195058) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -331,6 +331,7 @@ ActiveRecord::Schema.define(version: 20141001184630) do
     t.integer  "status_id"
     t.integer  "location_id"
     t.date     "end_date"
+    t.boolean  "sence"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

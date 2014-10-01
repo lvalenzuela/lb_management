@@ -83,11 +83,25 @@ class ReportsController < ApplicationController
 	end
 
 	def group_report
+		case params[:filter].to_i
+		when 1 #por curso
+			sence_flag = MoodleCourseV.find_by_coursename(params[:fullname]).sence
+		when 2 #por departamento
+			c_id = UserReport.where(:department => params[:fullname], :institution => params[:institution]).first().courseid
+			sence_flag = MoodleCourseV.find_by_moodleid(c_id).sence
+		else
+			sence_flag = false
+		end
 
 		respond_to do |format|
 			format.html
 			format.pdf do
-				pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
+				if sence_flag
+					pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
+				else
+					pdf = GroupReportPdfNoSence.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
+				end	
+	  			
 	  			send_data pdf.render, filename: params[:institution]+" - "+params[:fullname]+" - "+params[:date].to_s+".pdf",
 					                   type:"application/pdf"
 			end

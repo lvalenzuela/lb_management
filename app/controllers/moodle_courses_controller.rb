@@ -74,7 +74,14 @@ class MoodleCoursesController < ApplicationController
     def set_template
         params[:courses].each do |c|
             course = MoodleCourse.find_by_moodleid(c)
-            course.course_template_id = params[:template_id]
+            if params[:template_id]
+                course.course_template_id = params[:template_id]
+            end
+            if params[:sence]
+                course.sence = true
+            else
+                course.sence = false
+            end
             course.save!
         end
         redirect_to :action => :courses_list
