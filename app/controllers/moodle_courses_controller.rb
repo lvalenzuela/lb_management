@@ -78,9 +78,9 @@ class MoodleCoursesController < ApplicationController
                 course.course_template_id = params[:template_id]
             end
             if params[:sence]
-                course.sence = true
+                course.sence = 1
             else
-                course.sence = false
+                course.sence = 0
             end
             course.save!
         end
