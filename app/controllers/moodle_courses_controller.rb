@@ -45,7 +45,11 @@ class MoodleCoursesController < ApplicationController
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}").select("moodle_courses.*")
         @group = MoodleGroup.find(params[:id])
-        @remaining_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+        if params[:search]
+            @remaining_courses = MoodleCourseV.where("moodleid not in (?) and coursename like '%#{params[:search]}%'",@courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+        else
+            @remaining_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+        end
     end
 
     def create_group
