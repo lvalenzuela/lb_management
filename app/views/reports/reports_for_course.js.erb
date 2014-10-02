@@ -1,1 +1,1 @@
-$("#hist-reports-container").replaceWith("<%= escape_javascript(render(:partial => 'historical_reports_table', :object => @reports))%>");
+$("#hist-reports-container").replaceWith("<%= escape_javascript(render(:partial => 'historical_reports_table', :locals => {:reports => @reports}))%>");

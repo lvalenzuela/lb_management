@@ -9,12 +9,12 @@
             </tr>
         </thead>
         <tbody>
-            <%if @reports.nil?%>
-                <tr class="danger">
+            <%if reports.nil?%>
+                <tr class="warning">
                     <td colspan="4">Seleccione un curso.</td>
                 </tr>
             <%else%>
-                <%@reports.each do |report|%>
+                <%reports.each do |report|%>
                 <tr>
                     <td><%=report.coursename%></td>
                     <td><%=report.alumnos%></td>

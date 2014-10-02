@@ -32,9 +32,7 @@ module ReportsHelper
 							institution,
 							count(distinct userid) as alumnos,
 							count(distinct department) as departments").where("
-							institution <> '' and 
-							institution is not null and
-							institution like '%#{institution}%' and
+							lower(institution) = lower('#{institution}') and
 							coursename is not null and
 							coursename <> '' and
 							created_at = (select max(created_at) from user_reports)").group("courseid")
@@ -43,9 +41,7 @@ module ReportsHelper
 							distinct(department) as fullname,
 							count(distinct userid) as alumnos,
 							institution").where("
-							institution <> '' and
-							institution is not null and
-							institution like '%#{institution}%' and
+							lower(institution) = lower('#{institution}') and
 							coursename is not null and
 							coursename <> '' and
 							created_at = (select max(created_at) from user_reports)").group("department")

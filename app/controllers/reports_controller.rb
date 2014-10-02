@@ -18,7 +18,8 @@ class ReportsController < ApplicationController
 	end
 
 	def courses
-		@groups = find_course_by_institution(params[:institution],params[:group_filter])
+		@groups = find_course_by_institution(params[:institution],params[:group_filter]).page(params[:page]).per(10)
+		@institution = params[:institution]
 		@selected = params[:group_filter]
 	end
 
@@ -42,7 +43,12 @@ class ReportsController < ApplicationController
 	end
 
 	def historical
-		@courses = UserReport.select("courseid, coursename, count(distinct created_at) as reportnum").group("courseid")
+		if params[:search]
+			courselist = UserReport.where("coursename like '%#{params[:search]}%'").select("courseid, coursename, count(distinct created_at) as reportnum").group("courseid")
+		else
+			courselist = UserReport.select("courseid, coursename, count(distinct created_at) as reportnum").group("courseid")
+		end
+		@courses = courselist.page(params[:page]).per(10)
 		@reports = nil #UserReport.select("*, count(distinct userid) as alumnos").group("courseid, created_at")
 	end	
 

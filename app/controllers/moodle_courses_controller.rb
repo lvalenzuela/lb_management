@@ -43,7 +43,7 @@ class MoodleCoursesController < ApplicationController
     def show_group
         @courses = MoodleCourseV.joins("as moodle_courses inner join moodle_group_assignations as mga
                                        on mga.m_courseid = moodle_courses.moodleid
-                                       and mga.groupid = #{params[:id]}")
+                                       and mga.groupid = #{params[:id]}").select("moodle_courses.*")
         @group = MoodleGroup.find(params[:id])
         @remaining_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
     end

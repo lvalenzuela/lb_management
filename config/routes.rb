@@ -135,6 +135,7 @@ Rails.application.routes.draw do
       get 'group_report'
       get 'show'
       get 'historical'
+      post "historical"
       get 'reports_for_course'
       get "course_groups"
       get "course_group_report"
