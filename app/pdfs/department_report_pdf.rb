@@ -1,9 +1,9 @@
-class CourseReportPdf < Prawn::Document
+class DepartmentReportPdf < Prawn::Document
 
-	def initialize(course, institution, date, view_context)
+	def initialize(department_name, institution, date, view_context)
 		super(:margin => 50)
 		font "Helvetica"
-		members = course_members(course.moodleid)
+		members = department_members(department_name, institution)
 
 		repeat :all do
 			bounding_box [bounds.left, bounds.top + 30], :width  => bounds.width do
@@ -17,9 +17,9 @@ class CourseReportPdf < Prawn::Document
 
 		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 80) do
 			font "Helvetica", :size => 12
-			general_data(institution, course.coursename, date)
+			general_data(institution, department_name, date)
 			
-			if course.sence
+			if check_sence(members.map{|m| m.groupid})
 				course_attendance(members, date)
 			else
 				course_attendance_no_sence(members, date)
@@ -48,10 +48,10 @@ class CourseReportPdf < Prawn::Document
 	def general_data(institution, group_name, date)
 
 		font "Helvetica", :style => :bold
-		text "Informe de Desempeño por Curso"
+		text "Informe de Desempeño por Departamento"
 		font "Helvetica", :style => :normal
 
-		data = [["<b>Curso</b>",group_name],
+		data = [["<b>Departamento</b>",group_name],
 				["<b>Empresa</b>",institution],
 				["<b>Fecha</b>", date.strftime("%d-%m-%Y")]]
 		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
@@ -65,12 +65,12 @@ class CourseReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>Grupo Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
 			if date
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
 			else
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid).order("created_at DESC").first()
 			end
 			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
 			
@@ -83,7 +83,7 @@ class CourseReportPdf < Prawn::Document
 				att_pct = 0
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
 		table(data, :column_widths => {0 => 130, 1 => 130, 2 => 60, 3 => 60, 4 => 65, 5 => 60}, 
@@ -108,12 +108,12 @@ class CourseReportPdf < Prawn::Document
 		
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
 			if date
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
 			else
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid).order("created_at DESC").first()
 			end
 			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
 			
@@ -133,7 +133,7 @@ class CourseReportPdf < Prawn::Document
 			else
 				sence = r_sence
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
@@ -158,14 +158,14 @@ class CourseReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
+		data << ["<b>Nombre</b>", "<b></b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
 		members.each do |member|
 			if date
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
 			else
-				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
+				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid).order("created_at DESC").first()
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_course)+"</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
@@ -181,19 +181,29 @@ class CourseReportPdf < Prawn::Document
 
 	private
 
-	def course_members(courseid)
-		return UserReport.where("courseid = #{courseid} 
-			and created_at = '#{last_report_date.to_s}'").select("courseid,
-															coursename,
-															userid,
-															firstname,
-															lastname,
-															institution,
-															department").group("userid")
+	def group_name(groupid)
+		return MoodleGroup.find(groupid).groupname
+	end
+
+	def check_sence(group_list)
+		courseids = MoodleGroupAssignation.where(:groupid => group_list).map{|c| c.m_courseid}
+		courses = MoodleCourseV.where(:moodleid => courseids)
+		courses.each do |c|
+			#si alguno de los cursos tiene sence, se asume que todos lo tienen
+			if c.sence
+				return true
+			end
+		end
+		#Ningun curso tiene sence.
+		return false
+	end
+
+	def department_members(department, institution)
+		return CourseGroupReport.where(:institution => institution, :department => department, :created_at => last_report_date).group("userid")
 	end
 
 	def last_report_date
-		return UserReport.all().order("created_at DESC").first().created_at
+		return CourseGroupReport.all().order("created_at DESC").first().created_at
 	end
 
 	def grade_parser(grade)

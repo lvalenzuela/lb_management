@@ -4,7 +4,6 @@ class MoodleCoursesController < ApplicationController
     layout "dashboard"
 
     def index        
-        @courses = MoodleCourseV.all().page(params[:page]).per(10)
         if params[:search]
             @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
                 on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
@@ -45,11 +44,16 @@ class MoodleCoursesController < ApplicationController
                                        on mga.m_courseid = moodle_courses.moodleid
                                        and mga.groupid = #{params[:id]}").select("moodle_courses.*")
         @group = MoodleGroup.find(params[:id])
-        if params[:search]
-            @remaining_courses = MoodleCourseV.where("moodleid not in (?) and coursename like '%#{params[:search]}%'",@courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+        
+        if @courses.blank?
+            r_courses = MoodleCourseV.all()
         else
-            @remaining_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid}).page(params[:page]).per(10)
+            r_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid})
         end
+        if params[:search]
+            r_courses = r_courses.where("coursename like '%#{params[:search]}%'")
+        end
+        @remaining_courses = r_courses.page(params[:page]).per(10)
     end
 
     def create_group

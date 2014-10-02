@@ -37,32 +37,15 @@ class ReportsController < ApplicationController
 	end
 
 	def course_members
-		@members = UserReport.where("courseid = #{params[:courseid]} and created_at = '#{last_report_date}'").group("userid")
+		@members = UserReport.where(:courseid => params[:courseid], :created_at => last_report_date).group("userid")
 		@course = MoodleCourseV.find_by_moodleid(@members.first().courseid)
 		@institution = @members.first().institution
 	end
 
 	def department_members
-		@members = UserReport.where("")
-	end
-
-	def members
-		@members = find_group_members(params[:institution],params[:fullname],params[:filter])
-
-		@group = {}
-		if params[:filter].to_i == 2
-			@group = {:type => "Departamento", 
-				:name => @members.first().department, 
-				:institution => params[:institution], 
-				:fullname => params[:fullname],
-				:filter => params[:filter]}
-		elsif params[:filter].to_i == 1
-			@group = {:type => "Curso", 
-				:name => @members.first().coursename,
-				:institution => params[:institution], 
-				:fullname => params[:fullname],
-				:filter => params[:filter]}
-		end
+		@members = UserReport.where(:institution => params[:institution], :department => params[:department], :created_at => last_report_date).group("userid")
+		@department_name = params[:department]
+		@institution = params[:institution]
 	end
 
 	def historical
@@ -88,15 +71,19 @@ class ReportsController < ApplicationController
 	end
 
 	def course_bulk_user_reports
-		members = UserReport.where("courseid = #{params[:courseid]} and created_at = '#{last_report_date}'").group("userid")
+		members = UserReport.where(:courseid => params[:courseid], :created_at => last_report_date).group("userid")
 		aux = members.first() #utilizado para obtener datos generales
-		filename = aux.institution+"_"+aux.coursename+"_"+Date.today().to_s+".zip"
+		filename = aux.institution+"_"+aux.coursename+"_"+l(Date.today(),:format => "%d-%m-%Y")+".zip"
 		zip_data = generate_reports_folder(members, filename)
 		send_data(zip_data, :type => 'application/zip', :filename => filename)
 	end
 
 	def department_bulk_user_reports
-
+		members = UserReport.where(:institution => params[:institution], :department => params[:department], :created_at => last_report_date).group("userid")
+		aux = members.first() #utilizado para obtener datos generales
+		filename = aux.institution+"_"+aux.department+"_"+l(Date.today(),:format => "%d-%m-%Y")+".zip"
+		zip_data = generate_reports_folder(members, filename)
+		send_data(zip_data, :type => 'application/zip', :filename => filename)
 	end
 
 	def bulk_user_reports
@@ -124,10 +111,8 @@ class ReportsController < ApplicationController
 	end
 
 	def course_report
-		#Se verifica si el curso tiene franquicia sence
 		course = MoodleCourseV.find_by_moodleid(params[:courseid])
-		date = Date.today
-
+		date = last_report_date
 		respond_to do |format|
 			format.html
 			format.pdf do
@@ -139,7 +124,15 @@ class ReportsController < ApplicationController
 	end
 
 	def department_report
-
+		date = last_report_date
+		respond_to do |format|
+			format.html
+			format.pdf do
+				pdf = DepartmentReportPdf.new(params[:department], params[:institution], date, view_context)
+				send_data pdf.render, filename: params[:institution]+"_"+params[:department]+"_"+l(date,:format => "%d-%m-%Y")+".pdf",
+					                   type:"application/pdf"
+			end
+		end
 	end
 
 	def group_report
@@ -242,7 +235,7 @@ class ReportsController < ApplicationController
 
 			Zip::File.open(temp_file_zip.path, Zip::File::CREATE) do |zip|
 				members.each do |member|
-					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+Date.today().to_s+"_"+Time.now().to_s+".pdf"
+					pdf_filename = member.firstname.gsub(/[áéíóúñ]/, '-')+"_"+member.lastname.gsub(/[áéíóúñ]/, '-')+"_"+l(Date.today(),:format => "%d-%m-%Y")+".pdf"
 					temp_files << pdf_filename
 					pdf = StudentReportPdf.new(member.userid, member.courseid,view_context)
 					pdf.render_file(Rails.root.join("app","assets",tmp_reports_path,pdf_filename))

@@ -12,10 +12,10 @@
         <tbody>
             <%@groups.each do |group|%>
                 <tr>
-                    <td><%=link_to group.department, :controller => "reports", :action => "members", :params => {:department => group.department, :institution => group.institution} %></td>
+                    <td><%=link_to group.department.blank? ? "[NO-INFO]" : group.department, :controller => :reports, :action => :department_members, :params => {:department => group.department, :institution => group.institution} %></td>
                     <td style="text-align: center"><%=group.institution%></td>
                     <td style="text-align: center"><%=group.alumnos%></td>
-                    <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.department, :filter => selected, :format => "pdf"}}, :target => "_blank"%></td>
+                    <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :department_report, :params => {:institution => group.institution, :department => group.department, :format => "pdf"}}, :target => "_blank"%></td>
                 </tr>
             <%end%>
         </tbody>

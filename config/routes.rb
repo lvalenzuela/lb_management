@@ -134,6 +134,7 @@ Rails.application.routes.draw do
       get 'reporte_preliminar'
       get 'user_report'
       get "course_bulk_user_reports"
+      get "department_bulk_user_reports"
           get 'bulk_user_reports'
       get "course_report"
       get "department_report"
