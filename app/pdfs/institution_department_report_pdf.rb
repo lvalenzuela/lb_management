@@ -142,7 +142,7 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 	end
 
 	def find_group_members(institution, department)
-		return members = CourseGroupReport.where(:institution => institution, :department => department).select("userid")
+		return members = CourseGroupReport.where(:institution => institution, :department => department).select("distinct(userid) as userid")
 	end
 
 	def grade_parser(grade)
