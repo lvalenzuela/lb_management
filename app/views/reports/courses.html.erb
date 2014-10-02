@@ -31,26 +31,7 @@
                                         <h3 class="box-title">Cursos: <%=@institution%></h3>
                                     </div>
                                     <div class="box-body">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th style="text-align: center">Cliente</th>
-                                                    <th style="text-align: center"># Alumnos</th>
-                                                    <th style="text-align: center">Reporte</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <%@groups.each do |group|%>
-                                                    <tr>
-                                                        <td><%=link_to group.fullname, :controller => "reports", :action => "members", :params => {:filter => @selected, :fullname => group.fullname, :institution => group.institution} %></td>
-                                                        <td style="text-align: center"><%=group.institution%></td>
-                                                        <td style="text-align: center"><%=group.alumnos%></td>
-                                                        <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.fullname, :filter => @selected, :format => "pdf"}}, :target => "_blank"%></td>
-                                                    </tr>
-                                                <%end%>
-                                            </tbody>
-                                        </table>
+                                        <%=render :partial => "report_groups_table", :locals => {:groups => @groups, :selected => @selected}%>
                                     </div>
                                     <div class="box-footer clearfix">
                                         <div class="pull-right">

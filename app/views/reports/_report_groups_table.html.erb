@@ -1,0 +1,45 @@
+<%#seleccion por departamento%>
+<%if selected.to_i == 2%>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Departamento</th>
+                <th style="text-align: center">Cliente</th>
+                <th style="text-align: center"># Alumnos</th>
+                <th style="text-align: center">Reporte</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%@groups.each do |group|%>
+                <tr>
+                    <td><%=link_to group.department, :controller => "reports", :action => "members", :params => {:department => group.department, :institution => group.institution} %></td>
+                    <td style="text-align: center"><%=group.institution%></td>
+                    <td style="text-align: center"><%=group.alumnos%></td>
+                    <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "group_report", :params => {:institution => group.institution, :fullname => group.department, :filter => selected, :format => "pdf"}}, :target => "_blank"%></td>
+                </tr>
+            <%end%>
+        </tbody>
+    </table>
+<%else%>
+<%#seleccion por curso%>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Curso</th>
+            <th style="text-align: center">Cliente</th>
+            <th style="text-align: center"># Alumnos</th>
+            <th style="text-align: center">Reporte</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%groups.each do |g|%>
+        <tr>
+            <td><%=link_to g.coursename, :controller => :reports, :action => :course_members, :params => {:courseid => g.courseid} %></td>
+            <td style="text-align: center"><%=g.institution%></td>
+            <td style="text-align: center"><%=g.alumnos%></td>
+            <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => g.institution, :courseid => g.courseid, :format => "pdf"}}, :target => "_blank"%></td>
+        </tr>
+        <%end%>
+    </tbody>
+</table>
+<%end%>

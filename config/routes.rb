@@ -128,11 +128,16 @@ Rails.application.routes.draw do
       get 'index'
       get 'clients'
       get 'courses'
-      get 'members'
+      get "course_members"
+      get "department_members"
+          get 'members'
       get 'reporte_preliminar'
       get 'user_report'
-      get 'bulk_user_reports'
-      get 'group_report'
+      get "course_bulk_user_reports"
+          get 'bulk_user_reports'
+      get "course_report"
+      get "department_report"
+          get 'group_report'
       get 'show'
       get 'historical'
       post "historical"

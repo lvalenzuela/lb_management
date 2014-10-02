@@ -23,17 +23,27 @@ class ReportsController < ApplicationController
 			groups_list = UserReport.joins("inner join moodle_course_vs as courses
 											on user_reports.courseid = courses.moodleid
 											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}') 
-											and user_reports.created_at = (select max(created_at) from user_reports)").select("department as fullname, institution, count(distinct userid) as alumnos").group("department")
+											and user_reports.created_at = (select max(created_at) from user_reports)").select("department, institution, count(distinct userid) as alumnos").group("department")
 		else
 			#Listado por curso
 			groups_list = UserReport.joins("inner join moodle_course_vs as courses
 											on user_reports.courseid = courses.moodleid
 											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}')
-											and user_reports.created_at = (select max(created_at) from user_reports)").select("user_reports.coursename as fullname, institution, count(distinct userid) as alumnos").group("courseid")
+											and user_reports.created_at = (select max(created_at) from user_reports)").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
 		end
 		@groups = groups_list.page(params[:page]).per(10)
 		@institution = params[:institution]
 		@selected = params[:group_filter]
+	end
+
+	def course_members
+		@members = UserReport.where("courseid = #{params[:courseid]} and created_at = '#{last_report_date}'").group("userid")
+		@course = MoodleCourseV.find_by_moodleid(@members.first().courseid)
+		@institution = @members.first().institution
+	end
+
+	def department_members
+		@members = UserReport.where("")
 	end
 
 	def members
@@ -77,6 +87,18 @@ class ReportsController < ApplicationController
 	
 	end
 
+	def course_bulk_user_reports
+		members = UserReport.where("courseid = #{params[:courseid]} and created_at = '#{last_report_date}'").group("userid")
+		aux = members.first() #utilizado para obtener datos generales
+		filename = aux.institution+"_"+aux.coursename+"_"+Date.today().to_s+".zip"
+		zip_data = generate_reports_folder(members, filename)
+		send_data(zip_data, :type => 'application/zip', :filename => filename)
+	end
+
+	def department_bulk_user_reports
+
+	end
+
 	def bulk_user_reports
 		members = find_group_members(params[:institution], params[:fullname], params[:filter])
 		
@@ -99,6 +121,25 @@ class ReportsController < ApplicationController
 	  								 type: "application/pdf"
 			end
 		end
+	end
+
+	def course_report
+		#Se verifica si el curso tiene franquicia sence
+		course = MoodleCourseV.find_by_moodleid(params[:courseid])
+		date = Date.today
+
+		respond_to do |format|
+			format.html
+			format.pdf do
+				pdf = CourseReportPdf.new(course, params[:institution], date, view_context)
+				send_data pdf.render, filename: params[:institution]+"_"+course.coursename+"_"+l(date,:format => "%d-%m-%Y")+".pdf",
+					                   type:"application/pdf"
+			end
+		end
+	end
+
+	def department_report
+
 	end
 
 	def group_report
@@ -180,6 +221,10 @@ class ReportsController < ApplicationController
 	end
 
 	private
+
+	def last_report_date
+		return UserReport.all().order("created_at DESC").first().created_at
+	end
 
 	def check_authentication
 	    if current_user.nil?
