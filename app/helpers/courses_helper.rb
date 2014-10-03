@@ -1,5 +1,21 @@
 module CoursesHelper
 
+	def simulation(simulated,teacherid)
+		if simulated && simulated.id == teacherid
+			return true
+		else
+			return false
+		end
+	end
+
+	def teacher_level_label(teacher_level_id)
+		if teacher_level_id
+			return UserTeacherLevel.find(teacher_level_id).level_label
+		else
+			return "-"
+		end
+	end
+
 	def course_feature_value(features,f_name)
 		return features.find_by_feature_name(f_name).feature_description
 	end
@@ -42,7 +58,7 @@ module CoursesHelper
 			user = UserV.find(user_id)
 			return user.name
 		else
-			return ""
+			return "-"
 		end
 	end
 	

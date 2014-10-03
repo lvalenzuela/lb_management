@@ -56,6 +56,21 @@ class MoodleCoursesController < ApplicationController
         @remaining_courses = r_courses.page(params[:page]).per(10)
     end
 
+    def new_course_agrupation
+        if params[:search]
+            groups_list = MoodleGroup.joins("left join moodle_group_assignations as mga
+                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
+                                                    moodle_groups.groupname as groupname,
+                                                    count(distinct mga.m_courseid) as courses").where("groupname LIKE '%#{params[:search]}%'").group("moodle_groups.id")
+        else
+            groups_list = MoodleGroup.joins("left join moodle_group_assignations as mga
+                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
+                                                    moodle_groups.groupname as groupname,
+                                                    count(distinct mga.m_courseid) as courses").group("moodle_groups.id")
+        end
+        @groups = groups_list.page(params[:page]).per(10)
+    end
+
     def create_group
         if params[:groupname]
             g = MoodleGroup.create(params.permit(:groupname))

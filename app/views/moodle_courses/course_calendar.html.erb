@@ -49,10 +49,7 @@
 </section>
 
 <script type="text/javascript">
-$(function() {
-    /* initialize the calendar
-     -----------------------------------------------------------------*/
-    //Date for the calendar events
+$(document).ready(function() {
     $('#calendar').fullCalendar({
         header: {
             left: 'prev,next today',
@@ -67,6 +64,7 @@ $(function() {
             week: 'week',
             day: 'day'
         },
+        //Random default events
         events: gon.events,
         editable: false,
         droppable: false

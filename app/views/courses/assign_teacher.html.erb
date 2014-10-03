@@ -27,38 +27,82 @@
                 <div class="tab-pane active">
                     <section>
                         <div class="row">
+                            <div class="col-xs-12">
+                                <div class="box">
+                                    <div class="box-header">
+                                        <h3 class="box-title">Información General</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <%=render :partial => "course_general_info", :locals => {:course => @course, :features => @features}%>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-xs-8">
                                 <div class="box box-info">
+                                    <%if @simulated%>
+                                    <div class="box-header">
+                                        <h3 class="box-title">Simulacion para <%=@simulated.name%></h3>
+                                    </div>
+                                    <%end%>
                                     <div class="box-body">
                                         <div id="calendar"></div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div calss="row">
+                                            <div class="col-xs-4">
+                                                <span class="label label-primary">Nuevo Curso</span>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <span class="label label-danger">Cursos Prof. Simulación</span>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <span class="label label-success">Cursos Prof. Asignado</span>
+                                            </div>
+                                        </div>  
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-4">
                                 <div class="box box-primary">
+                                    <%=form_tag :action => :bind_course_teacher do%>
+                                    <%=hidden_field_tag :courseid, @course.id%>
                                     <div class="box-header">
                                         <h3 class="box-title">Profesores Disponibles</h3>
                                     </div>
                                     <div class="box-body">
-                                        <table class="table">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
+                                                    <th></th>
                                                     <th>Nombre</th>
-                                                    <th>Dia 1</th>
-                                                    <th>Dia 2</th>
+                                                    <th style="text-align: center;">Nivel</th>
+                                                    <th style="text-align: center;">Simular</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                             <%@teachers.each do |t|%>
                                                 <tr>
+                                                    <td style="text-align: center;"><%=radio_button_tag :teacherid, t.id, simulation(@simulated,t.id) ? true : false%></td>
                                                     <td><%=t.name%></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                    <td style="text-align: center;"><%=teacher_level_label(t.teacher_level_id)%></td>
+                                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-cogs fa-lg'></i>".html_safe, {:action => :assign_teacher, :params => {:id => @course.id, :teacherid => t.id}}%></td>
                                                 </tr>
                                             <%end%>
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="pull-right">
+                                            <%=submit_tag "Asignar Profesor", :class => "btn btn-primary"%>
+                                        </div>
+                                    </div>
+                                    <%end%>
                                 </div>
                             </div>
                         </div>
@@ -68,3 +112,27 @@
         </div>
     </div>
 </section>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#calendar').fullCalendar({
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        buttonText: {//This is to add icons to the visible buttons
+            prev: "<span class='fa fa-caret-left'></span>",
+            next: "<span class='fa fa-caret-right'></span>",
+            today: 'today',
+            month: 'month',
+            week: 'week',
+            day: 'day'
+        },
+        //Random default events
+        events: gon.events,
+        editable: false,
+        droppable: false
+    });
+});
+</script>

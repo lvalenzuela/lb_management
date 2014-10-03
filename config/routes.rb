@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       post "create_session_type"
       post "update_session_type"
       get "assign_teacher"
+      post "bind_course_teacher"
       post "template_selector_options"
     end
   end
@@ -70,6 +71,7 @@ Rails.application.routes.draw do
     collection do
       get "search"
       get "index"
+      get "new_course_agrupation"
       post "assign"
       post "create_group"
       get "show_group"
@@ -130,15 +132,12 @@ Rails.application.routes.draw do
       get 'courses'
       get "course_members"
       get "department_members"
-          get 'members'
       get 'reporte_preliminar'
       get 'user_report'
       get "course_bulk_user_reports"
       get "department_bulk_user_reports"
-          get 'bulk_user_reports'
       get "course_report"
       get "department_report"
-          get 'group_report'
       get 'show'
       get 'historical'
       post "historical"

@@ -79,6 +79,53 @@ class CoursesController < ApplicationController
                                             where day_number = #{day2}
                                                 and time('#{day2_hour}') between time(start_time) and time(end_time))")
         @teachers = TeacherV.where(:id => tchrs.map{|t| t.user_id})
+        gon.events = []
+        if params[:teacherid] && !@course.main_teacher_id
+            #sesiones de la simulacion
+            @simulated = TeacherV.find(params[:teacherid])
+            t_sessions = teacher_courses_sessions(params[:teacherid])
+            t_sessions.each do |s|
+                gon.events << {
+                    "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
+                    "start" => s.session_date,
+                    "allDay" => false,
+                    "backgroundColor" => "#FF0000",
+                    "borderColor" => "#FF0000"
+                }
+            end
+        end
+        if @course.main_teacher_id
+            #sesiones del profesor que ya tiene el curso asignado
+            m_sessions = teacher_courses_sessions(@course.main_teacher_id)
+            m_sessions.each do |ms|
+                gon.events << {
+                    "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
+                    "start" => ms.session_date,
+                    "allDay" => false,
+                    "backgroundColor" => "#00FF00",
+                    "borderColor" => "#00FF00"
+                }
+            end
+        end
+        #sesiones del curso
+        c_sessions = CourseSession.where(:commerce_course_id => @course.id)
+        c_sessions.each do |cs|
+            gon.events << {
+                "title" => @course.coursename,
+                "start" => cs.startdatetime,
+                "allDay" => false,
+                "backgroundColor" => "#0066FF",
+                "borderColor" => "#0066FF"
+            }
+        end
+        @features = CourseFeature.where(:course_id => @course.id)
+    end
+
+    def bind_course_teacher
+        c = Course.find(params[:courseid])
+        c.main_teacher_id = params[:teacherid]
+        c.save!
+        redirect_to :action => :assign_teacher, :id => params[:courseid], :teacherid => params[:teacherid]
     end
 
     def show 
@@ -214,7 +261,14 @@ class CoursesController < ApplicationController
         redirect_to :action => :edit_session_types
     end
 
+
+
     private
+
+    def teacher_courses_sessions(teacherid)
+        course_list = MoodleRoleAssignationV.where(:userid => teacherid, :roleid => [9,4]).map{|c| c.courseid}
+        return MoodleCourseSessionV.where(:courseid => course_list)
+    end
 
     def course_session_type_params
         params.require(:course_session_type).permit(:type_name, :description)

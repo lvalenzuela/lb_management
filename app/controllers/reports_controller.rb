@@ -86,17 +86,6 @@ class ReportsController < ApplicationController
 		send_data(zip_data, :type => 'application/zip', :filename => filename)
 	end
 
-	def bulk_user_reports
-		members = find_group_members(params[:institution], params[:fullname], params[:filter])
-		
-		filename = params[:institution]+"_"+params[:fullname]+"_"+Date.today().to_s+".zip"
-
-		zip_data = generate_reports_folder(members, filename)
-		
-		send_data(zip_data, :type => 'application/zip', :filename => filename)
-
-	end
-
 	def user_report
 		user = UserReport.where(:userid => params[:user_id]).first()
 
@@ -130,32 +119,6 @@ class ReportsController < ApplicationController
 			format.pdf do
 				pdf = DepartmentReportPdf.new(params[:department], params[:institution], date, view_context)
 				send_data pdf.render, filename: params[:institution]+"_"+params[:department]+"_"+l(date,:format => "%d-%m-%Y")+".pdf",
-					                   type:"application/pdf"
-			end
-		end
-	end
-
-	def group_report
-		case params[:filter].to_i
-		when 1 #por curso
-			sence_flag = MoodleCourseV.find_by_coursename(params[:fullname]).sence
-		when 2 #por departamento
-			c_id = UserReport.where(:department => params[:fullname], :institution => params[:institution]).first().courseid
-			sence_flag = MoodleCourseV.find_by_moodleid(c_id).sence
-		else
-			sence_flag = false
-		end
-
-		respond_to do |format|
-			format.html
-			format.pdf do
-				if sence_flag
-					pdf = GroupReportPdf.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
-				else
-					pdf = GroupReportPdfNoSence.new(params[:institution],params[:fullname], params[:filter], params[:date],view_context)
-				end	
-	  			
-	  			send_data pdf.render, filename: params[:institution]+" - "+params[:fullname]+" - "+params[:date].to_s+".pdf",
 					                   type:"application/pdf"
 			end
 		end

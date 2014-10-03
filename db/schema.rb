@@ -11,13 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141001195058) do
+ActiveRecord::Schema.define(version: 20141003181525) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "client_department_vs", id: false, force: true do |t|
+    t.string "institution", default: "", null: false
+    t.string "department",  default: "", null: false
   end
 
   create_table "contact_people", force: true do |t|
@@ -247,6 +252,7 @@ ActiveRecord::Schema.define(version: 20141001195058) do
     t.integer  "course_level_id"
     t.integer  "students_qty"
     t.string   "mode"
+    t.integer  "main_teacher_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "zoho_product_id"
@@ -321,6 +327,7 @@ ActiveRecord::Schema.define(version: 20141001195058) do
     t.integer  "location_id"
     t.datetime "start_date"
     t.date     "end_date"
+    t.boolean  "sence"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -554,6 +561,7 @@ ActiveRecord::Schema.define(version: 20141001195058) do
     t.string   "calendartype",        limit: 30,         default: "gregorian", null: false
     t.string   "auth_token"
     t.integer  "system_role_id"
+    t.integer  "teacher_level_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar_file_name"
@@ -669,6 +677,7 @@ ActiveRecord::Schema.define(version: 20141001195058) do
     t.string   "calendartype",        limit: 30,         default: "gregorian", null: false
     t.string   "auth_token"
     t.integer  "system_role_id"
+    t.integer  "teacher_level_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar_file_name"
