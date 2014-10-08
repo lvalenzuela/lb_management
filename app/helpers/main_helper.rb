@@ -1,5 +1,13 @@
 module MainHelper
 
+	def append_with_comma(item1,item2)
+		if item1
+			return item1+","+item2
+		else
+			return ","+item2
+		end
+	end
+
 	def week_day(day_number)
 		case day_number
 		when 1

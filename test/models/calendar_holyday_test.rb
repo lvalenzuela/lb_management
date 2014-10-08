@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ModalityTest < ActiveSupport::TestCase
+class CalendarHolydayTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

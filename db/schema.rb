@@ -11,11 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141003181525) do
+ActiveRecord::Schema.define(version: 20141008194337) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
     t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "calendar_holydays", force: true do |t|
+    t.date     "date"
+    t.integer  "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -183,6 +190,23 @@ ActiveRecord::Schema.define(version: 20141003181525) do
     t.datetime "updated_at"
   end
 
+  create_table "course_mode_zoho_product_maps", force: true do |t|
+    t.string   "product_name"
+    t.string   "zoho_product_id"
+    t.integer  "course_mode_id"
+    t.boolean  "enabled"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_modes", force: true do |t|
+    t.string   "mode_name"
+    t.string   "description"
+    t.boolean  "enabled"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_observations", force: true do |t|
     t.integer  "course_id"
     t.integer  "user_id"
@@ -199,6 +223,15 @@ ActiveRecord::Schema.define(version: 20141003181525) do
   create_table "course_session_types", force: true do |t|
     t.string   "type_name"
     t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_session_weekdays", force: true do |t|
+    t.integer  "course_id"
+    t.integer  "order"
+    t.integer  "day_number"
+    t.string   "session_start_hour"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -250,7 +283,9 @@ ActiveRecord::Schema.define(version: 20141003181525) do
     t.string   "coursename"
     t.string   "description"
     t.integer  "course_level_id"
+    t.integer  "sessions_per_week"
     t.integer  "students_qty"
+    t.integer  "current_students_qty", default: 0
     t.string   "mode"
     t.integer  "main_teacher_id"
     t.datetime "created_at"
@@ -295,13 +330,6 @@ ActiveRecord::Schema.define(version: 20141003181525) do
     t.integer  "requestid"
     t.integer  "userid"
     t.datetime "last_check_datetime"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "modalities", force: true do |t|
-    t.string   "modalityname"
-    t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -504,6 +532,14 @@ ActiveRecord::Schema.define(version: 20141003181525) do
     t.date    "created_at"
   end
 
+  create_table "system_parameters", force: true do |t|
+    t.string   "param_name"
+    t.string   "description"
+    t.string   "param_value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "teacher_vs", id: false, force: true do |t|
     t.integer  "id",                  limit: 8,          default: 0,           null: false
     t.string   "auth",                limit: 20,         default: "manual",    null: false
@@ -577,6 +613,8 @@ ActiveRecord::Schema.define(version: 20141003181525) do
     t.integer  "day_number"
     t.time     "start_time"
     t.time     "end_time"
+    t.time     "extra_start_time"
+    t.time     "extra_end_time"
     t.date     "start_date"
     t.date     "end_date"
     t.datetime "created_at"

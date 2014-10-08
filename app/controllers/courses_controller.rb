@@ -6,18 +6,17 @@ class CoursesController < ApplicationController
     def index
         case params[:opt]
         when "ongoing"
-            @courses = Course.where(:course_status_id => 4).order("start_date ASC")
+            c = Course.where(:course_status_id => 4).order("start_date ASC")
             @active = "ongoing"
-        when "sold"
-            @courses = Course.where(:course_status_id => 2).order("start_date ASC")
-            @active = "sold"
         when "canceled"
-            @courses = Course.where(:course_status_id => 3).order("start_date ASC")
+            c = Course.where(:course_status_id => 3).order("start_date ASC")
             @active = "canceled"
         else
-    	   @courses = Course.where(:course_status_id => [1,2]).order("start_date ASC")
+    	   c = Course.where(:course_status_id => [1,2]).order("start_date ASC")
            @active = "staged"
         end
+        @courses = c.page(params[:page]).per(10)
+        @statuses = CourseStatus.all()
     end
 
     def template_selector_options
@@ -27,61 +26,104 @@ class CoursesController < ApplicationController
         end
     end
 
+    def product_selector_options
+        @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => params[:coursemode])
+
+        respond_to do |format|
+            format.js
+        end
+    end
+
+    def sessions_per_week_inputs
+        @per_week = params[:sessions_pw].to_i
+        
+        respond_to do |format|
+            format.js
+        end
+    end
+
     def new
-    	raw_products = zoho_product_list
-    	if raw_products["code"] == 0
-    		@products = raw_products["items"].select{|i| i["status"] == "active"}
-    	else
-    		@products = nil
-    	end
+        @products = nil
     	@types = CourseType.all()
     	@course = Course.new()
         @course_levels = CourseLevel.all()
+        @modes = CourseMode.where(:enabled => true)
         @templates = nil
-        @teachers = get_teachers_list
     end
 
     def create
         @course = Course.create(course_params)
     	if @course.valid?
-            #generacion de course_features
-            modify_course_features
+            #Registro de los días de la semana en que hay clases
+            register_weekday_sessions(@course)
             #creacion de las sesiones correspondientes al curso
             create_course_sessions(@course)
             redirect_to :action => :assign_teacher, :id => @course.id
     	else
-    		raw_products = zoho_product_list
-	    	if raw_products["code"] == 0
-	    		@products = raw_products["items"].select{|i| i["status"] == "active"}
-	    	else
-	    		@products = nil
-	    	end
+    		if @course.mode
+                @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
+            else
+                @products = nil
+            end
+            @modes = CourseMode.where(:enabled => true)
 	    	@types = CourseType.all()
-            @teachers = get_teachers_list
             @course_levels = CourseLevel.all()
             @templates = CourseTemplate.where(:deleted => 0)
 	    	render :new
     	end
     end
 
+    def edit
+        @types = CourseType.all()
+        @course = Course.find(params[:id])
+        if @course.mode
+            @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
+        else
+            @products = nil
+        end
+        @modes = CourseMode.where(:enabled => true)
+        @templates = CourseTemplate.where(:course_level_id => @course.course_level_id, :deleted => 0)
+        @course_levels = CourseLevel.all()
+        @week_sessions = CourseSessionWeekday.where(:course_id => params[:id])
+    end
+
+    def update
+        @course = Course.find(params[:course][:id])
+        @course.update_attributes(course_params)
+        if @course.valid?
+            #Eliminacion de los datos correspondientes a las sesiones en la semana
+            CourseSessionWeekday.where(:course_id => @course.id).destroy_all
+            #Registro de los días de la semana en que hay clases
+            register_weekday_sessions(@course)
+            #eliminacion de las sesiones antiguas del curso
+            CourseSession.where(:commerce_course_id => @course.id).destroy_all
+            #creacion de las nuevas sesiones correspondientes al curso
+            create_course_sessions(@course)
+            redirect_to :action => :index
+        else
+            if @course.mode
+                @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
+            else
+                @products = nil
+            end
+            @modes = CourseMode.where(:enabled => true)
+            @types = CourseType.all()
+            @course_levels = CourseLevel.all()
+            @templates = CourseTemplate.where(:deleted => 0)
+            @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
+            render :edit    
+        end
+    end
+
     def assign_teacher
         @course = Course.find(params[:id])
-        @features = CourseFeature.where(:course_id => params[:id])
-        day1 = @features.find_by_feature_name('first_day').feature_description.to_i
-        day1_hour = @features.find_by_feature_name('first_day_hour').feature_description
-        day2 = @features.find_by_feature_name('second_day').feature_description.to_i
-        day2_hour = @features.find_by_feature_name('second_day_hour').feature_description
-        tchrs = UserDisponibility.where("day_number = #{day1} 
-                                        and time('#{day1_hour}') between time(start_time) and time(end_time)
-                                        and user_id in 
-                                        (select user_id 
-                                            from user_disponibilities 
-                                            where day_number = #{day2}
-                                                and time('#{day2_hour}') between time(start_time) and time(end_time))")
-        @teachers = TeacherV.where(:id => tchrs.map{|t| t.user_id})
+        @week_session_info = CourseSessionWeekday.where(:course_id => @course.id).order("day_number ASC")
+        teacher_list = available_teachers_for_course(@week_session_info)
+
+        @teachers = TeacherV.where(:id => teacher_list)
         gon.events = []
-        if params[:teacherid] && !@course.main_teacher_id
-            #sesiones de la simulacion
+        if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
+            #sesiones de la simulacion [cursos moodle]
             @simulated = TeacherV.find(params[:teacherid])
             t_sessions = teacher_courses_sessions(params[:teacherid])
             t_sessions.each do |s|
@@ -89,10 +131,22 @@ class CoursesController < ApplicationController
                     "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
                     "start" => s.session_date,
                     "allDay" => false,
-                    "backgroundColor" => "#FF0000",
-                    "borderColor" => "#FF0000"
+                    "backgroundColor" => "#f56954",#rojo
+                    "borderColor" => "#f56954"
                 }
             end
+            #sesiones de la simulación[Cursos summit]
+            s_sessions = teacher_summit_courses_sessions(params[:teacherid])
+            s_sessions.each do |ss|
+                gon.events << {
+                    "title" => Course.find(ss.commerce_course_id).coursename,
+                    "start" => ss.startdatetime,
+                    "allDay" => false,
+                    "backgroundColor" => "#f39c12",#Amarillo
+                    "borderColor" => "#f39c12"
+                }
+            end
+
         end
         if @course.main_teacher_id
             #sesiones del profesor que ya tiene el curso asignado
@@ -102,8 +156,8 @@ class CoursesController < ApplicationController
                     "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
                     "start" => ms.session_date,
                     "allDay" => false,
-                    "backgroundColor" => "#00FF00",
-                    "borderColor" => "#00FF00"
+                    "backgroundColor" => "#00a65a",#verde
+                    "borderColor" => "#00a65a"
                 }
             end
         end
@@ -114,11 +168,11 @@ class CoursesController < ApplicationController
                 "title" => @course.coursename,
                 "start" => cs.startdatetime,
                 "allDay" => false,
-                "backgroundColor" => "#0066FF",
-                "borderColor" => "#0066FF"
+                "backgroundColor" => "#0073b7",#azul
+                "borderColor" => "#0073b7"
             }
         end
-        @features = CourseFeature.where(:course_id => @course.id)
+        @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
     end
 
     def bind_course_teacher
@@ -130,50 +184,93 @@ class CoursesController < ApplicationController
 
     def show 
         @course = Course.find(params[:id])
-        @course_features = CourseFeature.where(:course_id => @course.id)
+        @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
+        if @course.main_teacher_id
+            @teacher = TeacherV.find(@course.main_teacher_id)
+        else
+            @teacher = nil
+        end
         student_list = CourseMember.where(:course_id => @course.id)
         @students = WebUser.where(:id => student_list.map{|s| s.web_user_id})
     end
 
-    def edit
-        raw_products = zoho_product_list
-        if raw_products["code"] == 0
-            @products = raw_products["items"].select{|i| i["status"] == "active"}
+    def course_students
+        @course = Course.find(params[:courseid])
+        c_students = CourseMember.where(:course_id => @course.id).map{|c| c.web_user_id}
+        @enroled_students = WebUser.where(:id => c_students)
+        if c_students.blank?
+            s = WebUser.all()
         else
-            @products = nil
+            s = WebUser.where("id not in (?)",c_students)
         end
-        @types = CourseType.all()
-        @course = Course.find(params[:id])
-        @course_features = CourseFeature.where(:course_id => @course.id)
-        @templates = CourseTemplate.where(:course_level_id => @course.course_level_id, :deleted => 0)
-        @course_levels = CourseLevel.all()
-        @teachers = get_teachers_list
+        @students = s
+
+        #identificar si se desea editar
+        if params[:edit_user]
+            @new_student = WebUser.find(params[:edit_user])
+            @editable = true
+        else
+            @new_student = WebUser.new()
+        end
     end
 
-    def update
-        @course = Course.find(params[:course][:id])
-        @course.update_attributes(course_params)
-        if @course.valid?
-            #modificacion de course_features
-            modify_course_features
-            #eliminacion de las sesiones antiguas del curso
-            CourseSession.where(:commerce_course_id => @course.id).destroy_all
-            #creacion de las nuevas sesiones correspondientes al curso
-            create_course_sessions(@course)
-            redirect_to :action => :index
-        else
-            raw_products = zoho_product_list
-            if raw_products["code"] == 0
-                @products = raw_products["items"].select{|i| i["status"] == "active"}
-            else
-                @products = nil
+    def create_student
+        @new_student = WebUser.create(web_user_params)
+        if @new_student.valid?
+            if params[:enrol]
+                enrol_student(@web_user.id, params[:courseid])
             end
-            @types = CourseType.all()
-            @course_features = CourseFeature.where(:course_id => @course.id)
-            @teachers = get_teachers_list
-            @course_levels = CourseLevel.all()
-            render :edit    
+            redirect_to :action => :course_students, :courseid => params[:courseid]
+        else
+            @course = Course.find(params[:courseid])
+            c_students = CourseMember.where(:course_id => @course.id).map{|c| c.web_user_id}
+            @enroled_students = WebUser.where(:id => c_students)
+            if c_students.blank?
+                s = WebUser.all()
+            else
+                s = WebUser.where("id not in (?)",c_students)
+            end
+            @students = s
+            render :course_students
         end
+    end
+
+    def update_student
+        @new_student = WebUser.find(params[:web_user][:id])
+        @new_student.update_attributes(web_user_params)
+        if @new_student.valid?
+            if params[:enrol]
+                enrol_student(@web_user.id, params[:courseid])
+            end
+            redirect_to :action => :course_students, :courseid => params[:courseid]
+        else
+            @course = Course.find(params[:courseid])
+            c_students = CourseMember.where(:course_id => @course.id).map{|c| c.web_user_id}
+            @enroled_students = WebUser.where(:id => c_students)
+            if c_students.blank?
+                s = WebUser.all()
+            else
+                s = WebUser.where("id not in (?)",c_students)
+            end
+            @students = s
+            render :course_students
+        end
+    end
+
+    def enrolement_management
+        course = Course.find(params[:courseid])
+        if params[:enrol]
+            enrol_student(params[:studentid],params[:courseid])
+        elsif params[:unenrol]
+            unenrol_student(params[:studentid],params[:courseid])
+        end
+        #Se identifica la cantidad de estudiantes que tiene el curso actualmente
+        course.count_students
+        redirect_to :action => :course_students, :courseid => params[:courseid]
+    end
+
+    def change_status
+
     end
 
     def cancel_course
@@ -265,9 +362,43 @@ class CoursesController < ApplicationController
 
     private
 
+    def available_teachers_for_course(week_session_info)
+        desired_days = week_session_info.map{|ws| ws.day_number} #array de dias de clases
+        #identificar a los profesores disponibles en las fechas correspondientes
+        selected_teachers = []
+        TeacherV.all().each do |t|
+            disp = UserDisponibility.where(:user_id => t.id).map{|u| u.day_number} #array de dias disponibles del profesor
+            if (desired_days - disp).empty?
+                #si la disponibilidad del profesor contiene
+                #a los dias de clases del curso
+                #se selecciona al profesor
+                selected_teachers << t.id
+            end
+        end
+        return selected_teachers
+    end
+
+    def web_user_params
+        params.require(:web_user).permit(:firstname, :lastname, :email, :phone, :gender)
+    end
+
+    def enrol_student(student_id, course_id)
+        CourseMember.create(:course_id => course_id, :web_user_id => student_id)
+    end
+
+    def unenrol_student(student_id, course_id)
+        CourseMember.where(:course_id => course_id, :web_user_id => student_id).destroy_all
+    end
+
     def teacher_courses_sessions(teacherid)
         course_list = MoodleRoleAssignationV.where(:userid => teacherid, :roleid => [9,4]).map{|c| c.courseid}
         return MoodleCourseSessionV.where(:courseid => course_list)
+    end
+
+    def teacher_summit_courses_sessions(teacherid)
+        #cursos que no esten asociados con un curso en moodle
+        course_list = Course.where(:main_teacher_id => teacherid, :moodleid => nil).map{|c| c.id}
+        return CourseSession.where(:commerce_course_id => course_list)
     end
 
     def course_session_type_params
@@ -278,82 +409,49 @@ class CoursesController < ApplicationController
         params.require(:course_template).permit(:course_level_id,:name,:total_sessions)
     end
 
-    def modify_course_features
-        cf = CourseFeature.where(:course_id => @course.id, :feature_name => "first_day").first()
-        if cf
-            cf.update_attributes(:feature_description => params[:first_weekday])
-        else
-            CourseFeature.create(:course_id => @course.id, :feature_name => "first_day", :feature_description => params[:first_weekday])
-        end
-        cf = CourseFeature.where(:course_id => @course.id, :feature_name => "first_day_hour").first()
-        
-        if cf
-            cf.update_attributes(:feature_description => params[:hour_first_weekday])
-        else
-            CourseFeature.create(:course_id => @course.id, :feature_name => "first_day_hour", :feature_description => params[:hour_first_weekday])
-        end
-
-        cf = CourseFeature.where(:course_id => @course.id, :feature_name => "second_day").first()
-        if cf
-            cf.update_attributes(:feature_description => params[:second_weekday])
-        else
-            CourseFeature.create(:course_id => @course.id, :feature_name => "second_day", :feature_description => params[:second_weekday])
-        end
-
-        cf = CourseFeature.where(:course_id => @course.id, :feature_name => "second_day_hour").first()
-        if cf
-            cf.update_attributes(:feature_description => params[:hour_second_weekday])
-        else
-            CourseFeature.create(:course_id => @course.id, :feature_name => "second_day_hour", :feature_description => params[:hour_second_weekday])
-        end
-
-        selected_item = zoho_get_element("items",@course.zoho_product_id)
-        if selected_item["code"] == 0
-            cf = CourseFeature.where(:course_id => @course.id, :feature_name => "price").first()
-            if cf
-                cf.update_attributes(:feature_description => selected_item["item"]["rate"])
-            else
-                CourseFeature.create(:course_id => @course.id, :feature_name => "price", :feature_description => selected_item["item"]["rate"])
-            end
+    def register_weekday_sessions(course)
+        for s in 1..course.sessions_per_week
+            weekday_session = CourseSessionWeekday.new()
+            weekday_session.course_id = course.id
+            weekday_session.order = params[:wday_order]["#{s}"]
+            weekday_session.day_number = params[:week_day]["#{s}"]
+            weekday_session.session_start_hour = params[:session_hour]["#{s}"]
+            weekday_session.save!
         end
     end
 
     def create_course_sessions(course)
-        #Se crean las sesiones correspondientes al curso 
-        #aun no se le asocia ningun curso de moodle
         total_sessions = CourseTemplate.find(course.course_template_id).total_sessions.to_i
-        day1 = CourseFeature.where(:course_id => course.id, :feature_name => "first_day").first().feature_description.to_i
-        hour_day1 = CourseFeature.where(:course_id => course.id, :feature_name => "first_day_hour").first().feature_description
-        day2 = CourseFeature.where(:course_id => course.id, :feature_name => "second_day").first().feature_description.to_i
-        hour_day2 = CourseFeature.where(:course_id => course.id, :feature_name => "second_day_hour").first().feature_description
+        week_sessions_info = CourseSessionWeekday.where(:course_id => course.id)
+        desired_days = week_sessions_info.map{|wd| wd.day_number}
         for session_number in 1..total_sessions
             new_session = CourseSession.new()
             new_session.commerce_course_id = course.id
             new_session.session_number = session_number
             if session_number == 1
-                current_session_date = session_datetime(course.start_date,day1,day2,hour_day1,hour_day2)
+                #solo para la primera sesion
+                current_session_date = session_datetime(desired_days, course.start_date, week_sessions_info)
             else
-                current_session_date = session_datetime(current_session_date + 1.days,day1,day2,hour_day1,hour_day2)
+                current_session_date = session_datetime(desired_days, current_session_date + 1.days, week_sessions_info)
             end
             new_session.startdatetime = current_session_date
             new_session.save!
         end
-        #ultima sesion del curso corresponde a la fecha de término del mismo
+        #se considera la ultima sesion del curso como la fecha de término del mismo
         course.end_date = current_session_date
         course.save!
     end
 
-    def session_datetime(session_date, day1, day2, hour_day1, hour_day2)
-        desired_days = [day1,day2]
+    def session_datetime(desired_days, session_date, week_sessions_info)
+        holydays = CalendarHolyday.all().map{|h| DateTime.parse(l(h.date, :format => "%d-%m-%Y"))} #array de días en los que no habrá clases
         session_date = DateTime.parse(l(session_date, :format => "%d-%m-%Y"))
-        session_date += 1.days while !desired_days.include?(session_date.wday)
-        if session_date.wday == day1
-            hour = hour_day1.split(":")
-            session_date = session_date.change(:hour => hour[0].to_i, :min => hour[1].to_i)
-        else
-            hour = hour_day2.split(":")
-            session_date = session_date.change(:hour => hour[0].to_i, :min => hour[1].to_i)
-        end
+        #Se verifica que las sesiones se asignen a los días de la semana que corresponden
+        #y a días que no sean considerados festivos
+        session_date += 1.days while ( !desired_days.include?(session_date.wday) || holydays.include?(session_date))
+        raw_hour = week_sessions_info.select{|ws| ws.day_number == session_date.wday}.first().session_start_hour
+        session_hour = raw_hour.split(":")
+        #se modifica la hora segun la que se haya registrado
+        session_date = session_date.change(:hour => session_hour[0].to_i, :min => session_hour[1].to_i)
         return session_date
     end
 
@@ -376,7 +474,7 @@ class CoursesController < ApplicationController
     end
 
     def course_params
-    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :start_date, :location, :course_type_id)
+    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :sessions_per_week, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :start_date, :location, :course_type_id)
     end
 
     def check_authentication

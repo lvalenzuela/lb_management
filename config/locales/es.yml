@@ -19,3 +19,16 @@ es:
       - month
       - day
       - year
+  activerecord:
+    errors:
+      models:
+        web_user:
+          attributes:
+            firstname:
+              blank: "El nombre del usuario no puede estar vacío"
+            lastname:
+              blank: "El apellido del usuario no puede estar vacío"
+            email:
+              blank: "El email del usuario no puede estar vacío"
+            gender:
+              blank: "El género del usuario no puede estar vacío"

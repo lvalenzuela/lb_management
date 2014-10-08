@@ -59,20 +59,10 @@ class UsersController < ApplicationController
 		redirect_to :action => :user_profile
 	end
 
-	def add_disponibility
-		UserDisponibility.create(user_disponibility_params)
-		redirect_to :action => :user_profile
-	end
-
-	def delete_disponibility
-		UserDisponibility.find(params[:id]).destroy
-		redirect_to :action => :user_profile
-	end
-
 	private
 
 	def user_disponibility_params
-		params.require(:user_disponibility).permit(:user_id, :day_number, :start_time, :end_time, :start_date, :end_date)
+		params.require(:user_disponibility).permit(:user_id, :day_number, :start_time, :end_time)
 	end
 
 	def resolve_layout

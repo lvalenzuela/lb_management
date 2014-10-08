@@ -13,7 +13,7 @@
 
 <section class="content">
 	<div class="row">
-		<div class="col-xs-8">
+		<div class="col-xs-10 col-xs-offset-1">
 			<div class="box box-info">
 				<div class="box-header">
 					<h3 class="box-title">Pofesores de Longbourn</h3>
@@ -25,7 +25,8 @@
 								<th>Nombre</th>
 								<th>Correo</th>
 								<th style="text-align: center;">Cursos</th>
-								<th>Nivel</th>
+								<th style="text-align: center;">Nivel</th>
+								<th style="text-align: center;">Disponibilidad</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -34,7 +35,8 @@
 								<td><%=link_to t.name, {:action => :teacher_availability, :params => {:id => t.id}}%></td>
 								<td><%=t.email%></td>
 								<td style="text-align: center;"><%=teacher_courses_count(t.id)%></td>
-								<td></td>
+								<td style="text-align: center;"></td>
+								<td style="text-align: center;"><%=link_to "<i class='fa fa-calendar fa-lg'></i>".html_safe, {:action => :teacher_availability, :params => {:id => t.id}}, {:class => "btn btn-default"}%></td>
 							</tr>
 							<%end%>
 						</tbody>

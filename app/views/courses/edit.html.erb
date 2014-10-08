@@ -89,7 +89,19 @@
                                             </div>
                                             <div class="col-xs-4">
                                                 <div class="form-group">
-                                                    <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]},1), {}, {:class => "form-control"}%>
+                                                    <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]}), {}, {:class => "form-control"}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <div class="form-group pull-right">
+                                                    <label>Sesiones Por Semana</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <div class="form-group">
+                                                    <%=f.select :sessions_per_week, options_for_select((1..6).step(1).collect{|p| [p, p]},@course.sessions_per_week), {}, {:class => "form-control"}%>
                                                 </div>
                                             </div>
                                         </div>
@@ -113,8 +125,19 @@
                                             </div>
                                             <div class="col-xs-4">
                                                 <div class="form-group">
-                                                <%=f.select :zoho_product_id, options_for_select(@products.collect{|p| [p["name"],p["item_id"]]},@course.zoho_product_id), {:include_blank => true}, {:class => "form-control"}%>
-                                                <%=f.hidden_field :mode, :class => "form-control"%>
+                                                <%=f.select :mode, options_for_select(@modes.collect{|p| [p.mode_name,p.id]},@course.mode), {:include_blank => true}, {:class => "form-control"}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <div class="form-group pull-right">
+                                                    <label>Producto</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <div class="form-group">
+                                                    <%=render :partial => "product_selector", :locals => {:products => @products, :selected => @course.zoho_product_id}%>
                                                 </div>
                                             </div>
                                         </div>
@@ -154,50 +177,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-xs-4">
-                                                <div class="form-group pull-right">
-                                                    <label>Dia 1 / Hora</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <div class="form-group">
-                                                <%=select_tag :first_weekday, options_for_select(weekday_options,course_feature_value(@course_features,"first_day").to_i), {:class => "form-control"}%>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <div class="form-group bootstrap-timepicker">
-                                                    <div class="input-group">
-                                                    <%=text_field_tag :hour_first_weekday, course_feature_value(@course_features,"second_day_hour"), {:class => "form-control", :id => "timepicker1"}%>
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-clock-o"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-4">
-                                                <div class="form-group pull-right">
-                                                    <label>Dia 2 / Hora</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <div class="form-group">
-                                                    <%=select_tag :second_weekday, options_for_select(weekday_options,course_feature_value(@course_features,"second_day").to_i), {:class => "form-control"}%>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <div class="form-group bootstrap-timepicker">
-                                                    <div class="input-group">
-                                                        <%=text_field_tag :hour_second_weekday, course_feature_value(@course_features,"second_day_hour"), {:class => "form-control", :id => "timepicker2"}%>
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-clock-o"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <%=render :partial => "sessions_per_week_inputs", :locals => {:per_week => @course.sessions_per_week ? @course.sessions_per_week : 2, :week_sessions => @week_sessions}%>
                                         <div class="row">
                                             <div class="col-xs-4 col-xs-offset-4">
                                                 <div class="pull-right">
@@ -219,18 +199,23 @@
 <%=form_tag template_selector_options_courses_path, :remote => true, :id => "template_options_form" do%>
 <%=hidden_field_tag :courselevel%>
 <%end%>
+<%=form_tag product_selector_options_courses_path, :remote => true, :id => "product_options_form" do%>
+<%=hidden_field_tag :coursemode%>
+<%end%>
 
 <script>
-$( "#course_zoho_product_id" ).change(function() {
-  var text = $( "#course_zoho_product_id option:selected" ).text();
-  $( "#course_mode" ).val( text );
-});
 $( "#course_course_level_id" ).change(function(){
     var level_id = $("#course_course_level_id option:selected").val();
     $( "#courselevel" ).val(level_id);
     $( "#template_options_form" ).submit();
 
 });
+$( "#course_mode" ).change(function(){
+    var level_id = $("#course_mode option:selected").val();
+    $( "#coursemode" ).val(level_id);
+    $( "#product_options_form" ).submit();
+});
+
 </script>
 <script type="text/javascript">
 $(function() {

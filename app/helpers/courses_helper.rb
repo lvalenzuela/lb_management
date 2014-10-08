@@ -8,6 +8,10 @@ module CoursesHelper
 		end
 	end
 
+	def get_course_mode_label(mode)
+		return CourseMode.find(mode).mode_name
+	end
+
 	def teacher_level_label(teacher_level_id)
 		if teacher_level_id
 			return UserTeacherLevel.find(teacher_level_id).level_label

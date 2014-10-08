@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       post "create"
       get "edit"
       post "update"
+      post "change_status"
       post "cancel_course"
       get "course_templates"
       get "new_template"
@@ -43,6 +44,12 @@ Rails.application.routes.draw do
       get "assign_teacher"
       post "bind_course_teacher"
       post "template_selector_options"
+      get "course_students"
+      post "create_student"
+      post "update_student"
+      get "enrolement_management"
+      post "product_selector_options"
+      post "sessions_per_week_inputs"
     end
   end
 
@@ -108,6 +115,18 @@ Rails.application.routes.draw do
       get "enable_product"
       get "teachers_manager"
       get "teacher_availability"
+      get "zoho_product_list"
+      get "course_modes"
+      post "create_course_mode"
+      post "update_course_mode"
+      get "disable_course_mode"
+      post "save_products"
+      #calendario
+      get "calendar_management"
+      post "upload_holydays"
+      #disponibilidad de usuarios
+      post "set_user_disponibility"
+      delete "delete_disponibility"
     end
   end
 
@@ -195,8 +214,6 @@ Rails.application.routes.draw do
       post 'login'
       get 'logout'
       get 'not_authorized'
-      post "add_disponibility"
-      delete "delete_disponibility"
     end
   end
 

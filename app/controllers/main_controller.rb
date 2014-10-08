@@ -2,17 +2,11 @@ class MainController < ApplicationController
     before_filter :check_authentication
     protect_from_forgery
     require 'bcrypt'
+    require "csv"
     layout "dashboard"
 
     def index
       
-    end
-
-    def extras
-        source = "https://invoice.zoho.com/api/v3/items?authtoken="+zoho_auth_token+"&organization_id=39721460"
-        resp = Net::HTTP.get_response(URI.parse(source))
-        data = resp.body
-        @response = JSON.parse data
     end
 
     def system_manager
@@ -82,8 +76,9 @@ class MainController < ApplicationController
 
     def teacher_availability
         @teacher = TeacherV.find(params[:id])
-        @disponibility = UserDisponibility.where("user_id = #{params[:id]} and (end_date >= curdate() or end_date is null)")
+        @disponibility = UserDisponibility.where(:user_id => params[:id])
         course_ids = MoodleRoleAssignationV.where(:userid => params[:id]).map{|c| c.courseid}
+        @courses = MoodleCourseV.where(:moodleid => course_ids, :visible => 1)
         sessions = MoodleCourseSessionV.joins("as mcs inner join moodle_course_vs as courses
                                                 on mcs.courseid = courses.moodleid").where("
                                                 mcs.courseid in (?)",course_ids).select("
@@ -91,6 +86,7 @@ class MainController < ApplicationController
                                                                                         courses.coursename").order("courses.coursename")
         calendar_events = []
         sessions.each do |s|
+            #sesiones de los cursos asignados en moodle
             calendar_events << {
                 "title" => s.coursename,
                 "start" => s.session_date,
@@ -99,10 +95,138 @@ class MainController < ApplicationController
                 "borderColor" => "#0073b7"
             }
         end
+        @commerce_courses = Course.where(:main_teacher_id => @teacher.id, :moodleid => nil)
+        comm_sessions = CourseSession.where(:commerce_course_id => @commerce_courses.map{|c| c.id})
+        comm_sessions.each do |cs|
+            calendar_events << {
+                #sesiones de cursos del sistema que no se han registrado aun en moodle
+                "title" => Course.find(cs.commerce_course_id).coursename,
+                "start" => cs.startdatetime,
+                "allDay" => false,
+                "backgroundColor" => "#f39c12",
+                "borderColor" => "#f39c12"
+            }
+        end
         gon.events = calendar_events
     end
 
+    def set_user_disponibility
+        #se borran todas las disponibilidades previas para el usuario
+        UserDisponibility.where(:user_id => params[:userid]).destroy_all
+        for day in 1..6
+            if params[:enabled_day]["#{day}"]
+                #Solo aquellos dias seleccionados son registrados
+                new_disp = UserDisponibility.new()
+                new_disp.user_id = params[:userid]
+                new_disp.day_number = day
+                new_disp.start_time = Time.parse(params[:start_time]["#{day}"])
+                new_disp.end_time = params[:end_time]["#{day}"]
+                new_disp.extra_start_time = params[:extra_start_time]["#{day}"]
+                new_disp.extra_end_time = params[:extra_end_time]["#{day}"]
+                new_disp.save!
+            end
+        end
+        redirect_to :action => :teacher_availability, :id => params[:userid]
+    end
+
+    def course_modes
+        if params[:show_disabled]
+            @modes = CourseMode.all()
+        else
+            @modes = CourseMode.where(:enabled => true)
+        end
+
+        if params[:course_mode_id]
+            @course_mode = CourseMode.find(params[:course_mode_id])
+        end
+    end
+
+    def disable_course_mode
+        cm = CourseMode.find(params[:course_mode_id])
+        cm.enabled = false
+        cm.save!
+        redirect_to :action => :course_modes
+    end
+
+    def create_course_mode
+        CourseMode.create(course_mode_params)
+        redirect_to :action => :course_modes
+    end
+
+    def update_course_mode
+        cm = CourseMode.find(params[:course_mode][:id])
+        cm.update_attributes(course_mode_params)
+        redirect_to :action => :course_modes
+    end
+
+    def zoho_product_list
+        raw_products = get_zoho_product_list
+        if raw_products["code"] == 0
+            zoho_products = raw_products["items"].select{|i| i["status"] == "active"}
+        end
+        zoho_products.each do |zp|
+            product = CourseModeZohoProductMap.find_by_zoho_product_id(zp["item_id"])
+            if product.blank?
+                CourseModeZohoProductMap.create(:product_name => zp["name"], :zoho_product_id => zp["item_id"], :enabled => true)
+            end
+        end
+
+        if params[:show_disabled]
+            @system_products = CourseModeZohoProductMap.all()
+        else
+            @system_products = CourseModeZohoProductMap.where(:enabled => true)
+        end
+        @course_modes = CourseMode.where(:enabled => true)
+    end
+
+    def save_products
+        params[:product].each do |p|
+            m = p.split(",")
+            #m[0] = mode_id
+            #m[1] = zoho_product_id
+            product = CourseModeZohoProductMap.find_by_zoho_product_id(m[1])
+            product.course_mode_id = m[0].to_i
+            product.save!
+        end
+        redirect_to :action => :zoho_product_list
+    end
+
+    def calendar_management
+        holydays = CalendarHolyday.all()
+        @last_date = holydays.order("date DESC").first().date
+        @total_dates = holydays.count
+        gon.events = []
+        holydays.each do |h|
+            gon.events << {
+                "title" => "Dia Festivo",
+                "start" => h.date,
+                "allDay" => true,
+                "backgroundColor" => "#f56954",#rojo
+                "borderColor" => "#f56954"
+            }
+        end
+    end
+
+    def upload_holydays
+        #se borran las fechas anteriores
+        CalendarHolyday.all().destroy_all
+        #se crean fechas nuevas
+        file_contents = params[:holyday_calendar].read
+        csv_calendar = CSV.parse(file_contents, :headers => true)
+        csv_calendar.each do |row|
+            found_date = CalendarHolyday.where("date = '#{row["date"]}'")
+            if found_date.blank?
+                CalendarHolyday.create(:date => row["date"])
+            end
+        end
+        redirect_to :action => :calendar_management
+    end
+
     private
+
+    def course_mode_params
+        params.require(:course_mode).permit(:mode_name, :description, :enabled)
+    end
 
     def assign_area_member(areaid,userid)
         c = get_area_context(areaid)
@@ -165,7 +289,21 @@ class MainController < ApplicationController
                                                             ra.roleid")
     end
 
-    def zoho_auth_token
-        return "c08fd565113c4bbe94df623ecf397be5"
+    def get_zoho_data(organization,service)
+        return ZohoOrganizationData.where(:organization_name => organization, :service => service).first()
+    end
+
+    def zoho_get_element(data_type,data_id)
+        data = get_zoho_data("Longbourn","invoice")
+        url = "https://invoice.zoho.com/api/v3/"+data_type+"/"+data_id+"?authtoken="+data.authtoken+"&organization_id="+data.organization_id
+        resp = Net::HTTP.get_response(URI.parse(url))
+        return JSON.parse resp.body
+    end
+
+    def get_zoho_product_list
+        data = get_zoho_data("Longbourn","invoice")
+        url = "https://invoice.zoho.com/api/v3/items?authtoken="+data.authtoken+"&organization_id="+data.organization_id
+        resp = Net::HTTP.get_response(URI.parse(url))
+        return JSON.parse resp.body
     end
 end

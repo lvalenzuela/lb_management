@@ -1,0 +1,69 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Productos
+        <small>Productos Longbourn</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li class="active">Productos de Longbourn</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	    <div class="col-xs-12">
+	        <div class="nav-tabs-custom">
+	            <ul class="nav nav-tabs">
+	                <li>
+	                	<%=link_to "Modalidades de Cursos", :controller => :main, :action => :course_modes%>
+	                </li>
+	                <li class="active">
+	                	<%=link_to "Productos de Longbourn", :controller => :main, :action => :zoho_product_list%>
+	                </li>
+	            </ul>
+	            <div class="tab-content">
+	                <div class="tab-pane active">
+	                    <section>
+	                    	<div class="row">
+	                    		<div class="col-xs-8 col-xs-offset-2">
+	                    			<div class="box box-info">
+	                    				<div class="box-header">
+	                    					<h3 class="box-title">Productos de Longbourn</h3>
+	                    				</div>
+                						<%=form_tag :action => :save_products do%>
+	                    				<div class="box-body">
+	                    					<%if @system_products%>
+		                    					<%@system_products.each do |product|%>
+		                    					<div class="row">
+		                    						<div class="col-xs-6">
+		                    							<div class="form-group pull-right">
+		                    								<label><%=product.product_name%></label>
+		                    							</div>
+		                    						</div>
+		                    						<div class="col-xs-4">
+		                    							<div class="form-group">
+		                    								<%=select_tag "product[]",options_for_select(@course_modes.collect.map{|m| [m.mode_name, append_with_comma(m.id.to_s, product.zoho_product_id)]}, append_with_comma(product.course_mode_id.to_s, product.zoho_product_id)), :class => "form-control"%>
+		                    							</div>
+		                    						</div>
+		                    					</div>
+		                    					<%end%>
+		                    				<%end%>
+	                    				</div>
+	                    				<div class="box-footer clearfix">
+	                    					<div class="pull-right">
+	                    						<%=submit_tag "Guardar Configuracion", :class => "btn btn-primary"%>
+	                    					</div>
+	                    				</div>
+	                    				<%end%>
+	                    			</div>
+	                    		</div>
+	                    	</div>
+	                    </section>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</section>

@@ -1,0 +1,74 @@
+<div id="s_per_week">
+    <%if week_sessions%>
+        <%#se esta editando%>
+        <%for s in 1..per_week%>
+            <%=hidden_field_tag "wday_order[#{s}]", s%>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="form-group pull-right">
+                        <label>Sesion <%=s%> / Hora</label>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <div class="form-group">
+                        <%=select_tag "week_day[#{s}]", options_for_select(weekday_options, week_sessions.select{|ws| ws.order == s}.first().day_number), {:class => "form-control"}%>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <div class="form-group bootstrap-timepicker">
+                        <div class="input-group">
+                            <%=text_field_tag "session_hour[#{s}]", week_sessions.select{|ws| ws.order == s}.first().session_start_hour, {:class => "form-control", :id => "timepicker_#{s}"}%>
+                            <div class="input-group-addon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%=javascript_tag do%>
+                $(function() {
+                    //Timepicker
+                    $('<%="#timepicker_#{s}"%>').timepicker({
+                        showInputs: false,
+                        showMeridian: false 
+                    });
+                });
+            <%end%>
+        <%end%>
+    <%else%>
+        <%for s in 1..per_week%>
+            <%=hidden_field_tag "wday_order[#{s}]", s%>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="form-group pull-right">
+                        <label>Sesion <%=s%> / Hora</label>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <div class="form-group">
+                        <%=select_tag "week_day[#{s}]", options_for_select(weekday_options, s), {:class => "form-control"}%>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <div class="form-group bootstrap-timepicker">
+                        <div class="input-group">
+                            <%=text_field_tag "session_hour[#{s}]", "", {:class => "form-control", :id => "timepicker_#{s}"}%>
+                            <div class="input-group-addon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%=javascript_tag do%>
+                $(function() {
+                    //Timepicker
+                    $('<%="#timepicker_#{s}"%>').timepicker({
+                        showInputs: false,
+                        showMeridian: false 
+                    });
+                });
+            <%end%>
+        <%end%>
+    <%end%>
+</div>

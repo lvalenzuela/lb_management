@@ -29,12 +29,16 @@
             <td><%=get_template_name(course.course_template_id)%></td>
         </tr>
         <tr>
-            <th style="width:200px;">Sesiones</th>
-            <td><%=week_day(course_feature_value(features,"first_day").to_i)+" - "+course_feature_value(features,"first_day_hour")%> / <%=week_day(course_feature_value(features,"second_day").to_i)+" - "+course_feature_value(features,"second_day_hour")%></td>
-        </tr>
-        <tr>
             <th style="width:200px;">Fecha de Inicio</th>
             <td><%=l(course.start_date,:format => "%d / %b / %Y")%></td>
+        </tr>
+        <tr>
+            <th style="width:200px;">Sesiones</th>
+            <td>
+                <%week_sessions.each do |ws|%>
+                    <%=week_day(ws.day_number)%> - <%=ws.session_start_hour%> <br>
+                <%end%>
+            </td>
         </tr>
     </table>
 </div>

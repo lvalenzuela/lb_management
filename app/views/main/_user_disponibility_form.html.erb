@@ -1,0 +1,212 @@
+<div id="user_availability">
+	<%=form_tag :action => :set_user_disponibility do%>
+	<%=hidden_field_tag :userid, userid%>
+	<div class="box box-info">
+		<div class="box-header">
+		</div>
+		<div class="box-body">
+			<div class="row">
+				<div class="col-xs-2">
+					<h4>Día</h4>
+				</div>
+				<div class="col-xs-5" style="text-align: center;">
+					<h4>Disponibilidad</h4>
+					<div class="row">
+						<div class="col-xs-6">
+							<label>Hora de Inicio</label>
+						</div>
+						<div class="col-xs-6">
+							<label>Hora de Término</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-5" style="text-align: center;">
+					<h4>Disponibilidad Extra</h4>
+					<div class="row">
+						<div class="col-xs-6">
+							<label>Hora de Inicio</label>
+						</div>
+						<div class="col-xs-6">
+							<label>Hora de Término</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<%for day in 1..6%>
+				<%if disponibility.select{|d| d.day_number == day}.blank?%>
+					<%#el registro no existe%>
+					<div class="row">
+						<div class="col-xs-2">
+							<%=check_box_tag "enabled_day[#{day}]", true, false, {:id => "enabler_#{day}"}%>
+							<label><%=week_day(day)%></label>
+						</div>
+						<div class="col-xs-5">
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "start_time[#{day}]", nil, {:class => "form-control inputs_#{day}", :id => "start_timepicker_#{day}", :disabled => true}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "end_time[#{day}]", nil, {:class => "form-control inputs_#{day}", :id => "end_timepicker_#{day}", :disabled => true}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-5">
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "extra_start_time[#{day}]", nil, {:class => "form-control inputs_#{day}", :id => "extra_start_timepicker_#{day}", :disabled => true}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "extra_end_time[#{day}]", nil, {:class => "form-control inputs_#{day}", :id => "extra_end_timepicker_#{day}", :disabled => true}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+		            <%=javascript_tag do%>
+		                $(function() {
+		                    //Timepicker
+		                    $('<%="#start_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#end_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#extra_start_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#extra_end_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+
+						    $('<%="#enabler_#{day}"%>').on('ifUnchecked', function(event) {
+						        //Uncheck all checkboxes
+						        $('<%=".inputs_#{day}"%>').prop("disabled",true);
+						    });
+						    //When checking the checkbox
+						    $('<%="#enabler_#{day}"%>').on('ifChecked', function(event) {
+						        //Check all checkboxes
+						        $('<%=".inputs_#{day}"%>').prop("disabled",false);
+						    });
+		                });
+		            <%end%>
+				<%else%>
+					<%#el registro existe%>
+					<div class="row">
+						<div class="col-xs-2">
+							<%=check_box_tag "enabled_day[#{day}]", true, true, {:id => "enabler_#{day}"}%>
+							<label><%=week_day(day)%></label>
+						</div>
+						<div class="col-xs-5">
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "start_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().start_time, :format => "%H:%M"), {:class => "form-control inputs_#{day}", :id => "start_timepicker_#{day}"}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "end_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().end_time, :format => "%H:%M") , {:class => "form-control inputs_#{day}", :id => "end_timepicker_#{day}"}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-5">
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "extra_start_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().extra_start_time, :format => "%H:%M"), {:class => "form-control inputs_#{day}", :id => "extra_start_timepicker_#{day}"}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group bootstrap-timepicker">
+									<div class="input-group">
+										<%=text_field_tag "extra_end_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().extra_end_time, :format => "%H:%M"), {:class => "form-control inputs_#{day}", :id => "extra_end_timepicker_#{day}"}%>
+			                            <div class="input-group-addon">
+			                                <i class="fa fa-clock-o"></i>
+			                            </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+		            <%=javascript_tag do%>
+		                $(function() {
+		                    //Timepicker
+		                    $('<%="#start_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#end_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#extra_start_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+		                    $('<%="#extra_end_timepicker_#{day}"%>').timepicker({
+		                        showInputs: false,
+		                        showMeridian: false 
+		                    });
+
+						    $('<%="#enabler_#{day}"%>').on('ifUnchecked', function(event) {
+						        //Uncheck all checkboxes
+						        $('<%=".inputs_#{day}"%>').prop("disabled",true);
+						    });
+						    //When checking the checkbox
+						    $('<%="#enabler_#{day}"%>').on('ifChecked', function(event) {
+						        //Check all checkboxes
+						        $('<%=".inputs_#{day}"%>').prop("disabled",false);
+						    });
+		                });
+		            <%end%>
+				<%end%>
+			<%end%>
+		</div>
+		<div class="box-footer clearfix">
+			<div class="pull-right">
+				<%=submit_tag "Guardar Horario", :class => "btn btn-success btn-lg"%>
+			</div>
+		</div>
+	</div>
+	<%end%>
+</div>

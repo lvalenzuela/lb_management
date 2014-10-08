@@ -1,0 +1,125 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "courses"%>
+<section class="content-header no-margin">
+    <h1>
+        <%=@course.coursename%>
+        <small>Agregar Alumnos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to @course.coursename, :controller => :courses, :action => :show, :params => {:id => @course.id}%></li>
+        <li class="active">Agregar Alumnos</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-5">
+		<%if @editable%>
+			<%=render :partial => "edit_student_form", :locals => {:courseid => @course.id}%>
+		<%else%>
+			<%=render :partial => "create_student_form", :locals => {:courseid => @course.id}%>
+		<%end%>
+		</div>
+		<div class="col-xs-7">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Estudiantes del Curso: <%=@course.coursename%></h3>
+				</div>
+				<div class="box-body">
+					<%if @course.students_qty < @course.current_students_qty%>
+			        <div class="alert alert-warning alert-dismissable">
+			            <i class="fa fa-warning"></i>
+			            <h4>Capacidad de Usuarios Sobrepasada</h4>
+			            <p>El curso actualmente cuenta con <strong><%=@course.current_students_qty - @course.students_qty%></strong> alumnos por sobre su capacidad.</p>
+			        </div>
+					<%end%>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>E-Mail</th>
+								<th>Género</th>
+								<th>Telefono</th>
+								<th style="text-align: center; width: 120px;">Remover</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%if @enroled_students.blank?%>
+							<tr>
+								<td colspan="5">No hay estudiantes registrados en el curso hasta el momento.</td>
+							</tr>
+							<%else%>
+								<%@enroled_students.each do |student|%>
+								<tr>
+									<td><%=student.name%></td>
+									<td><%=student.email%></td>
+									<td><%=student.gender%></td>
+									<td><%=student.phone%></td>
+									<td style="text-align:center;">
+										<%=link_to "<i class='fa fa-arrow-circle-o-down fa-lg'></i>".html_safe, {:controller => :courses, :action => :enrolement_management, :params => {:studentid => student.id, :courseid => @course.id, :unenrol => 1}}, {:class => "btn btn-circle btn-danger"}%>
+									</td>
+								</tr>
+								<%end%>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">Estudiantes del Sistema</h3>
+				</div>
+				<div class="box-body table-responsive">
+					<table class="table table-striped" id="unenroled-students">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Nombre</th>
+								<th>E-Mail</th>
+								<th>Género</th>
+								<th>Telefono</th>
+								<th style="text-align: center; width: 80px;">Asociar</th>
+								<th style="text-align: center; width: 80px;">Editar</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%if @students.blank?%>
+							<tr>
+								<td colspan="5">No hay estudiantes registrados en el sistema.</td>
+							</tr>
+							<%else%>
+								<%@students.each do |student|%>
+								<tr>
+									<td><%=student.id%></td>
+									<td><%=student.name%></td>
+									<td><%=student.email%></td>
+									<td><%=student.gender%></td>
+									<td><%=student.phone%></td>
+									<td style="text-align: center;">
+										<%=link_to "<i class='fa fa-arrow-circle-o-up fa-lg'></i>".html_safe, {:controller => :courses, :action => :enrolement_management, :params => {:studentid => student.id, :courseid => @course.id, :enrol => 1}}, {:class => "btn btn-circle btn-success"}%>
+									</td>
+									<td style="text-align: center;">
+										<%=link_to "<i class='fa fa-edit fa-lg'></i>".html_safe, {:controller => :courses, :action => :course_students, :params => {:courseid => @course.id, :edit_user => student.id}}, {:class => "btn btn-circle btn-warning"}%>
+									</td>
+								</tr>
+								<%end%>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script type="text/javascript">
+    $(function() {
+        $("#unenroled-students").dataTable();
+    });
+</script>
