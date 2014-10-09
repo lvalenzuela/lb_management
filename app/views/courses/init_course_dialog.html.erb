@@ -1,0 +1,56 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "courses"%>
+
+<section class="content-header">
+    <h1>
+        <%=@course.coursename%>
+        <small>Inicialización del Curso</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Cursos de Longbourn", :controller => :courses, :action => :index%></li>
+        <li><%=link_to @course.coursename, :controller => :courses, :action => :show, :params => {:id => @course.id}%></li>
+        <li class="active">Iniciar Curso</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-8 col-xs-offset-2">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Inicialización de Curso</h3>
+				</div>
+				<div class="box-body">
+					<h4>Detalles:</h4>
+					<p>Al iniciar el curso <strong><%=@course.coursename%></strong> se dará paso a enviar un listado de múltiples tareas asociadas a la creación y realización del mismo.</p>
+					<p>Tener presente que una vez que se haya marcado el inicio de un curso, estas tareas no se podrán cancelar más que por el administrador de las Áreas respectivas a las cuales se asignen.</p>
+					<p>El listado de tareas a realizar para la creación del curso corresponde al que se muestra a continuacion:</p>
+					<div class="row">
+						<div class="col-xs-10 col-xs-offset-1">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Tarea</th>
+										<th>Área de Destino</th>
+										<th>Usuario Encargado</th>
+									</tr>
+								</thead>
+								<tbody>
+									<%@course_init_tasks.each do |t|%>
+									<tr>
+										<td><%=t.tagname%></td>
+										<td><%=get_areaname(t.area_id)%></td>
+										<td><%=user_name(t.default_user_id)%></td>
+									</tr>	
+									<%end%>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

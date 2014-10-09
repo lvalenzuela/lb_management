@@ -1,12 +1,36 @@
-<table class="table table-mailbox">
+<%=form_tag :action => :assign_requests do%>
+<%=hidden_field_tag :areaid, areaid%>
+<div class="row">
+	<div class="col-sm-12 search-form">
+		<div class="row">
+			<div class="col-xs-3">
+				<div class="input-group">
+					<%=select_tag :receiverid, options_for_select(@receivers.collect{|r| [r.name,r.id]}), {:prompt => "Seleccionar Usuario", :class => "form-control"}%>
+				</div>
+			</div>	
+			<div class="col-xs-3">
+				<div class="form-group">
+					<%=date_field_tag :duedate, nil, :class => "form-control", :placeholder => "Fecha de Vencimiento"%>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group">
+					<%=submit_tag "Asignar", :class => "btn btn-default"%>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<table class="table table-mailbox" style="margin-top:5px;">
 	<tbody>
 	<%if requests.blank?%>
 	<tr class="read">
-		<td colspan="5">No se encontraron resultados.</td>
+		<td colspan="6">No se encontraron resultados.</td>
 	</tr>
 	<%else%>
 	    <%requests.each do |r|%>
 	    <tr class="<%=request_display_mode(r)%>">
+	    	<td><%=check_box_tag "requests[]", r.id%></td>
 	    	<td class="small-col"><small class="badge <%=req_priority_label(r.priorityid)%>"><%=request_priority_desc(r.priorityid)%></small></td>
 	        <td class="small-col"><small>De: <%=link_to get_username(r.userid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></small></td>
 	        <td class="small-col"><small>Para: <%=link_to get_username(r.receiverid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></small></td>
@@ -17,3 +41,4 @@
 	<%end%>
 	</tbody>
 </table>
+<%end%>

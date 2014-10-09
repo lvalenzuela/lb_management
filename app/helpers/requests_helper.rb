@@ -1,5 +1,9 @@
 module RequestsHelper
 
+	def request_tag_category_name(category_id)
+		return RequestTagCategory.find(category_id).name
+	end
+
 	def days_left(r_date)
 		if r_date
 			d_left = (r_date - Date.today).to_i

@@ -59,7 +59,7 @@
                                                     <td><%=c.start_date ? c.start_date.strftime("%d-%m-%Y") : "-"%></td>
                                                     <td style="text-align: center;">
                                                         <div class="btn-group">
-                                                            <%=link_to "Iniciar", {}, {:class => "btn btn-default"}%>
+                                                            <%=link_to "Iniciar", {:controller => :courses, :action => :init_course_dialog, :params => {:courseid => c.id}}, {:class => "btn btn-default"}%>
                                                             <%=link_to "Editar" ,{:controller => "courses", :action => "edit", :params => {:id => c.id}}, {:class => "btn btn-default"}%>
                                                             <%=link_to "Cancelar", {:controller => "courses", :action => "cancel_course", :params => {:id => c.id}}, {:class => "btn btn-default", method: :post,data: {confirm: "Estas seguro?"}}%>
                                                         </div>

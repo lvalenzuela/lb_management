@@ -49,7 +49,6 @@ class UsersController < ApplicationController
 	def user_profile
 		@user = current_user
 		@user_area_roles = get_user_area_roles(@user.id)
-		@disponibility = UserDisponibility.where("user_id = #{@user.id} and (end_date >= curdate() or end_date is null)")
 	end
 
 	def change_profile_picture
@@ -57,6 +56,58 @@ class UsersController < ApplicationController
 		user.avatar = params[:avatar]
 		user.save!
 		redirect_to :action => :user_profile
+	end
+
+	def my_calendar
+		@user = current_user
+		@availability = UserDisponibility.where(:user_id => @user.id)
+		all_courses = MoodleRoleAssignationV.where(:userid => @user.id).map{|c| c.courseid}
+		course_ids = MoodleCourseV.where(:moodleid => all_courses, :visible => 1).map{|c| c.moodleid}
+        moodle_sessions = MoodleCourseSessionV.joins("as mcs inner join moodle_course_vs as courses
+                                                on mcs.courseid = courses.moodleid").where("
+                                                mcs.courseid in (?)",course_ids).select("
+                                                                                        mcs.*,
+                                                                                        courses.coursename").order("courses.coursename")
+        gon.events = []
+    	moodle_sessions.each do |s|
+            #sesiones de los cursos asignados en moodle
+            gon.events << {
+                "title" => s.coursename,
+                "start" => s.session_date,
+                "allDay" => false,
+                "backgroundColor" => "#0073b7", #azul
+                "borderColor" => "#0073b7"
+            }
+        end
+        commerce_courses = Course.where(:main_teacher_id => @user.id, :moodleid => nil).map{|c| c.id}
+        comm_sessions = CourseSession.where(:commerce_course_id => commerce_courses)
+        comm_sessions.each do |cs|
+            gon.events << {
+                #sesiones de cursos del sistema que no se han registrado aun en moodle
+                "title" => Course.find(cs.commerce_course_id).coursename,
+                "start" => cs.startdatetime,
+                "allDay" => false,
+                "backgroundColor" => "#f39c12", #amarillo
+                "borderColor" => "#f39c12"
+            }
+        end
+	end
+
+	def my_courses
+		@filters = {}
+		@user = current_user
+		my_courses = MoodleRoleAssignationV.where(:userid => @user.id).map{|c| c.courseid}
+		if params[:filter]
+			if params[:filter][:show_hidden]
+				@courses = DashboardCoursesV.where(:courseid => my_courses)
+				@filters[:show_hidden] = true
+			else
+				@courses = DashboardCoursesV.where(:courseid => my_courses, :visible => 1)
+			end
+		else
+			@courses = DashboardCoursesV.where(:courseid => my_courses, :visible => 1)
+		end
+		@courses = @courses.order("courseid ASC")
 	end
 
 	private

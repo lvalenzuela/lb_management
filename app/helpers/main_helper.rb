@@ -1,5 +1,19 @@
 module MainHelper
 
+	def check_extra_time(disponibility, day)
+		extra_time = disponibility.select{|d| d.day_number == day}.first()
+		if extra_time.blank?
+			#si no hay nada registrado para el dia
+			return false
+		elsif extra_time.extra_start_time.nil?
+			#si hay registros para el dia, pero no horarios extra
+			return false
+		else
+			return true
+		end
+
+	end
+
 	def append_with_comma(item1,item2)
 		if item1
 			return item1+","+item2

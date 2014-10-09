@@ -56,7 +56,7 @@
                                 <%=render :partial => "requests_search_form", :locals => {:active => @active, :action => @previous_action ? @previous_action : action_name, :id => @area.id}%>
                             </div>
                             <div class="table-responsive">
-                                <%=render :partial => "area_manager_request_table", :locals => {:requests => @requests, :active => @active}%>
+                                <%=render :partial => "area_manager_request_table", :locals => {:requests => @requests, :active => @active, :areaid => @area.id}%>
                             </div>
                         </div><!-- /.col (RIGHT) -->
                     </div>

@@ -34,7 +34,7 @@
 	    				<%elsif @request.statusid == 1 && @request.receiverid == current_user.id%>
 	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Resuelto".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 4}}, {:class => "btn btn-primary btn-sm"}%>
 	    				<%elsif @request.statusid == 4 && @request.receiverid == current_user.id%>
-	    					<%=link_to "<i class='fa fa-mail-reply'></i> Volver a Enviar".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
+	    					<%=link_to "<i class='fa fa-mail-reply'></i> Marcar Como Pendiente".html_safe, {:controller => "requests", :action => "mark_solution" ,:params => {:id => @request.id, :statusid => 1}}, {:class => "btn btn-warning btn-sm"}%>
 	    				<%end%>
                 	</div>
                 	<div class="col-sm-2 pull-right">

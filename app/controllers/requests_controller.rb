@@ -173,11 +173,12 @@ class RequestsController < ApplicationController
 		@active = "manage"
 		@tags = RequestTag.where(:area_id => @area.id).order("created_at DESC")
 		@default_tag = RequestTag.new()
-		@receivers = receiver_list(default_area)
+		@receivers = receiver_list(@area.id)
+		@tag_categories = RequestTagCategory.all()
 	end
 
 	def create_request_tag
-		RequestTag.create(params.require(:request_tag).permit(:area_id, :tagname, :default_user_id))
+		RequestTag.create(request_tag_params)
 		redirect_to :action => :manage_area_requests, :id => params[:request_tag][:area_id]
 	end
 
@@ -186,13 +187,14 @@ class RequestsController < ApplicationController
 		@active = "manage"
 		@tags = RequestTag.where(:area_id => @area.id).order("created_at DESC")
 		@default_tag = RequestTag.find(params[:tagid])
-		@receivers = receiver_list(default_area)
+		@receivers = receiver_list(@area.id)
+		@tag_categories = RequestTagCategory.all()
 		render :manage_area_requests
 	end
 
 	def update_request_tag
 		t = RequestTag.find(params[:request_tag][:id])
-		t.update_attributes(params.require(:request_tag).permit(:tagname, :default_user_id))
+		t.update_attributes(request_tag_params)
 		redirect_to :action => :manage_area_requests, :id => params[:request_tag][:area_id]
 	end
 
@@ -307,8 +309,8 @@ class RequestsController < ApplicationController
 	    end
 	end
 
-	def tag_params
-		params.require(:tag).permit(:userid, :tagname)
+	def request_tag_params
+		params.require(:request_tag).permit(:tagname, :default_user_id)
 	end
 
 	def request_params

@@ -174,7 +174,7 @@ usuario
                 <%if user.system_role_id <= 2%>
                 <li class="treeview <%=activate_menu_item("dashboard", active_item)%>">
                     <a href="#">
-                        <i class="fa fa-dashboard fa-fw"></i> 
+                        <i class="fa fa-bar-chart-o fa-fw"></i> 
                         <span>Dashboard</span>
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
@@ -220,6 +220,23 @@ usuario
                     </ul>
                 </li>
                 <%end%>
+                <li class="treeview <%=activate_menu_item("user", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-dashboard fa-fw"></i> 
+                        <span>Panel de Usuario</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => :users, :action => :my_courses do%>
+                            <i class="fa fa-angle-double-right"></i> Mis Cursos
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => :users, :action => :my_calendar do%>
+                            <i class="fa fa-angle-double-right"></i> Mi Calendario
+                            <%end%>
+                        </li>
+                    </ul>
+                </li>
                 <li class="treeview <%=activate_menu_item("requests", active_item)%>">
                     <a href="#">
                         <i class="fa fa-folder-open-o fa-fw"></i> 

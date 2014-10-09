@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141008194337) do
+ActiveRecord::Schema.define(version: 20141009165932) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -445,7 +445,15 @@ ActiveRecord::Schema.define(version: 20141008194337) do
     t.datetime "updated_at"
   end
 
+  create_table "request_tag_categories", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "request_tags", force: true do |t|
+    t.integer  "category_id",     default: 1
     t.integer  "area_id"
     t.integer  "default_user_id"
     t.string   "tagname"

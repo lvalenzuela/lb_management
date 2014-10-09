@@ -114,15 +114,26 @@ class MainController < ApplicationController
         #se borran todas las disponibilidades previas para el usuario
         UserDisponibility.where(:user_id => params[:userid]).destroy_all
         for day in 1..6
-            if params[:enabled_day]["#{day}"]
+            new_disp = UserDisponibility.new()
+            new_disp.user_id = params[:userid]
+            new_disp.day_number = day
+            save_register = false #flag para guardar el registro
+
+            if params[:enabled_day] && params[:enabled_day]["#{day}"]
                 #Solo aquellos dias seleccionados son registrados
-                new_disp = UserDisponibility.new()
-                new_disp.user_id = params[:userid]
-                new_disp.day_number = day
-                new_disp.start_time = Time.parse(params[:start_time]["#{day}"])
+                new_disp.start_time = params[:start_time]["#{day}"]
                 new_disp.end_time = params[:end_time]["#{day}"]
+                save_register = true
+            end
+            if params[:extra_enabled] && params[:extra_enabled]["#{day}"]
+                #horas extras 
                 new_disp.extra_start_time = params[:extra_start_time]["#{day}"]
                 new_disp.extra_end_time = params[:extra_end_time]["#{day}"]
+                save_register = true
+            end
+            
+            if save_register
+                #si se guardo algun horario para el dia seleccionado
                 new_disp.save!
             end
         end

@@ -1,0 +1,61 @@
+<%= render "shared_partials/navigation_menu", :active_item => "user"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Mi Calendario
+        <small><%=@user.name%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Panel de Usuario</li>
+        <li class="active">Mi Calendario</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div calss="row">
+		<div class="col-xs-8">
+			<div class="box box-info">
+				<div class="box-body no-padding">
+					<div id="calendar"></div>
+				</div>
+				<div class="box-footer">
+                <table>
+                    <tr>
+                        <td><span class="label label-primary"><i class="fa fa-quare-o"></i></span>Cursos Moodle</td>
+                    </tr>
+                    <tr>
+                        <td><span class="label label-warning"><i class="fa fa-quare-o"></i></span>Cursos Summit [Aun no iniciados]</td>
+                    </tr>
+                </table>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Disponibilidad</h3>
+				</div>
+				<div class="box-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Día</th>
+								<th>Horario</th>
+								<th>Extra</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@availability.each do |av|%>
+							<tr>
+								<td><%=week_day(av.day_number)%></td>
+								<td><%=av.start_time ? l(av.start_time, :format => "%H:%M") : ""%> - <%=av.end_time ? l(av.end_time, :format => "%H:%M") : ""%></td>
+								<td><%=av.extra_start_time ? l(av.extra_start_time, :format => "%H:%M") : ""%> - <%=av.extra_end_time ? l(av.extra_end_time, :format => "%H:%M") : ""%></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

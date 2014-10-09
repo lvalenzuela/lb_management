@@ -30,6 +30,12 @@ Rails.application.routes.draw do
       post "update"
       post "change_status"
       post "cancel_course"
+      post "template_selector_options"
+      post "product_selector_options"
+      post "sessions_per_week_inputs"
+      #inicialización del curso
+      get "init_course_dialog"
+      #templates
       get "course_templates"
       get "new_template"
       post "create_template"
@@ -41,15 +47,13 @@ Rails.application.routes.draw do
       get "edit_session_types"
       post "create_session_type"
       post "update_session_type"
+      #detalles del curso
       get "assign_teacher"
       post "bind_course_teacher"
-      post "template_selector_options"
       get "course_students"
       post "create_student"
       post "update_student"
       get "enrolement_management"
-      post "product_selector_options"
-      post "sessions_per_week_inputs"
     end
   end
 
@@ -214,6 +218,9 @@ Rails.application.routes.draw do
       post 'login'
       get 'logout'
       get 'not_authorized'
+      #panel de usuarios
+      get "my_calendar"
+      get "my_courses"
     end
   end
 

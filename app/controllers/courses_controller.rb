@@ -118,9 +118,14 @@ class CoursesController < ApplicationController
     def assign_teacher
         @course = Course.find(params[:id])
         @week_session_info = CourseSessionWeekday.where(:course_id => @course.id).order("day_number ASC")
-        teacher_list = available_teachers_for_course(@week_session_info)
+        teacher_list = available_teachers_for_course(@week_session_info, false)
+        extra_teachers_list = available_teachers_for_course(@week_session_info, true)
 
+        #listado de profesores disponibles en horario normal
         @teachers = TeacherV.where(:id => teacher_list)
+        #listado de profesores disponibles en horario extra
+        @teachers_extra = TeacherV.where(:id => extra_teachers_list)
+
         gon.events = []
         if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
             #sesiones de la simulacion [cursos moodle]
@@ -192,6 +197,12 @@ class CoursesController < ApplicationController
         end
         student_list = CourseMember.where(:course_id => @course.id)
         @students = WebUser.where(:id => student_list.map{|s| s.web_user_id})
+    end
+
+    def init_course_dialog
+        @course = Course.find(params[:courseid])
+        #categoría para la creación de cursos es 2
+        @course_init_tasks = RequestTag.where(:category_id => 2)
     end
 
     def course_students
@@ -362,20 +373,35 @@ class CoursesController < ApplicationController
 
     private
 
-    def available_teachers_for_course(week_session_info)
+    def available_teachers_for_course(week_session_info, extra)
         desired_days = week_session_info.map{|ws| ws.day_number} #array de dias de clases
         #identificar a los profesores disponibles en las fechas correspondientes
-        selected_teachers = []
-        TeacherV.all().each do |t|
-            disp = UserDisponibility.where(:user_id => t.id).map{|u| u.day_number} #array de dias disponibles del profesor
-            if (desired_days - disp).empty?
-                #si la disponibilidad del profesor contiene
-                #a los dias de clases del curso
-                #se selecciona al profesor
-                selected_teachers << t.id
+        candidate_teachers = TeacherV.all().map{|t| t.id}
+        teachers_availability = UserDisponibility.all()
+        if extra
+            #revisar horarios extras
+            desired_days.each do |day|
+                teachers_availability = teachers_availability.where(:user_id => candidate_teachers)
+                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:day_number => day).first.session_start_hour}') between time(extra_start_time) and time(extra_end_time)").group("user_id")
+                candidate_teachers = available_teachers.map{|at| at.user_id} #listado de profesores que cumplieron las condiciones
             end
+            #cambio de nombre de la variable
+            #para que el concepto sea mas
+            #comprensible
+            available_teachers = candidate_teachers
+        else
+            #revisar horario normal
+            desired_days.each do |day|
+                teachers_availability = teachers_availability.where(:user_id => candidate_teachers)
+                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:day_number => day).first.session_start_hour}') between time(start_time) and time(end_time)").group("user_id")
+                candidate_teachers = available_teachers.map{|at| at.user_id} #listado de profesores que cumplieron las condiciones
+            end
+            #cambio de nombre de la variable
+            #para que el concepto sea mas
+            #comprensible
+            available_teachers = candidate_teachers
         end
-        return selected_teachers
+        return available_teachers
     end
 
     def web_user_params
