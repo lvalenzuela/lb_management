@@ -1,0 +1,144 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "user"%>
+
+<section class="content-header">
+    <h1>
+        Desempeño de Estudiantes	
+       	<small><%=@student_info.name%></small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Mis Cursos</li>
+    	<li><%=moodle_course_name(@course_grades.first().courseid)%></li>
+        <li class="active"><%=@student_info.name%></li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="col-xs-6">
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">Información General</h3>
+			</div>
+			<div class="box-body table-responsive no-padding">
+				<table class="table">
+					<tbody>
+						<tr>
+							<th>Nombre</th>
+							<td><%=@student_info.name%></td>
+						</tr>
+						<tr>
+							<th>Correo</th>
+							<td><%=@student_info.username%></td>
+						</tr>
+						<tr>
+							<th>Institución</th>
+							<td><%=@student_info.institution%></td>
+						</tr>
+						<tr>
+							<th>Departamento</th>
+							<td><%=@student_info.department%></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-6 pull-right">
+		<div class="box box-warning">
+			<div class="box-header">
+				<h3 class="box-title">Evaluaciones: <%=moodle_course_name(@course_grades.first().courseid)%></h3>
+			</div>
+			<div class="box-body table-responsive transversal-column">
+				<table class="table table-striped">
+					<tbody>
+						<%@grade_categories.each do |cat|%>
+							<%category = nil%>
+							<%@course_grades.where(:categoryid => cat.categoryid).each do |grade|%>
+								<%if grade.itemname.nil?%>
+									<%category = grade%>
+								<%else%>
+								<tr>
+									<th><%=grade.categoryname%></th>
+									<td><%=grade.itemname%></td>
+									<td><%=dashboard_grade_parser(grade.finalgrade,grade.gradetype)%></td>
+								</tr>
+								<%end%>
+							<%end%>
+							<!-- Categoria al final -->
+							<tr>
+								<th colspan="2" style="text-align: center; font-size: 1.2em;"><%=category.categoryname%></th>
+								<td style="center; font-size: 1.2em;"><span class="badge <%=grade_badge_class(category.finalgrade,category.gradetype)%>"><%=dashboard_grade_parser(category.finalgrade,category.gradetype)%></span></td>
+							</tr>
+						<%end%>
+						<tr>
+							<th colspan="2" style="text-align: center; font-size: 1.2em;">Promedio Curso</th>
+							<td style="center; font-size: 1.2em;"><span class="badge <%=grade_badge_class(@final_grade.finalgrade,@final_grade.gradetype)%>"><%=dashboard_grade_parser(@final_grade.finalgrade, @final_grade.gradetype)%></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">Otros Cursos de <%=@student_info.name%></h3>
+			</div>
+			<div class="box-body table-responsive no-padding">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nombre Curso</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%@other_courses.each do |o|%>
+						<tr>
+							<td><%=o.courseid%></td>
+							<td><%=link_to moodle_course_name(o.courseid), :controller => :users, :action => :show_course, :params => {:courseid => o.courseid}%></td>
+						</tr>
+						<%end%>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="box box-warning">
+			<div class="box-header">
+				<h3 class="box-title">Asistencias</h3>
+			</div>
+			<div class="box-body table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Fecha</th>
+							<th>Asistencia</th>
+							<th>Trabajo en Clases</th>
+							<th>Comportamiento</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%@student_attendance.each do |att|%>
+						<tr>
+							<td><%=l(att.sessiondate, :format => "%d / %b / %Y")%></td>
+							<td><%=translate_attendance_acronym(att.acronym).html_safe%></td>
+							<td><%=inclass_work(att.inclasswork).html_safe%></td>
+							<td><%=inclass_attitude(att.attitude).html_safe%></td>
+						</tr>
+						<%end%>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+			</div>
+		</div>
+	</div>
+</section>

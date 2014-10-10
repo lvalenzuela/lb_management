@@ -31,31 +31,27 @@
 					</div>
 				</div>
 				<div class="box-body">
-					<table class="table table-hover table-striped">
+					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th style="width: 50px;">ID</th>
-								<th>Nombre</th>
-								<th style="width: 100px; text-align: center;">Prom. Notas</th>
-								<th style="width: 100px; text-align: center;">Reprobando</th>
-								<th style="width: 140px; text-align: center;">Prom. Asistencia</th>
-								<th style="width: 100px; text-align: center;">Bajo <%=min_attendance%>%</th>
-								<th style="width: 100px; text-align: center;">Sesiones Registradas</th>
-								<th style="width: 100px; text-align: center;">Total Sesiones</th>
-								<th style="width: 180px;">Progreso</th>
+								<th>Curso</th>
+								<th style="width: 120px; text-align: center;">Sesiones Registradas</th>
+								<th style="width: 120px; text-align: center;">Total Sesiones</th>
+								<th style="width: 120px; text-align: center;">Asistencia Bajo <%=min_attendance%>%</th>
+								<th style="width: 120px; text-align: center;">Alumnos Reprobando</th>
+								<th>Progreso</th>
 							</tr>
 						</thead>
 						<tbody>
-						<%@courses.each do |c|%>
+							<%@courses.each do |c|%>
 							<tr>
-								<td><%=c.courseid%></td>
-								<td><%=link_to c.coursename, :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
-								<td style="text-align: center;"><%=dashboard_grade_parser(c.mean_grade, c.gradetype.to_i)%></td>
-								<td style="text-align: center;"><%=failing_grades_students(c)%></td>
-								<td style="text-align: center;"><%=number_with_precision(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0, :precision => 1)%>%</td>
-								<td style="text-align: center;"><%=failing_attendance_students(c)%></td>
-								<td style="text-align: center;"><%=c.current_taken_sessions.to_s+" de "+c.current_booked_sessions.to_s%></td>
+								<td><%=link_to c.coursename, :controller => :users, :action => :show_course, :params => {:courseid => c.courseid}%></td>
+								<td style="text-align: center;">
+									<%=c.current_taken_sessions%> de <%=c.current_booked_sessions%>
+								</td>
 								<td style="text-align: center;"><%=c.total_sessions%></td>
+								<td style="text-align: center;"><%=failing_attendance_students(c)%></td>
+								<td style="text-align: center;"><%=failing_grades_students(c)%></td>
 								<td>
 									<div class="progress xs progress-striped active">
 										<div class="<%=course_current_progress_bar(c)%>" style="width: <%=progress_bar_pct(c.current_taken_sessions,c.total_sessions)%>;"></div>
@@ -65,7 +61,7 @@
 									</div>
 								</td>
 							</tr>
-						<%end%>
+							<%end%>
 						</tbody>
 					</table>
 				</div>

@@ -221,6 +221,12 @@ Rails.application.routes.draw do
       #panel de usuarios
       get "my_calendar"
       get "my_courses"
+      get "show_course"
+      get "show_student"
+      #observaciones en los cursos
+      get "edit_teacher_course_observation"
+      post "update_teacher_course_observation"
+      post "create_teacher_course_observation"
     end
   end
 

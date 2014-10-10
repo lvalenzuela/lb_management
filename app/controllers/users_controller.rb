@@ -96,7 +96,7 @@ class UsersController < ApplicationController
 	def my_courses
 		@filters = {}
 		@user = current_user
-		my_courses = MoodleRoleAssignationV.where(:userid => @user.id).map{|c| c.courseid}
+		my_courses = MoodleRoleAssignationV.where(:userid => @user.id).group(:courseid).map{|c| c.courseid}
 		if params[:filter]
 			if params[:filter][:show_hidden]
 				@courses = DashboardCoursesV.where(:courseid => my_courses)
@@ -107,10 +107,83 @@ class UsersController < ApplicationController
 		else
 			@courses = DashboardCoursesV.where(:courseid => my_courses, :visible => 1)
 		end
-		@courses = @courses.order("courseid ASC")
+	end
+
+	def show_course
+		if check_own_course(params[:courseid])
+			@course = MoodleCourseV.find_by_moodleid(params[:courseid])
+			@students_info = StudentGradesReport.joins("as sgr
+							inner join student_general_attendance_reports as sgar
+							on sgr.userid = sgar.userid and sgr.courseid = sgar.courseid 
+							and sgr.created_at = curdate() and sgar.created_at = curdate()
+							and sgr.courseid = #{@course.moodleid}").select("
+							sgr.userid,
+							sgr.courseid,
+							sgr.finalgrade,
+							sgr.gradetype,
+							sgar.present_sessions,
+							sgar.absent_sessions,
+							sgar.total_sessions,
+							sgar.created_at").where("sgr.categoryname = '?' and sgr.itemname is null").group("sgr.userid").order("sgr.courseid ASC")
+			@user_roles = MoodleRoleAssignationV.where(:courseid => @course.moodleid).order("roleid ASC")
+			@attendance_reports = CourseAttendanceReport.where("courseid = #{@course.moodleid} and created_at = curdate()").first()
+			@course_grade = CourseGradesReport.where("courseid = #{@course.moodleid} and created_at = curdate() and categoryname = '?' and itemname is null").first()
+			@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
+			#obtencion del contenido de las sesiones
+			@taken_sessions = StudentAttendanceReport.where("courseid = #{@course.moodleid} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
+			@course_observations = CourseObservation.where(:course_id => @course.moodleid)
+		else
+			redirect_to :action => :my_courses
+		end
+	end
+
+	def show_student
+		if check_own_course(params[:courseid])
+			@course_grades = StudentGradesReport.where("userid = #{params[:studentid]} and courseid = #{params[:courseid]} and created_at = curdate()").order("sortorder ASC")
+			@grade_categories = @course_grades.where("categoryname != '?' and itemname is null")
+			@general_attendance = StudentGeneralAttendanceReport.where("userid = #{params[:studentid]} and courseid = #{params[:courseid]} and created_at = curdate()")
+			@student_info = UserReport.select("userid, firstname, lastname, concat(firstname, ' ', lastname) as name, institution, department, username").where(:userid => params[:studentid]).first()
+			@other_courses = StudentGradesReport.select("distinct(courseid)").where("userid = #{@student_info.userid} and courseid != #{params[:courseid]} and created_at = curdate()")
+			@final_grade = @course_grades.where(:categoryname => "?", :itemname => nil).first()
+			@student_attendance = StudentAttendanceReport.where("courseid = #{params[:courseid]} and userid = #{params[:studentid]} and created_at = curdate()" ).order("sessionid ASC")
+		else
+			redirect_to :action => :my_courses
+		end
+	end
+
+	def create_teacher_course_observation
+		c = CourseObservation.create(course_observation_params)
+		redirect_to :action => :show_course, :courseid => c.course_id
+	end
+
+	def update_teacher_course_observation
+		c_obs = CourseObservation.find(params[:course_observation][:id])
+		c_obs.update_attributes(course_observation_params)
+		redirect_to :action => :show_course, :courseid => c_obs.course_id
+	end
+
+	def edit_teacher_course_observation
+		if check_own_course(params[:courseid])
+			@course_obs = CourseObservation.where(:id => params[:id], :course_id => params[:courseid]).first()
+		else
+			redirect_to :action => :my_courses
+		end
 	end
 
 	private
+
+	def course_observation_params
+		params.require(:course_observation).permit(:course_id, :user_id, :subject, :message, :attachment)
+	end
+
+	def check_own_course(course)
+		my_courses = MoodleRoleAssignationV.where(:userid => current_user.id).group(:courseid).map{|c| c.courseid}
+		if my_courses.include?(course.to_i)
+			return true
+		else
+			return false
+		end
+	end
 
 	def user_disponibility_params
 		params.require(:user_disponibility).permit(:user_id, :day_number, :start_time, :end_time)

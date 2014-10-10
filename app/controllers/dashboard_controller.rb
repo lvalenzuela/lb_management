@@ -48,11 +48,6 @@ class DashboardController < ApplicationController
 		@course_grade = CourseGradesReport.where("courseid = #{params[:id]} and created_at = curdate() and categoryname = '?' and itemname is null").first()
 		@course = MoodleCourseV.find_by_moodleid(params[:id])
 		@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
-		if @template_sessions.blank?
-			@template_id = nil
-		else
-			@template_id = @template_sessions.first().course_template_id
-		end
 		#obtencion del contenido de las sesiones
 		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
 		@course_observations = CourseObservation.where(:course_id => params[:id])
