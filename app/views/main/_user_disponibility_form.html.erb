@@ -135,14 +135,14 @@
 					<%#el registro existe%>
 					<div class="row">
 						<div class="col-xs-2">
-							<%=check_box_tag "enabled_day[#{day}]", true, true, {:id => "enabler_#{day}"}%>
+							<%=check_box_tag "enabled_day[#{day}]", true, check_disponibility(disponibility, day), {:id => "enabler_#{day}"}%>
 							<label><%=week_day(day)%></label>
 						</div>
 						<div class="col-xs-5">
 							<div class="col-xs-6">
 								<div class="form-group bootstrap-timepicker">
 									<div class="input-group">
-										<%=text_field_tag "start_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().start_time, :format => "%H:%M"), {:class => "form-control inputs_#{day}", :id => "start_timepicker_#{day}"}%>
+										<%=text_field_tag "start_time[#{day}]", check_disponibility(disponibility, day) ? l(disponibility.select{|d| d.day_number == day}.first().start_time, :format => "%H:%M") : nil, {:class => "form-control inputs_#{day}", :id => "start_timepicker_#{day}", :disabled => check_disponibility(disponibility,day) ? false : true}%>
 			                            <div class="input-group-addon">
 			                                <i class="fa fa-clock-o"></i>
 			                            </div>
@@ -152,7 +152,7 @@
 							<div class="col-xs-6">
 								<div class="form-group bootstrap-timepicker">
 									<div class="input-group">
-										<%=text_field_tag "end_time[#{day}]", l(disponibility.select{|d| d.day_number == day}.first().end_time, :format => "%H:%M") , {:class => "form-control inputs_#{day}", :id => "end_timepicker_#{day}"}%>
+										<%=text_field_tag "end_time[#{day}]", check_disponibility(disponibility, day) ? l(disponibility.select{|d| d.day_number == day}.first().end_time, :format => "%H:%M") : nil , {:class => "form-control inputs_#{day}", :id => "end_timepicker_#{day}", :disabled => check_disponibility(disponibility,day) ? false : true}%>
 			                            <div class="input-group-addon">
 			                                <i class="fa fa-clock-o"></i>
 			                            </div>

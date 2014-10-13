@@ -6,17 +6,15 @@ class CoursesController < ApplicationController
     def index
         case params[:opt]
         when "ongoing"
-            c = Course.where(:course_status_id => 4).order("start_date ASC")
+            @courses = Course.where(:course_status_id => 4).order("start_date ASC")
             @active = "ongoing"
         when "canceled"
-            c = Course.where(:course_status_id => 3).order("start_date ASC")
+            @courses = Course.where(:course_status_id => 3).order("start_date ASC")
             @active = "canceled"
         else
-    	   c = Course.where(:course_status_id => [1,2]).order("start_date ASC")
+    	    @courses = Course.where(:course_status_id => [1,2]).order("start_date ASC")
            @active = "staged"
         end
-        @courses = c.page(params[:page]).per(10)
-        @statuses = CourseStatus.all()
     end
 
     def template_selector_options
@@ -127,6 +125,19 @@ class CoursesController < ApplicationController
         @teachers_extra = TeacherV.where(:id => extra_teachers_list)
 
         gon.events = []
+
+        #sesiones del nuevo curso
+        c_sessions = CourseSession.where(:commerce_course_id => @course.id)
+        c_sessions.each do |cs|
+            gon.events << {
+                "title" => @course.coursename,
+                "start" => cs.startdatetime,
+                "allDay" => false,
+                "backgroundColor" => "#0073b7",#azul
+                "borderColor" => "#0073b7"
+            }
+        end
+
         if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
             #sesiones de la simulacion [cursos moodle]
             @simulated = TeacherV.find(params[:teacherid])
@@ -151,7 +162,8 @@ class CoursesController < ApplicationController
                     "borderColor" => "#f39c12"
                 }
             end
-
+            @moodle_collisions = find_collisions(t_sessions.map{|moodle| moodle.session_date}, c_sessions.map{|new_course| new_course.startdatetime})
+            @summit_collisions = find_collisions(s_sessions.map{|summit| summit.startdatetime}, c_sessions.map{|new_course| new_course.startdatetime})
         end
         if @course.main_teacher_id
             #sesiones del profesor que ya tiene el curso asignado
@@ -166,18 +178,9 @@ class CoursesController < ApplicationController
                 }
             end
         end
-        #sesiones del curso
-        c_sessions = CourseSession.where(:commerce_course_id => @course.id)
-        c_sessions.each do |cs|
-            gon.events << {
-                "title" => @course.coursename,
-                "start" => cs.startdatetime,
-                "allDay" => false,
-                "backgroundColor" => "#0073b7",#azul
-                "borderColor" => "#0073b7"
-            }
-        end
+
         @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
+
     end
 
     def bind_course_teacher
@@ -197,6 +200,7 @@ class CoursesController < ApplicationController
         end
         student_list = CourseMember.where(:course_id => @course.id)
         @students = WebUser.where(:id => student_list.map{|s| s.web_user_id})
+        @course_statuses = CourseStatus.all()
     end
 
     def init_course_dialog
@@ -281,7 +285,24 @@ class CoursesController < ApplicationController
     end
 
     def change_status
-
+        c = Course.find(params[:id])
+        case params[:status]
+        when "cancel"
+            c.course_status_id = 3
+            c.save!
+        when "initiate"
+            c.course_status_id = 4
+            c.save!
+        else
+            #el estado se asigna automaticamente
+            if c.current_students_qty == 0
+                c.course_status_id = 1
+                c.save
+            else
+                c.count_students
+            end
+        end
+        redirect_to :action => :index
     end
 
     def cancel_course
@@ -373,6 +394,22 @@ class CoursesController < ApplicationController
 
     private
 
+    def find_collisions(fixed_sessions, new_course_sessions)
+        collisions = []
+        fixed_sessions.each do |fs|
+            new_course_sessions.each do |ncs|
+                if fs.strftime("%d-%m-%Y") == ncs.strftime("%d-%m-%Y")
+                    #las fechas coinciden
+                    if (fs.hour - ncs.hour).abs < 2
+                        #las horas coinciden
+                        collisions << fs
+                    end
+                end
+            end
+        end
+        return collisions
+    end
+
     def available_teachers_for_course(week_session_info, extra)
         desired_days = week_session_info.map{|ws| ws.day_number} #array de dias de clases
         #identificar a los profesores disponibles en las fechas correspondientes
@@ -423,7 +460,7 @@ class CoursesController < ApplicationController
 
     def teacher_summit_courses_sessions(teacherid)
         #cursos que no esten asociados con un curso en moodle
-        course_list = Course.where(:main_teacher_id => teacherid, :moodleid => nil).map{|c| c.id}
+        course_list = Course.where(:main_teacher_id => teacherid, :moodleid => nil, :course_status_id => [1,2,4]).map{|c| c.id}
         return CourseSession.where(:commerce_course_id => course_list)
     end
 

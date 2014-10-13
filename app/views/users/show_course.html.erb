@@ -57,8 +57,6 @@
 								<th style="text-align: center;">Sesión</th>
 								<th style="text-align: center;">Tipo de Clase</th>
 								<th style="text-align: center;">Contenido</th>
-								<th style="text-align: center;">Pag.</th>
-								<th style="text-align: center;">Contenido Cubierto</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -67,8 +65,6 @@
 								<td style="text-align: center;"><%=ts.session_number%></td>
 								<td style="text-align: center;"><%=get_session_type(ts.session_type_id)%></td>
 								<td style="text-align: center;"><%=ts.contents%></td>
-								<td style="text-align: center;"><%=ts.page%></td>
-								<td style="text-align: center;"><%=taken_session_content(ts.session_number,@taken_sessions)%></td>
 							</tr>
 							<%end%>
 						</tbody>
@@ -133,6 +129,12 @@
 											<%else%>
 											-
 											<%end%>
+										</td>
+									</tr>
+									<tr>
+										<th>Último Reporte</th>
+										<td>
+										<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => @institution, :courseid => @course.moodleid, :format => "pdf"}}, :target => "_blank" %>
 										</td>
 									</tr>
 								</tbody>

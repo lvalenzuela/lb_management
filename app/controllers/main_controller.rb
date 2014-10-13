@@ -95,7 +95,7 @@ class MainController < ApplicationController
                 "borderColor" => "#0073b7"
             }
         end
-        @commerce_courses = Course.where(:main_teacher_id => @teacher.id, :moodleid => nil)
+        @commerce_courses = Course.where(:main_teacher_id => @teacher.id, :moodleid => nil, :course_status_id => [1,2,4])
         comm_sessions = CourseSession.where(:commerce_course_id => @commerce_courses.map{|c| c.id})
         comm_sessions.each do |cs|
             calendar_events << {

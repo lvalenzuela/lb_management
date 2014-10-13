@@ -101,7 +101,11 @@ class ReportsController < ApplicationController
 
 	def course_report
 		course = MoodleCourseV.find_by_moodleid(params[:courseid])
-		date = last_report_date
+		if params[:date]
+			date = Date.parse(params[:date])
+		else
+			date = last_report_date
+		end
 		respond_to do |format|
 			format.html
 			format.pdf do

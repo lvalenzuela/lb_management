@@ -1,5 +1,17 @@
 module MainHelper
 
+	def check_disponibility(disponibility, day)
+		disp = disponibility.select{|d| d.day_number == day}.first()
+
+		if disp.blank?
+			return false
+		elsif disp.start_time.nil?
+			return false
+		else
+			return true
+		end
+	end
+
 	def check_extra_time(disponibility, day)
 		extra_time = disponibility.select{|d| d.day_number == day}.first()
 		if extra_time.blank?

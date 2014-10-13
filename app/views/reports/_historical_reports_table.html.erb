@@ -19,7 +19,7 @@
                     <td><%=report.coursename%></td>
                     <td><%=report.alumnos%></td>
                     <td><%=report.created_at.strftime("%d-%m-%Y")%></td>
-                    <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "group_report", :params => {:institution => report.institution, :fullname => report.coursename, :date => report.created_at ,:filter => 1, :format => "pdf"}}, :target => "_blank" %></td>
+                    <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => report.institution, :courseid => report.courseid, :date => report.created_at, :format => "pdf"}}, :target => "_blank" %></td>
                 </tr>
                <%end%>
            <%end%>

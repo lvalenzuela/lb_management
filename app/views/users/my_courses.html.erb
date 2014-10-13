@@ -16,7 +16,7 @@
 		<div class="col-xs-12">
 			<div class="box box-info">
 				<div class="box-header">
-					<h3 class="box-title">Cursos de <%=@user.name%></h3>
+					<h3 class="box-title">Cursos Activos: <%=@user.name%></h3>
 					<div class="box-tools">
 						<div class="pull-right">
 							<%=form_tag my_courses_users_path, :id => "filter-form", :method => :get do%>
@@ -34,6 +34,7 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
+								<th style="width: 40px; text-align: center;">ID</th>
 								<th>Curso</th>
 								<th style="width: 120px; text-align: center;">Sesiones Registradas</th>
 								<th style="width: 120px; text-align: center;">Total Sesiones</th>
@@ -45,6 +46,7 @@
 						<tbody>
 							<%@courses.each do |c|%>
 							<tr>
+								<td style="text-align: center;"><%=c.courseid%></td>
 								<td><%=link_to c.coursename, :controller => :users, :action => :show_course, :params => {:courseid => c.courseid}%></td>
 								<td style="text-align: center;">
 									<%=c.current_taken_sessions%> de <%=c.current_booked_sessions%>

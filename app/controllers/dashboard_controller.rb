@@ -51,6 +51,7 @@ class DashboardController < ApplicationController
 		#obtencion del contenido de las sesiones
 		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
 		@course_observations = CourseObservation.where(:course_id => params[:id])
+		@institution = StudentV.find(@students_info.first().userid).institution
 	end
 
 	def create_course_observation
@@ -72,8 +73,8 @@ class DashboardController < ApplicationController
 		@course_grades = StudentGradesReport.where("userid = #{params[:studentid]} and courseid = #{params[:courseid]} and created_at = curdate()").order("sortorder ASC")
 		@grade_categories = @course_grades.where("categoryname != '?' and itemname is null")
 		@general_attendance = StudentGeneralAttendanceReport.where("userid = #{params[:studentid]} and courseid = #{params[:courseid]} and created_at = curdate()")
-		@student_info = UserReport.select("userid, firstname, lastname, concat(firstname, ' ', lastname) as name, institution, department, username").where(:userid => params[:studentid]).first()
-		@other_courses = StudentGradesReport.select("distinct(courseid)").where("userid = #{@student_info.userid} and courseid != #{params[:courseid]} and created_at = curdate()")
+		@student_info = StudentV.find(params[:studentid])
+		@other_courses = StudentGradesReport.select("distinct(courseid)").where("userid = #{@student_info.id} and courseid != #{params[:courseid]} and created_at = curdate()")
 		@final_grade = @course_grades.where(:categoryname => "?", :itemname => nil).first()
 		@student_attendance = StudentAttendanceReport.where("courseid = #{params[:courseid]} and userid = #{params[:studentid]} and created_at = curdate()" ).order("sessionid ASC")
 	end

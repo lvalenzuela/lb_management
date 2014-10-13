@@ -18,6 +18,12 @@
             <div class="box box-info">
                 <div class="box-header">
                     <h3 class="box-title">Información General: <%=@course.coursename%></h3>
+                    <div class="box-tools">
+                        <div class="btn-group pull-right">
+                            <%=link_to "<i class='fa fa-calendar'></i> Ver Calendario".html_safe, {:controller => :courses, :action => :assign_teacher, :params => {:id => @course.id}}, {:class => "btn btn-default"}%>
+                            <%=link_to "<i class='fa fa-edit'></i> Editar".html_safe, {:controller => :courses, :action => :edit, :params => {:id => @course.id}}, {:class => "btn btn-default"}%>
+                        </div>
+                    </div>
                 </div>
                 <div class="box-body">
                     <div class="row">
