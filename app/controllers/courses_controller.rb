@@ -5,9 +5,9 @@ class CoursesController < ApplicationController
 
     def index
         case params[:opt]
-        when "ongoing"
+        when "production"
             @courses = Course.where(:course_status_id => 4).order("start_date ASC")
-            @active = "ongoing"
+            @active = "production"
         when "canceled"
             @courses = Course.where(:course_status_id => 3).order("start_date ASC")
             @active = "canceled"
@@ -302,7 +302,7 @@ class CoursesController < ApplicationController
                 c.count_students
             end
         end
-        redirect_to :action => :index
+        redirect_to :action => :index, :opt => params[:active]
     end
 
     def cancel_course

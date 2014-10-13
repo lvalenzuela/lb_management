@@ -1,10 +1,10 @@
 <div id="hist-reports-container">
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Curso</th>
-                <th>Alumnos</th>
-                <th>Fecha Reporte</th>
+                <th style="width: 80px; text-align: center;">Alumnos</th>
+                <th style="width: 120px; text-align: center;">Fecha Reporte</th>
                 <th>Generar</th>
             </tr>
         </thead>
@@ -17,8 +17,8 @@
                 <%reports.each do |report|%>
                 <tr>
                     <td><%=report.coursename%></td>
-                    <td><%=report.alumnos%></td>
-                    <td><%=report.created_at.strftime("%d-%m-%Y")%></td>
+                    <td style="text-align:center;"><%=report.alumnos%></td>
+                    <td><%=report.created_at.strftime("%d / %b / %Y")%></td>
                     <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => report.institution, :courseid => report.courseid, :date => report.created_at, :format => "pdf"}}, :target => "_blank" %></td>
                 </tr>
                <%end%>

@@ -16,8 +16,8 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-                <li class="<%=activate_menu_item("ongoing",@active)%>">
-                    <%=link_to "Cursos en Desarrollo", {:controller => :courses, :action => :index, :params => {:opt => "ongoing"}}%>
+                <li class="<%=activate_menu_item("production",@active)%>">
+                    <%=link_to "Cursos en Desarrollo", {:controller => :courses, :action => :index, :params => {:opt => "production"}}%>
                 </li>
                 <li class="<%=activate_menu_item("staged",@active)%>">
                     <%=link_to "Cursos en Venta", {:controller => :courses, :action => :index, :params => {:opt => "staged"}}%>
@@ -36,32 +36,7 @@
                                         <h3 class="box-title">Listado de Cursos</h3>
                                     </div>
                                     <div class="box-body table-responsive">
-                                        <table class="table table-striped table-bordered" id="courses-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre Curso</th>
-                                                    <th style="width: 120px;">Modalidad</th>
-                                                    <th style="width: 80px;">Tipo</th>
-                                                    <th style="width: 80px;">Alumnos</th>
-                                                    <th style="width: 120px;">Fecha Inicio</th>
-                                                    <th style="width: 60px; text-align: center;">Ver</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <%@courses.each do |c|%>
-                                                <tr>
-                                                    <td><%=c.coursename%></td>
-                                                    <td><%=get_course_mode_label(c.mode)%></td>
-                                                    <td><%=get_course_type(c.course_type_id)%></td>
-                                                    <td><%=c.current_students_qty%> de <%=c.students_qty%></td>
-                                                    <td><%=c.start_date ? c.start_date.strftime("%d-%m-%Y") : "-"%></td>
-                                                    <td style="text-align: center;">
-                                                        <%=link_to "<i class='fa fa-eye fa-large'></i>".html_safe, {:controller => "courses", :action => "show", :params => {:id => c.id}}, {:class => "btn btn-default"}%>
-                                                    </td>
-                                                </tr>
-                                                <%end%>
-                                            </tbody>
-                                        </table>
+                                        <%=render :partial => "summit_course_list", :locals => {:active => @active, :courses => @courses}%>
                                     </div>
                                     <div class="box-footer clearfix">
                                         <div class="pull-right">
@@ -76,8 +51,3 @@
         </div>
     </div>
 </section>
-<script type="text/javascript">
-    $(document).on('page:change', function () {
-        $("#courses-table").dataTable();
-    });
-</script>

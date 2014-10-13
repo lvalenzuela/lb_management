@@ -54,7 +54,7 @@ class ReportsController < ApplicationController
 		else
 			courselist = UserReport.select("courseid, coursename, count(distinct created_at) as reportnum").group("courseid")
 		end
-		@courses = courselist.page(params[:page]).per(10)
+		@courses = courselist
 		@reports = nil #UserReport.select("*, count(distinct userid) as alumnos").group("courseid, created_at")
 	end	
 

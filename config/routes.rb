@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       post "create"
       get "edit"
       post "update"
-      post "change_status"
+      get "change_status"
       post "cancel_course"
       post "template_selector_options"
       post "product_selector_options"
