@@ -79,7 +79,7 @@ class UsersController < ApplicationController
                 "borderColor" => "#0073b7"
             }
         end
-        commerce_courses = Course.where(:main_teacher_id => @teacher.id, :moodleid => nil, :course_status_id => [1,2,4]).map{|c| c.id}
+        commerce_courses = Course.where(:main_teacher_id => @user.id, :moodleid => nil, :course_status_id => [1,2,4]).map{|c| c.id}
         comm_sessions = CourseSession.where(:commerce_course_id => commerce_courses)
         comm_sessions.each do |cs|
             gon.events << {
