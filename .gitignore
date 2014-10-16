@@ -20,3 +20,6 @@
 /config/secrets.yml
 /config/environments/production.erb
 /config/environments/development.erb
+
+#ignorar archivos adjuntos
+/public/system/*
