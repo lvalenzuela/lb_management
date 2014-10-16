@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       get "courses_list"
       post "courses_list"
       get "course"
+      get "generate_detailed_course_report"
       get "student"
       get "teachers_list"
       post "teachers_list"

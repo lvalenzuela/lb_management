@@ -135,7 +135,7 @@
 										<tr>
 											<th>Último Reporte</th>
 											<td>
-											<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => @institution, :courseid => @course.moodleid, :format => "pdf"}}, :target => "_blank" %>
+											<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :dashboard, :action => :generate_detailed_course_report, :params => {:courseid => @course.moodleid, :institution => @institution,:format => "pdf"}}, :target => "_blank" %>
 											</td>
 										</tr>
 									</tr>

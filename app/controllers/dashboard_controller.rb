@@ -54,6 +54,17 @@ class DashboardController < ApplicationController
 		@institution = StudentV.find(@students_info.first().userid).institution
 	end
 
+	def generate_detailed_course_report
+		course = MoodleCourseV.find_by_moodleid(params[:courseid])
+
+		respond_to do |format|
+			format.pdf do
+				pdf = DetailedCourseReportPdf.new(course,params[:institution],view_context)
+				send_data pdf.render, :filename => course.coursename+"_test.pdf", :type => "application/pdf"
+			end
+		end
+	end
+
 	def create_course_observation
 		c = CourseObservation.create(course_observation_params)
 		redirect_to :action => :course, :id => c.course_id
