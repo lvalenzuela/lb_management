@@ -1,5 +1,19 @@
 module DashboardHelper
 
+	def moodle_course_role(user_id, course_id)
+		role = MoodleRoleAssignationV.where(:courseid => course_id, :userid => user_id).first()
+		if role.blank?
+			return ""
+		else
+			return role.rolename
+		end
+	end
+
+	def count_teacher_courses(teacher_id)
+		raw_courses = MoodleRoleAssignationV.where(:userid => teacher_id).group(:courseid).map{|rc| rc.courseid}
+		return DashboardCoursesV.where(:courseid => raw_courses).count(:courseid)
+	end
+
 	def inclass_attitude(attitude)
 		case attitude
 		when 1

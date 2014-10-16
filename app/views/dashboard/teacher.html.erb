@@ -41,6 +41,7 @@
 					<thead>
 						<tr>
 							<th>Curso</th>
+							<th style="width: 140px;">Rol</th>
 							<th style="width: 120px; text-align: center;">Sesiones Registradas</th>
 							<th style="width: 120px; text-align: center;">Total Sesiones</th>
 							<th style="width: 120px; text-align: center;">Asistencia Bajo <%=min_attendance%>%</th>
@@ -52,6 +53,7 @@
 						<%@courses.each do |c|%>
 						<tr>
 							<td><%=link_to c.coursename, :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
+							<td><%=moodle_course_role(@user.id, c.courseid)%></td>
 							<td style="text-align: center;">
 								<%=c.current_taken_sessions%> de <%=c.current_booked_sessions%>
 							</td>

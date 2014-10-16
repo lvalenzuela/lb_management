@@ -1,0 +1,65 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Configuración de Creación de Cursos
+        <small>Configuración de Cursos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li class="active">Configuración de Creación de Cursos</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Tareas para Creación de Cursos</h3>
+					<div class="box-tools">
+						<%=link_to "Nueva Tarea", {:controller => :main, :action => :new_course_creation_tag}, {:class => "btn btn-default pull-right"}%>
+					</div>
+				</div>
+				<div class="box-body">
+					<p>Las siguientes tareas corresponden al listado de tareas a completar al momento de iniciar un curso en Longbourn Institute.</p>
+					<div class="row">
+						<div class="col-xs-10 col-xs-offset-1">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Tarea</th>
+										<th>Area de Destino</th>
+										<th>Usuario Responsable</th>
+										<th style="text-align:center;">Editar</th>
+										<th style="text-align:center;">Eliminar</th>
+										<th style="text-align:center;">Vista Previa</th>
+									</tr>
+								</thead>
+								<tbody>
+									<%@request_tags.each do |rt|%>
+									<tr>
+										<td><%=rt.tagname%></td>
+										<td><%=get_areaname(rt.area_id)%></td>
+										<td><%=get_username(rt.default_user_id)%></td>
+										<td style="text-align:center;"><%=link_to "<i class='fa fa-edit fa-lg'></i>".html_safe, {:controller => :main, :action => :edit_course_creation_tag, :params => {:tagid => rt.id}}, {:class => "btn btn-default"}%>
+										</td>
+										<td style="text-align:center;">
+											<%=link_to "<i class='fa fa-times fa-lg'></i>".html_safe, {:controller => :main, :action => :delete_course_creation_tag}, {:class => "btn btn-default", :method => :delete}%>
+										</td>
+										<td style="text-align:center;">
+											<%=link_to "<i class='fa fa-eye fa-lg'></i>".html_safe, {:controller => :main, :action => :course_creation_tag_preview, :params => {:tagid => rt.id}}, {:class => "btn btn-default"}%>
+										</td>
+									</tr>
+									<%end%>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="box-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

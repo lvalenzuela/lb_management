@@ -6,9 +6,15 @@ class RequestNotesController < ApplicationController
 	def show
 		@request = Request.find(params[:id])
 		@notes = RequestNote.where(:requestid => params[:id])
+		@attachments = RequestAttachment.where(:request_id => @request.id)
 		c_time = Time.now #el mismo tiempo para ambos registros
 		#Se registra la visualizacion de las notas de las solicitudes
 		register_last_revision(@request.id,current_user.id,c_time)
+	end
+
+	def send_attachment
+		att = RequestAttachment.find(params[:attachment])
+		send_file att.attached_file.path, :type => att.attached_file.content_type
 	end
 
 	def create

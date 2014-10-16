@@ -94,6 +94,13 @@ class RequestsController < ApplicationController
 		@area = Area.find(params[:areaid])
 	end
 
+	def add_attachment
+		@num = params[:num]
+		respond_to do |format|
+			format.js
+		end
+	end
+
 	def edit_request
 		@request = Request.find(params[:id])
 		@user = current_user
@@ -124,6 +131,15 @@ class RequestsController < ApplicationController
 			#Se marca el usuario que envió el requerimiento
 			@request.userid = current_user.id
 			@request.save!
+
+			#se guardan los adjuntos
+			params[:attachments].each do |att|
+				new_attachment = RequestAttachment.new()
+				new_attachment.request_id = @request.id
+				new_attachment.attached_file = att
+				new_attachment.save!
+			end
+
 			if !@request.receiverid.nil? && @request.receiverid != ""
 				notify_user(@request.receiverid,@request,true)
 			else

@@ -203,12 +203,6 @@ class CoursesController < ApplicationController
         @course_statuses = CourseStatus.all()
     end
 
-    def init_course_dialog
-        @course = Course.find(params[:courseid])
-        #categoría para la creación de cursos es 2
-        @course_init_tasks = RequestTag.where(:category_id => 2)
-    end
-
     def course_students
         @course = Course.find(params[:courseid])
         c_students = CourseMember.where(:course_id => @course.id).map{|c| c.web_user_id}
@@ -284,22 +278,80 @@ class CoursesController < ApplicationController
         redirect_to :action => :course_students, :courseid => params[:courseid]
     end
 
+    def init_course_dialog
+        @course = Course.find(params[:courseid])
+        #categoría para la creación de cursos es 2
+        @course_init_tasks = RequestTag.where(:category_id => 2)
+    end
+
+    def init_course
+        course = Course.find(params[:courseid])
+        begin
+            #archivo de estudiantes
+            members_attachment = Tempfile.new(["LISTADO-ALUMNOS_#{course.coursename}",".csv"])
+            course_attachment = Tempfile.new(["DATOS_CURSO_#{course.coursename}",".csv"])
+            course_sessions_attachment = Tempfile.new(["SESIONES_CURSO_#{course.coursename}",".csv"])
+
+            #rellenar archivos
+            members_attachment = course_members_file(members_attachment,course)
+            course_attachment = course_data_file(course_attachment,course)
+            course_sessions_attachment = course_sessions_file(course_sessions_attachment,course)
+
+            #generar requerimientos
+            tasks = RequestTag.where(:category_id => 2)
+            tasks.each do |t|
+                #nuevo requerimiento
+                req = Request.new()
+                req.tagid = t.id
+                req.userid = current_user.id
+                req.subject = t.tagname+" - "+course.coursename
+                req.receiverid = t.default_user_id
+                req.areaid = t.area_id
+                req.priorityid = 3 #prioridad normal
+                req.request = t.default_msg ? t.default_msg : " "
+                req.save!
+                #adjuntar miembros del curso
+                attach_members = RequestAttachment.new()
+                attach_members.request_id = req.id
+                attach_members.attached_file = members_attachment
+                attach_members.save!
+                #adjuntar datos del curso
+                attach_course_data = RequestAttachment.new()
+                attach_course_data.request_id = req.id
+                attach_course_data.attached_file = course_attachment
+                attach_course_data.save!
+                #adjuntar sesiones del curso
+                attach_course_sessions = RequestAttachment.new()
+                attach_course_sessions.request_id = req.id
+                attach_course_sessions.attached_file = course_sessions_attachment
+                attach_course_sessions.save!
+            end
+        ensure
+            members_attachment.close
+            members_attachment.unlink
+            course_attachment.close
+            course_attachment.unlink
+        end
+        #se cambia el estado del curso a "en desarrollo"
+        course.course_status_id = 4
+        course.save!
+        redirect_to :action => :index, :opt => "production"
+    end
+
     def change_status
         c = Course.find(params[:id])
         case params[:status]
         when "cancel"
             c.course_status_id = 3
             c.save!
-        when "initiate"
-            c.course_status_id = 4
-            c.save!
         else
-            #el estado se asigna automaticamente
             if c.current_students_qty == 0
                 c.course_status_id = 1
-                c.save
+                c.save!
             else
+                c.course_status_id = 2
                 c.count_students
+                c.save!
             end
         end
         redirect_to :action => :index, :opt => params[:active]
@@ -393,6 +445,47 @@ class CoursesController < ApplicationController
 
 
     private
+
+    def course_sessions_file(file,course)
+        sessions = CourseSession.where(:commerce_course_id => course.id)
+
+        headers = ["Numero de Sesión", "Fecha", "Hora de Inicio"]
+        CSV.open(file.path, "w") do |csv|
+            csv << headers
+            sessions.each do |s|
+                csv << [s.session_number, l(s.startdatetime, :format => "%d - %m - %Y"), l(s.startdatetime, :format => "%H:%M")]
+            end
+        end
+        return file
+    end
+
+    def course_members_file(file,course)
+        member_list = CourseMember.where(:course_id => course.id).map{|cm| cm.web_user_id}
+        members = WebUser.where(:id => member_list)
+
+        #Creacion del archivo adjunto conteniendo al listado de alumnos
+        student_list_headers = ["Nombre", "Apellido", "Email", "Género"]
+        CSV.open(file.path,"w") do |csv|
+            csv << student_list_headers
+            members.each do |m|
+                csv << [m.firstname, m.lastname, m.email, m.gender.include?("male") ? "Masculino" : "Femenino"]
+            end
+        end
+        return file
+    end
+
+    def course_data_file(file,course)
+        CSV.open(file.path,"w") do |csv|
+            csv << ["Curso", course.coursename]
+            csv << ["Descripcion", course.description]
+            csv << ["Nivel", CourseLevel.find(course.course_level_id).course_level]
+            csv << ["Cantidad de Alumnos", course.current_students_qty]
+            csv << ["Profesor a Cargo", TeacherV.find(course.main_teacher_id).name]
+            csv << ["Libro del Curso", CourseTemplate.find(course.course_template_id).name]
+            csv << ["Fecha de Inicio", l(course.start_date, :format => "%d - %m - %Y")]
+        end
+        return file
+    end
 
     def find_collisions(fixed_sessions, new_course_sessions)
         collisions = []

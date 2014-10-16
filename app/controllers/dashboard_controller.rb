@@ -81,95 +81,32 @@ class DashboardController < ApplicationController
 
 	def teachers_list
 		if params[:search]
-			@teachers = User.joins("inner join moodle_role_assignation_vs as mra
-							on users.id = mra.userid").select("users.*,
-															count(distinct mra.courseid) as courses").where("
-															mra.roleid in(9,4)
-															and (users.firstname like '%#{params[:search]}%' or users.lastname like '%#{params[:search]}%')").group("users.id").page(params[:page]).per(10)
+			@teachers = TeacherV.all().page(params[:page]).per(10)
 		else
-			@teachers = User.joins("inner join moodle_role_assignation_vs as mra
-							on users.id = mra.userid").select("users.*,
-															count(distinct mra.courseid) as courses").where("
-															mra.roleid in(9,4)").group("users.id").page(params[:page]).per(10)
+			@teachers = TeacherV.all().page(params[:page]).per(10)
 		end
 	end
 
 	def teacher
-		@user = User.find(params[:id])
+		@user = TeacherV.find(params[:id])
+		courses_list = MoodleRoleAssignationV.where(:userid => params[:id]).map{|c| c.courseid}
 		if params[:filter]
 			if params[:filter][:show_hidden]
 				@show_hidden = true
-				c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
-								on mra.courseid = mc.moodleid
-								left join course_attendance_reports as car
-								on mra.courseid = car.courseid
-								left join course_grades_reports as cgr
-								on car.courseid = cgr.courseid 
-								and car.created_at = cgr.created_at
-								and car.created_at = curdate()").select("mra.roleid, 
-																		mra.rolename, 
-																		mra.courseid,
-																		mc.coursename,
-																		car.current_booked_sessions,
-																		car.current_taken_sessions,
-																		car.total_sessions,
-																		car.last_taken_session_date,
-																		car.avg_attendance_ratio,
-																		cgr.mean_grade,
-																		cgr.std_dev_grade,
-																		cgr.gradetype,
-																		car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]}").group("mra.courseid")
+				c = DashboardCoursesV.where(:courseid => courses_list)
 			else
-				c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
-							on mra.courseid = mc.moodleid
-							left join course_attendance_reports as car
-							on mra.courseid = car.courseid
-							left join course_grades_reports as cgr
-							on car.courseid = cgr.courseid 
-							and car.created_at = cgr.created_at
-							and car.created_at = curdate()").select("mra.roleid, 
-																	mra.rolename, 
-																	mra.courseid,
-																	mc.coursename,
-																	car.current_booked_sessions,
-																	car.current_taken_sessions,
-																	car.total_sessions,
-																	car.last_taken_session_date,
-																	car.avg_attendance_ratio,
-																	cgr.mean_grade,
-																	cgr.std_dev_grade,
-																	cgr.gradetype,
-																	car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]} and mc.visible = 1").group("mra.courseid")
+				c = DashboardCoursesV.where(:courseid => courses_list, :visible => 1)
 			end
 		else
-			c = MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as mc
-							on mra.courseid = mc.moodleid
-							left join course_attendance_reports as car
-							on mra.courseid = car.courseid
-							left join course_grades_reports as cgr
-							on car.courseid = cgr.courseid 
-							and car.created_at = cgr.created_at
-							and car.created_at = curdate()").select("mra.roleid, 
-																	mra.rolename, 
-																	mra.courseid,
-																	mc.coursename,
-																	car.current_booked_sessions,
-																	car.current_taken_sessions,
-																	car.total_sessions,
-																	car.last_taken_session_date,
-																	car.avg_attendance_ratio,
-																	cgr.mean_grade,
-																	cgr.std_dev_grade,
-																	cgr.gradetype,
-																	car.created_at").where("mra.roleid in (9,4) and mra.userid = #{params[:id]} and mc.visible = 1").group("mra.courseid")
+			c = DashboardCoursesV.where(:courseid => courses_list, :visible => 1)
 		end
 
 		if params[:search]
-			f_c = c.where("mc.coursename like '%#{params[:search]}%'")
+			f_c = c.where("coursename like '%#{params[:search]}%'")
 		else
 			f_c = c
 		end
-		@courses = f_c.order("mra.roleid ASC").page(params[:page]).per(10)
+		@courses = f_c.order("courseid ASC").page(params[:page]).per(10)
 	end
 
 	def configuration

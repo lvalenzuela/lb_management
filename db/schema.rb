@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141009165932) do
+ActiveRecord::Schema.define(version: 20141015154334) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -303,20 +303,21 @@ ActiveRecord::Schema.define(version: 20141009165932) do
   end
 
   create_table "dashboard_courses_vs", id: false, force: true do |t|
-    t.integer "courseid"
-    t.string  "coursename"
-    t.integer "total_sessions"
-    t.integer "current_booked_sessions"
-    t.integer "current_taken_sessions"
-    t.float   "avg_attendance_ratio"
-    t.float   "std_dev_assistance"
-    t.float   "mean_grade"
-    t.float   "std_dev_grade"
-    t.integer "gradetype"
-    t.date    "created_at"
-    t.boolean "visible",                 default: true, null: false
-    t.integer "status_id"
-    t.date    "end_date"
+    t.integer  "courseid"
+    t.string   "coursename",              limit: 254, default: "",   null: false
+    t.boolean  "visible",                             default: true, null: false
+    t.integer  "status_id"
+    t.date     "end_date"
+    t.integer  "total_sessions"
+    t.integer  "current_booked_sessions"
+    t.integer  "current_taken_sessions"
+    t.datetime "last_taken_session_date"
+    t.float    "avg_attendance_ratio"
+    t.float    "std_dev_assistance"
+    t.float    "mean_grade"
+    t.float    "std_dev_grade"
+    t.integer  "gradetype"
+    t.date     "created_at"
   end
 
   create_table "diagnostic_tests", force: true do |t|
@@ -412,6 +413,16 @@ ActiveRecord::Schema.define(version: 20141009165932) do
     t.boolean  "deleted",      default: false
   end
 
+  create_table "request_attachments", force: true do |t|
+    t.integer  "request_id"
+    t.string   "attached_file_file_name"
+    t.string   "attached_file_content_type"
+    t.integer  "attached_file_file_size"
+    t.datetime "attached_file_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "request_default_titles", force: true do |t|
     t.integer  "area_id"
     t.string   "title"
@@ -457,6 +468,7 @@ ActiveRecord::Schema.define(version: 20141009165932) do
     t.integer  "area_id"
     t.integer  "default_user_id"
     t.string   "tagname"
+    t.text     "default_msg"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -538,6 +550,63 @@ ActiveRecord::Schema.define(version: 20141009165932) do
     t.float   "finalgrade"
     t.integer "gradetype"
     t.date    "created_at"
+  end
+
+  create_table "student_vs", id: false, force: true do |t|
+    t.integer "id",                limit: 8,          default: 0,           null: false
+    t.string  "auth",              limit: 20,         default: "manual",    null: false
+    t.boolean "confirmed",                            default: false,       null: false
+    t.boolean "policyagreed",                         default: false,       null: false
+    t.boolean "deleted",                              default: false,       null: false
+    t.boolean "suspended",                            default: false,       null: false
+    t.integer "mnethostid",        limit: 8,          default: 0,           null: false
+    t.string  "username",          limit: 100,        default: "",          null: false
+    t.string  "password",                             default: "",          null: false
+    t.string  "idnumber",                             default: "",          null: false
+    t.string  "firstname",         limit: 100,        default: "",          null: false
+    t.string  "lastname",          limit: 100,        default: "",          null: false
+    t.string  "email",             limit: 100,        default: "",          null: false
+    t.boolean "emailstop",                            default: false,       null: false
+    t.string  "icq",               limit: 15,         default: "",          null: false
+    t.string  "skype",             limit: 50,         default: "",          null: false
+    t.string  "yahoo",             limit: 50,         default: "",          null: false
+    t.string  "aim",               limit: 50,         default: "",          null: false
+    t.string  "msn",               limit: 50,         default: "",          null: false
+    t.string  "phone1",            limit: 20,         default: "",          null: false
+    t.string  "phone2",            limit: 20,         default: "",          null: false
+    t.string  "institution",                          default: "",          null: false
+    t.string  "department",                           default: "",          null: false
+    t.string  "address",                              default: "",          null: false
+    t.string  "city",              limit: 120,        default: "",          null: false
+    t.string  "country",           limit: 2,          default: "",          null: false
+    t.string  "lang",              limit: 30,         default: "en",        null: false
+    t.string  "theme",             limit: 50,         default: "",          null: false
+    t.string  "timezone",          limit: 100,        default: "99",        null: false
+    t.integer "firstaccess",       limit: 8,          default: 0,           null: false
+    t.integer "lastaccess",        limit: 8,          default: 0,           null: false
+    t.integer "lastlogin",         limit: 8,          default: 0,           null: false
+    t.integer "currentlogin",      limit: 8,          default: 0,           null: false
+    t.string  "lastip",            limit: 45,         default: "",          null: false
+    t.string  "secret",            limit: 15,         default: "",          null: false
+    t.integer "picture",           limit: 8,          default: 0,           null: false
+    t.string  "url",                                  default: "",          null: false
+    t.text    "description",       limit: 2147483647
+    t.integer "descriptionformat", limit: 1,          default: 1,           null: false
+    t.boolean "mailformat",                           default: true,        null: false
+    t.boolean "maildigest",                           default: false,       null: false
+    t.integer "maildisplay",       limit: 1,          default: 2,           null: false
+    t.boolean "autosubscribe",                        default: true,        null: false
+    t.boolean "trackforums",                          default: false,       null: false
+    t.integer "timecreated",       limit: 8,          default: 0,           null: false
+    t.integer "timemodified",      limit: 8,          default: 0,           null: false
+    t.integer "trustbitmask",      limit: 8,          default: 0,           null: false
+    t.string  "imagealt"
+    t.string  "lastnamephonetic"
+    t.string  "firstnamephonetic"
+    t.string  "middlename"
+    t.string  "alternatename"
+    t.string  "calendartype",      limit: 30,         default: "gregorian", null: false
+    t.string  "name",              limit: 201
   end
 
   create_table "system_parameters", force: true do |t|

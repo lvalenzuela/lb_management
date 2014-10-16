@@ -24,6 +24,12 @@
                 <!-- form start -->
                 <div class="box-body">
                 	<%=simple_format @request.request%>
+
+                    <div class="attachment-frame">
+                    <%@attachments.each do |att|%>
+                        <%=link_to "<i class='fa fa-paperclip'></i> ".html_safe+File.basename(att.attached_file.url, File.extname(att.attached_file.url).downcase), {:controller => :request_notes, :action => :send_attachment, :params => {:attachment => att.id}}, :class => "btn btn-default btn-sm" ,:target => "_blank"%>
+                    <%end%>
+                    </div>
                 </div>
                 <div class="box-footer clearfix">
                 	<div class="col-sm-6">
@@ -133,8 +139,4 @@
         </div>
     </div>
 </section>
-
-<script type="text/javascript">
-    $('.wysihtml5').wysihtml5();
-</script>
 

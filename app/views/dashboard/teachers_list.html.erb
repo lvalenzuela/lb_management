@@ -42,7 +42,7 @@
 						<tr>
 							<td><%=link_to user_name(t.id), :controller => :dashboard, :action => :teacher, :params => {:id => t.id}%></td>
 							<td><%=user_mail(t.id)%></td>
-							<td><%=t.courses%></td>
+							<td><%=count_teacher_courses(t.id)%></td>
 						</tr>
 						<%end%>
 					</tbody>

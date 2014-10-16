@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       post "sessions_per_week_inputs"
       #inicialización del curso
       get "init_course_dialog"
+      get "init_course"
       #templates
       get "course_templates"
       get "new_template"
@@ -120,11 +121,19 @@ Rails.application.routes.draw do
       get "teachers_manager"
       get "teacher_availability"
       get "zoho_product_list"
+      get "disable_course_mode"
+      post "save_products"
+      #administracion de cursos
       get "course_modes"
       post "create_course_mode"
       post "update_course_mode"
-      get "disable_course_mode"
-      post "save_products"
+      get "course_creation_config"
+      get "new_course_creation_tag"
+      post "create_course_creation_tag"
+      get "course_creation_tag_preview"
+      get "edit_course_creation_tag"
+      post "update_course_creation_tag"
+      delete "delete_course_creation_tag"
       #calendario
       get "calendar_management"
       post "upload_holydays"
@@ -177,6 +186,7 @@ Rails.application.routes.draw do
       get 'index'
       get 'mark_solution'
       get "area_for_request"
+      get "add_attachment"
       get 'new_request'
       get 'delete_request'
       post 'create_request'
@@ -205,6 +215,7 @@ Rails.application.routes.draw do
       post "create"
       get "edit"
       post "update"
+      get "send_attachment"
     end
   end
 

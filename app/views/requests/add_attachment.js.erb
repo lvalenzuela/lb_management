@@ -1,0 +1,2 @@
+$(".attachment-wrapper-<%=(@num.to_i - 1).to_s%>").after("<%= escape_javascript(render(:partial => 'request_attachment_partial', :locals => {:num => @num}))%>");
+$("#add-attachment-button-<%=(@num.to_i - 1).to_s%>").replaceWith("<%= escape_javascript(render(:partial => 'attachment_button_partial', :locals => {:num => @num}))%>");

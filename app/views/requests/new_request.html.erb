@@ -56,16 +56,16 @@
                                 <%=f.select :priorityid, options_for_select(@priorities.collect{|p| [p.description+" - "+p.term_desc, p.id]}, 3), {},{:class =>"form-control"}%>
                             </div>
                         </div>
-                        <div class="bod-body pad">
+                        <div class="box-body pad">
                             <%=f.text_area :request, :id => "wysihtml5",:class => "wysihtml5", :placeholder => "Especificar Requerimiento ¿Cual es el problema a resolver? ¿Cómo esperas que sea resuelto?"%>
                         </div>
+                        <div class="clearfix">
+                            <%=render :partial => "attachment_button_partial", :locals => {:num => 1}%>
+                            <%=render :partial => "request_attachment_partial", :locals => {:num => 1}%>
+                        </div>
                         <div class="box-footer clearfix">
-                            <div class="form-group col-sm-6">
-                                <label>Adjuntar Archivo:</label>
-                                <%=f.file_field :attach %>
-                            </div>
                             <div class="col-sm-3 pull-right">
-                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-primary"%>
+                                <%=f.submit :value=> "Enviar Solicitud", :class => "btn btn-primary btn-lg"%>
                             </div>
                         </div>
                     </div><!-- /.box -->
@@ -74,10 +74,3 @@
         </div>
     </div>
 </section><!-- /.content -->
-<script type="text/javascript">
-  $(document).ready(function(){
-
-    $('.wysihtml5').wysihtml5();
-
-  })
-</script>

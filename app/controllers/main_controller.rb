@@ -233,7 +233,62 @@ class MainController < ApplicationController
         redirect_to :action => :calendar_management
     end
 
+    def course_creation_config
+        #Categorías de Requerimientos
+        #1.- Requerimientos por defecto del area
+        #2.- Requerimientos para creación de cursos
+        @request_tags = RequestTag.where(:category_id => 2)
+
+    end
+
+    def new_course_creation_tag
+        @request_tag = RequestTag.new()
+        @areas = Area.all()
+    end
+
+    def create_course_creation_tag
+        @request_tag = RequestTag.create(request_tag_params)
+        if @request_tag.valid?
+            @request_tag.category_id = 2
+            @request_tag.save!
+            redirect_to :action => :course_creation_tag_preview, :tagid => @request_tag.id
+        else
+            @areas = Area.all()
+            render :new_course_creation_tag
+        end
+    end
+
+    def course_creation_tag_preview
+        @request_tag = RequestTag.find(params[:tagid])
+    end
+
+    def edit_course_creation_tag
+        @request_tag = RequestTag.find(params[:tagid])
+        @areas = Area.all()
+    end
+
+    def update_course_creation_tag
+        @request_tag = RequestTag.find(params[:request_tag][:id])
+        @request_tag.update_attributes(request_tag_params)
+        if @request_tag.valid?
+            redirect_to :action => :course_creation_tag_preview, :tagid => @request_tag.id
+        else
+            @areas = Area.all()
+            render :edit_course_creation_tag
+        end
+    end
+
+    def delete_course_creation_tag
+        r = RequestTag.find(params[:tagid])
+        r.destroy
+        redirect_to :action => :course_creation_config
+    end
+
     private
+
+    def request_tag_params
+        params.require(:request_tag).permit(:tagname, :area_id, :default_msg)
+    end
 
     def course_mode_params
         params.require(:course_mode).permit(:mode_name, :description, :enabled)

@@ -48,7 +48,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="box-footer">
+				<div class="box-footer clearfix">
+					<div class="pull-right">
+						<%=link_to "<i class='fa fa-play fa-lg'></i> Iniciar Curso".html_safe, {:controller => :courses, :action => :init_course, :params => {:courseid => @course.id}}, {:class => "btn btn-lg btn-success"}%>
+					</div>
 				</div>
 			</div>
 		</div>
