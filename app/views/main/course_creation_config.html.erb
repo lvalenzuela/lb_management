@@ -31,9 +31,9 @@
 										<th>Tarea</th>
 										<th>Area de Destino</th>
 										<th>Usuario Responsable</th>
+										<th style="text-align:center; width: 80px;">Ver</th>
 										<th style="text-align:center; width: 80px;">Editar</th>
 										<th style="text-align:center; width: 80px;">Eliminar</th>
-										<th style="text-align:center; width: 80px;">Ver</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -42,13 +42,13 @@
 										<td><%=rt.tagname%></td>
 										<td><%=get_areaname(rt.area_id)%></td>
 										<td><%=get_username(rt.default_user_id)%></td>
+										<td style="text-align:center;">
+											<%=link_to "<i class='fa fa-eye fa-lg'></i>".html_safe, {:controller => :main, :action => :course_creation_tag_preview, :params => {:tagid => rt.id}}, {:class => "btn btn-default"}%>
+										</td>
 										<td style="text-align:center;"><%=link_to "<i class='fa fa-edit fa-lg'></i>".html_safe, {:controller => :main, :action => :edit_course_creation_tag, :params => {:tagid => rt.id}}, {:class => "btn btn-default"}%>
 										</td>
 										<td style="text-align:center;">
 											<%=link_to "<i class='fa fa-times fa-lg'></i>".html_safe, {:controller => :main, :action => :delete_course_creation_tag}, {:class => "btn btn-default", :method => :delete}%>
-										</td>
-										<td style="text-align:center;">
-											<%=link_to "<i class='fa fa-eye fa-lg'></i>".html_safe, {:controller => :main, :action => :course_creation_tag_preview, :params => {:tagid => rt.id}}, {:class => "btn btn-default"}%>
 										</td>
 									</tr>
 									<%end%>
