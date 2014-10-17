@@ -18,22 +18,30 @@
 			<div class="box box-info">
 				<div class="box-header">
 					<h3 class="box-title"><%=@request_tag.tagname%></h3>
+					<div class="box-tools">
+						<%=link_to "<i class='fa fa-edit'></i> Editar".html_safe, {:controller => :main, :action => :edit_course_creation_tag, :params => {:tagid => @request_tag.id}}, {:class => "btn btn-default pull-right"}%>
+					</div>
 				</div>
 				<div class="box-body">
-					<div class="form-group">
-						<label>Tarea</label>
-						<%=@request_tag.tagname%> - [Nombre del Curso]
-					</div>
-					<div class="form-group">
-						<label>Area de Destino</label>
-						<%=get_areaname(@request_tag.area_id)%>
-					</div>
-					<div class="form-group">
-						<label>Mensaje Predeterminado</label>
-						<%=simple_format @request_tag.default_msg%>
+					<div class="row">
+						<div class="col-xs-10 col-xs-offset-1">
+							<div class="form-group">
+								<label>Tarea</label>
+								<%=text_field_tag :subject, @request_tag.tagname+" - [Nombre del Curso]", :class => "form-control", :disabled => true%>
+							</div>
+							<div class="form-group">
+								<label>Area de Destino</label>
+								<%=text_field_tag :course, get_areaname(@request_tag.area_id), :class => "form-control", :disabled => true%>
+							</div>
+							<div class="form-group">
+								<label>Mensaje Predeterminado</label>
+								<%=text_area_tag :msg, @request_tag.default_msg, :class => "text-area", :disabled => true%>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="box-footer">
+					<%=link_to "<i class='fa fa-chevron-left'></i><i class='fa fa-chevron-left'></i> Volver a la lista de tareas".html_safe, {:controller => :main, :action => :course_creation_config}%>
 				</div>
 			</div>
 		</div>
