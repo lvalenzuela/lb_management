@@ -2,7 +2,6 @@ class ReportsController < ApplicationController
 	before_filter :check_authentication
 	protect_from_forgery
 	layout "dashboard", except:[:index]
-	include ReportsHelper
 	require 'zip'
 	
 	def index
@@ -14,19 +13,19 @@ class ReportsController < ApplicationController
 	end
 
 	def clients
-		@clients = get_client_list(params[:institution_name])
+		@clients = get_client_list(params[:institution])
 	end
 
 	def courses
 		if params[:group_filter] && params[:group_filter].to_i == 2
 			#Listado por departamento
-			groups_list = UserReport.joins("inner join moodle_course_vs as courses
+			groups_list = UserReport.joins("right join moodle_course_vs as courses
 											on user_reports.courseid = courses.moodleid
 											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}') 
 											and user_reports.created_at = (select max(created_at) from user_reports)").select("department, institution, count(distinct userid) as alumnos").group("department")
 		else
 			#Listado por curso
-			groups_list = UserReport.joins("inner join moodle_course_vs as courses
+			groups_list = UserReport.joins("right join moodle_course_vs as courses
 											on user_reports.courseid = courses.moodleid
 											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}')
 											and user_reports.created_at = (select max(created_at) from user_reports)").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
@@ -181,6 +180,20 @@ class ReportsController < ApplicationController
 	end
 
 	private
+
+	def get_client_list(institution)
+		if institution.nil?
+			@clients = UserReport.select("institution, 
+										count(distinct department) as departments, 
+										count(distinct courseid) as courses, 
+										count(distinct userid) as users").where("institution <> '' and institution is not null").group(:institution)
+		else
+			@clients = UserReport.select("institution, 
+										count(distinct department) as departments, 
+										count(distinct courseid) as courses, 
+										count(distinct userid) as users").where("institution like '%#{institution}%'").group(:institution)
+		end
+	end
 
 	def last_report_date
 		return UserReport.all().order("created_at DESC").first().created_at

@@ -18,8 +18,8 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-                <li <%=activate_tab("1",@selected)%>><%=link_to "Por Curso", :controller => "reports", :action => "courses", :params => {:institution => @groups.first().institution, :group_filter => "1"}%></li>
-                <li <%=activate_tab("2",@selected)%>><%=link_to "Por Departamento", :controller => "reports", :action => "courses", :params => {:institution => @groups.first().institution, :group_filter => "2"}%></li>
+                <li <%=activate_tab("1",@selected)%>><%=link_to "Por Curso", :controller => "reports", :action => "courses", :params => {:institution => @institution, :group_filter => "1"}%></li>
+                <li <%=activate_tab("2",@selected)%>><%=link_to "Por Departamento", :controller => "reports", :action => "courses", :params => {:institution => @institution, :group_filter => "2"}%></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active">

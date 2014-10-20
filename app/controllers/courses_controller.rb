@@ -6,15 +6,16 @@ class CoursesController < ApplicationController
     def index
         case params[:opt]
         when "production"
-            @courses = Course.where(:course_status_id => 4).order("start_date ASC")
+            c_list = Course.where(:course_status_id => 4).order("start_date ASC")
             @active = "production"
         when "canceled"
-            @courses = Course.where(:course_status_id => 3).order("start_date ASC")
+            c_list = Course.where(:course_status_id => 3).order("start_date ASC")
             @active = "canceled"
         else
-    	    @courses = Course.where(:course_status_id => [1,2]).order("start_date ASC")
-           @active = "staged"
+            c_list = Course.where(:course_status_id => [1,2]).order("start_date ASC")
+            @active = "staged"
         end
+        @courses = c_list.page(params[:page]).per(10)
     end
 
     def template_selector_options

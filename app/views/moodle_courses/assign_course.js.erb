@@ -1,0 +1,1 @@
+$("#group-courses").replaceWith("<%= escape_javascript(render(:partial => 'group_courses', :locals => {:courses => @courses, :group => @group}))%>");

@@ -3,7 +3,7 @@
 
 <section class="content-header no-margin">
     <h1>
-        Cursos de Longbourn
+        Agrupaciones de Cursos
         <small>Grupos de Cursos</small>
     </h1>
     <ol class="breadcrumb">
@@ -22,22 +22,25 @@
                 <li>
                     <%=link_to "Listado de Cursos", :controller => :moodle_courses, :action => :courses_list%>
                 </li>
-                <li>
-                    <%=link_to "Nueva Agrupación de Cursos", :controller => :moodle_courses, :action => :new_course_agrupation%>
-                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active">
                     <section>
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-xs-5">
                                 <div class="box box-info">
                                     <div class="box-header">
                                         <h3 class="box-title">Creación de Grupos</h3>
                                     </div>
                                     <div class="box-body">
                                         <div class="row">
-                                            <div class="col-xs-6">
+                                            <div class="col-xs-12">
+                                                <h3>Grupos de Cursos</h3>
+                                                <p>Los grupos de cursos serán utilizados para hacer seguimiento a los cursos de moodle. Mediante los grupos de cursos se consideará las notas y asistencia correspondientes para todos los cursos del grupo en el caso de cada alumno, en lugar de para un curso en particular</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
                                                 <%=form_tag :controller => "moodle_courses", :action => "create_group" do%>
                                                 <div class="form-group">
                                                     <label>Agrupamiento de Cursos</label>
@@ -48,28 +51,21 @@
                                                 </div>
                                                 <%end%>
                                             </div>
-                                            <div class="col-xs-6">
-                                                <h3>Grupos de Cursos</h3>
-                                                <p>Los grupos de cursos serán utilizados para hacer seguimiento a los cursos de moodle. Mediante los grupos de cursos se consideará las notas y asistencia correspondientes para todos los cursos del grupo en el caso de cada alumno, en lugar de para un curso en particular</p>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="box-footer clearfix">
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-xs-7">
                                 <div class="box box-warning">
                                     <div class="box-header">
                                         <h3 class="box-title">Grupos de Monitoreo</h3>
                                     </div>
                                     <div class="box-body">
-                                        <table class="table">
+                                        <table class="table table-striped" id="groups-table">
                                             <thead>
                                                 <tr>
-                                                    <th></th>
                                                     <th>Nombre Grupo</th>
                                                     <th style="text-align: center;"># Cursos</th>
                                                     <th style="text-align: center;">Eliminar</th>
@@ -78,20 +74,14 @@
                                             <tbody>
                                                 <%@moodlegroups.each do |g|%>
                                                 <tr>
-                                                    <td style="text-align: center;"><%=radio_button_tag :groupid, g.id%></td>
                                                     <td><%=link_to g.groupname, :controller => "moodle_courses", :action => "show_group", :params => {:id => g.id}%></td>
-                                                    <td style="text-align: center;"><%=g.courses%></td>
-                                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {action: "destroy_group", id: g.id}, method: :delete, data: {confirm: "Estas seguro?"}, :class => "btn btn-default btn-circle"%></td>
+                                                    <td style="text-align: center; width: 100px"><%=g.courses%></td>
+                                                    <td style="text-align: center; width: 100px"><%=link_to "<i class='fa fa-times'></i>".html_safe, {action: "destroy_group", id: g.id}, method: :delete, data: {confirm: "Estas seguro?"}, :class => "btn btn-default"%></td>
                                                 </tr>
                                                 <%end%>
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="box-footer clearfix">
-                                        <div class="pull-right">
-                                            <%=paginate @moodlegroups%>
-                                        </div>
-                                    </div><!-- box-footer -->
                                 </div>
                             </div>
                         </div>
@@ -102,19 +92,7 @@
     </div>
 </section>
 <script type="text/javascript">
-$(function() {
-
-    "use strict";
-
-    //When unchecking the checkbox
-    $("#check-all").on('ifUnchecked', function(event) {
-        //Uncheck all checkboxes
-        $("input[type='checkbox']").iCheck("uncheck");
+    $(document).on('page:change', function () {
+        $("#groups-table").dataTable();
     });
-    //When checking the checkbox
-    $("#check-all").on('ifChecked', function(event) {
-        //Check all checkboxes
-        $("input[type='checkbox']").iCheck("check");
-    });
-});
 </script>

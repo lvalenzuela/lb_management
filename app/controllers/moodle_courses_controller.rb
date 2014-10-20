@@ -8,12 +8,12 @@ class MoodleCoursesController < ApplicationController
             @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
                 on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
                                                     moodle_groups.groupname as groupname,
-                                                    count(distinct mga.m_courseid) as courses").where("groupname LIKE '%#{params[:search]}%'").group("moodle_groups.id").page(params[:page]).per(10)
+                                                    count(distinct mga.m_courseid) as courses").where("groupname LIKE '%#{params[:search]}%'").group("moodle_groups.id")
         else
             @moodlegroups = MoodleGroup.joins("left join moodle_group_assignations as mga
                 on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
                                                     moodle_groups.groupname as groupname,
-                                                    count(distinct mga.m_courseid) as courses").group("moodle_groups.id").page(params[:page]).per(10)
+                                                    count(distinct mga.m_courseid) as courses").group("moodle_groups.id")
         end
     end
 
@@ -30,13 +30,25 @@ class MoodleCoursesController < ApplicationController
 
     def assign_course
         assign_to_group(params[:groupid], params[:courseid])
-        redirect_to :action => "show_group", :id => params[:groupid]
+        @group = MoodleGroup.find(params[:groupid])
+        @courses = MoodleCourseV.joins("as moodle_courses inner join moodle_group_assignations as mga
+                                       on mga.m_courseid = moodle_courses.moodleid
+                                       and mga.groupid = #{params[:groupid]}").select("moodle_courses.*")
+        respond_to do |format|
+            format.js
+        end
     end
 
     def destroy_assignation
         g = MoodleGroupAssignation.where(:groupid => params[:groupid], :m_courseid => params[:courseid])
         g.destroy_all
-        redirect_to :action => "show_group", :id => params[:groupid]
+        @group = MoodleGroup.find(params[:groupid])
+        @courses = MoodleCourseV.joins("as moodle_courses inner join moodle_group_assignations as mga
+                                       on mga.m_courseid = moodle_courses.moodleid
+                                       and mga.groupid = #{params[:groupid]}").select("moodle_courses.*")
+        respond_to do |format|
+            format.js
+        end
     end
 
     def show_group
@@ -50,25 +62,7 @@ class MoodleCoursesController < ApplicationController
         else
             r_courses = MoodleCourseV.where("moodleid not in (?)", @courses.map{|c| c.moodleid})
         end
-        if params[:search]
-            r_courses = r_courses.where("coursename like '%#{params[:search]}%'")
-        end
-        @remaining_courses = r_courses.page(params[:page]).per(10)
-    end
-
-    def new_course_agrupation
-        if params[:search]
-            groups_list = MoodleGroup.joins("left join moodle_group_assignations as mga
-                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
-                                                    moodle_groups.groupname as groupname,
-                                                    count(distinct mga.m_courseid) as courses").where("groupname LIKE '%#{params[:search]}%'").group("moodle_groups.id")
-        else
-            groups_list = MoodleGroup.joins("left join moodle_group_assignations as mga
-                on moodle_groups.id = mga.groupid").select("moodle_groups.id as id,
-                                                    moodle_groups.groupname as groupname,
-                                                    count(distinct mga.m_courseid) as courses").group("moodle_groups.id")
-        end
-        @groups = groups_list.page(params[:page]).per(10)
+        @remaining_courses = r_courses
     end
 
     def create_group
@@ -80,6 +74,7 @@ class MoodleCoursesController < ApplicationController
     end
 
     def destroy_group
+        MoodleGroupAssignation.where(:groupid => params[:id]).destroy_all
         MoodleGroup.find(params[:id]).destroy
         flash[:notice] = "Grupo eliminado."
         redirect_to :action => "index"
