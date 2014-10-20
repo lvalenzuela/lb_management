@@ -108,22 +108,9 @@ class StudentReportPdf < Prawn::Document
 			inatt_total = 0
 		end
 
-		move_down 20
-		font "Helvetica", :style => :bold
-		text "<u>Observaciones</u>", :inline_format => true
-		font "Helvetica", :style => :normal
-		indent(60) do
-			text "Para hacer uso de la Franquicia Sence, al final del curso la suma de porcentaje de inasistencias y atrasos debe ser menor o igual al 25%(<b>"+inatt_limit.to_s+" clases</b> en el caso de este curso de ingles).", :inline_format => true
-		end
-		move_down 10
-		if inatt_total < inatt_limit
-			indent(60) do
-				text "Si el alumno se ausenta o se atrasa <b>"+(inatt_limit - inatt_total).to_s+" veces</b> en lo que resta del curso, no cumplirá con el 75% de asistencia exigido por la Franquicia Sence", :inline_format => true
-			end
-		else
-			indent(60) do
-				text "El alumno actualmente no cumple con el mínimo de 75% de asistencia exigido por la Franquicia Sence (<b>"+inatt_total.to_s+"</b> inasistencias y atrasos)", :inline_format => true
-			end
+		c = MoodleCourse.find_by_moodleid(report_data.courseid)
+		if c.sence
+			sence_attendance_text(inatt_total, inatt_limit)
 		end
 	end
 
@@ -192,4 +179,25 @@ class StudentReportPdf < Prawn::Document
 		text "www.longbourn.cl", :align => :center
 	end
 
+	private
+
+	def sence_attendance_text(inatt_total, inatt_limit)
+		move_down 20
+		font "Helvetica", :style => :bold
+		text "<u>Observaciones</u>", :inline_format => true
+		font "Helvetica", :style => :normal
+		indent(60) do
+			text "Para hacer uso de la Franquicia Sence, al final del curso la suma de porcentaje de inasistencias y atrasos debe ser menor o igual al 25%(<b>"+inatt_limit.to_s+" clases</b> en el caso de este curso de ingles).", :inline_format => true
+		end
+		move_down 10
+		if inatt_total < inatt_limit
+			indent(60) do
+				text "Si el alumno se ausenta o se atrasa <b>"+(inatt_limit - inatt_total).to_s+" veces</b> en lo que resta del curso, no cumplirá con el 75% de asistencia exigido por la Franquicia Sence", :inline_format => true
+			end
+		else
+			indent(60) do
+				text "El alumno actualmente no cumple con el mínimo de 75% de asistencia exigido por la Franquicia Sence (<b>"+inatt_total.to_s+"</b> inasistencias y atrasos)", :inline_format => true
+			end
+		end
+	end
 end
