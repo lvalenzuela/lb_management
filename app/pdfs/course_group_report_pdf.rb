@@ -112,7 +112,7 @@ class CourseGroupReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio Parcial</b>"]
+		data << ["<b>Nombre</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio</b>"]
 		members.each do |member|
 			if reportdate.nil?
 				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id).order("created_at DESC").first()
