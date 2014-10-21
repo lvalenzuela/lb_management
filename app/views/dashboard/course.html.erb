@@ -65,7 +65,7 @@
 							<tr>
 								<td style="text-align: center;"><%=ts.session_number%></td>
 								<td style="text-align: center;"><%=get_session_type(ts.session_type_id)%></td>
-								<td><%=ts.page.to_s+" - "+ts.contents%></td>
+								<td><%=ts.page.to_s+" - "+ts.contents.to_s%></td>
 								<td style="text-align: center;"><%=taken_session_content(ts.session_number,@taken_sessions)%></td>
 							</tr>
 							<%end%>

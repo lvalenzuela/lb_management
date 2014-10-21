@@ -51,7 +51,11 @@ class DashboardController < ApplicationController
 		#obtencion del contenido de las sesiones
 		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
 		@course_observations = CourseObservation.where(:course_id => params[:id])
-		@institution = StudentV.find(@students_info.first().userid).institution
+		if @students_info.blank?
+			@institution = ""
+		else
+			@institution = StudentV.find(@students_info.first().userid).institution
+		end
 	end
 
 	def generate_detailed_course_report
