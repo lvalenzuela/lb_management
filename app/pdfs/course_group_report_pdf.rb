@@ -86,9 +86,8 @@ class CourseGroupReportPdf < Prawn::Document
 			else
 				sence = r_sence
 			end
-			if member_data.firstname
-				data << [member_data.firstname.to_s+" "+member_data.lastname.to_s, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
-			end
+			
+			data << [StudentV.find(member_data.userid).name, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
@@ -120,9 +119,7 @@ class CourseGroupReportPdf < Prawn::Document
 			else
 				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => group.id, :created_at => reportdate).first()
 			end
-			if member_data.firstname
-				data << [member_data.firstname.to_s+" "+member_data.lastname.to_s, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
-			end
+			data << [StudentV.find(member_data.userid).name, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end
 		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
