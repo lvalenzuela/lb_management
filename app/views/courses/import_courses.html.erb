@@ -14,15 +14,40 @@
 <section class="content">
 	<div class="row">
 		<div class="col-xs-8 col-xs-offset-2">
-			<%=form_tag :action => :bulk_course_creation do%>
+			<%=form_tag bulk_course_creation_courses_path, :multipart => true do%>
 			<div class="box">
 				<div class="box-header">
 					<h3 class="box-title">Archivo de Importación</h3>
 				</div>
 				<div class="box-body">
+					<p>Se requieren los siguientes datos generales que se aplicarán a todos los cursos que se incluyan en la importacion.</p>
 					<div class="row">
-						<div class="col-xs-4">
-							<div class="btn btn-primary btn-file" style="width: 200px;">
+						<div class="col-xs-10 col-xs-offset-1">
+							<div class="form-group">
+								<label>Nivel del Curso</label>
+ 								<%=select_tag :course_level_id, options_for_select(@course_levels.collect{|l| [l.course_level,l.id]}), {:include_blank => true, :class => "form-control"}%>
+							</div>
+							<div class="form-group">
+								<label>Plantilla</label>
+								<%=render :partial => "template_selector", :locals => {:templates => @templates, :selected => nil}%>
+							</div>
+							<div class="form-group">
+								<label>Tipo de Cursos</label>
+								<%=select_tag :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]}), {:class => "form-control"}%>
+							</div>
+							<div class="form-group">
+								<label>Modalidad</label>
+								<%=select_tag :mode, options_for_select(@modes.collect{|p| [p.mode_name,p.id]}), {:include_blank => true, :class => "form-control"}%>
+							</div>
+							<div class="form-group">
+								<label>Producto</label>
+								<%=render :partial => "product_selector", :locals => {:products => @products, :selected => nil}%>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-3 col-xs-offset-1">
+							<div class="btn btn-primary btn-file" style="width: 170px;">
 								<i class="fa fa-upload"></i> Archivo de Cursos
 								<%=file_field_tag :courses_file%>
 							</div>
@@ -43,9 +68,26 @@
 	</div>
 </section>
 
+<%=form_tag template_selector_options_courses_path, :remote => true, :id => "template_options_form" do%>
+<%=hidden_field_tag :courselevel%>
+<%end%>
+<%=form_tag product_selector_options_courses_path, :remote => true, :id => "product_options_form" do%>
+<%=hidden_field_tag :coursemode%>
+<%end%>
+
 <script>
 $( "#courses_file" ).change(function(){
     var file_path = $("#courses_file").val();
     $( "#file_path" ).val(file_path);
+});
+$( "#course_level_id" ).change(function(){
+    var level_id = $("#course_level_id option:selected").val();
+    $( "#courselevel" ).val(level_id);
+    $( "#template_options_form" ).submit();
+});
+$( "#mode" ).change(function(){
+    var mode = $("#mode option:selected").val();
+    $( "#coursemode" ).val(mode);
+    $( "#product_options_form" ).submit();
 });
 </script>

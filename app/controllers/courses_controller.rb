@@ -2,6 +2,7 @@ class CoursesController < ApplicationController
     before_filter :check_authentication
     protect_from_forgery
     layout "dashboard"
+    require "csv"
 
     def index
         case params[:opt]
@@ -39,6 +40,43 @@ class CoursesController < ApplicationController
         respond_to do |format|
             format.js
         end
+    end
+
+    def import_courses
+        @types = CourseType.all()
+        @modes = CourseMode.where(:enabled => true)
+        @course_levels = CourseLevel.all()
+        @templates = nil
+    end
+
+    def bulk_course_creation
+        if params[:course_level_id] && params[:course][:course_template_id] && params[:course][:zoho_product_id] && params[:course_type_id] && params[:mode] && params[:courses_file]
+            file_contents = params[:courses_file].read
+            csv_courses = CSV.parse(file_contents, :headers => true)
+            csv_courses.each do |row|
+                course = Course.new()
+                course.coursename = row["NOMBRE_CURSO"]
+                course.description = row["DESCRIPCION"]
+                course.course_level_id = params[:course_level_id]
+                course.sessions_per_week = row["SESIONES_SEMANA"]
+                course.students_qty = row["MAX_ALUMNOS"]
+                course.mode = params[:mode]
+                course.zoho_product_id = params[:course][:zoho_product_id]
+                course.course_template_id = params[:course][:course_template_id]
+                course.start_date = row["FECHA_INICIO"]
+                course.location = row["UBICACION"]
+                course.course_type_id = params[:course_type_id]
+                course.save!
+                #sesiones semanales
+                w_sessions = row["SESIONES"].split(";")
+                bulk_register_weekday_sessions(course, w_sessions)
+                #sesiones en calendario
+                create_course_sessions(course)
+            end
+      else
+        flash[:notice] = "Por favor, indique todos los parametros."
+        redirect_to :action => :import_courses
+      end
     end
 
     def new
@@ -289,7 +327,7 @@ class CoursesController < ApplicationController
         course = Course.find(params[:courseid])
         begin
             #archivo de estudiantes
-            members_attachment = Tempfile.new(["LISTADO-ALUMNOS_#{course.coursename}",".csv"])
+            members_attachment = Tempfile.new(["LISTADO_ALUMNOS_#{course.coursename}",".csv"])
             course_attachment = Tempfile.new(["DATOS_CURSO_#{course.coursename}",".csv"])
             course_sessions_attachment = Tempfile.new(["SESIONES_CURSO_#{course.coursename}",".csv"])
 
@@ -574,6 +612,21 @@ class CoursesController < ApplicationController
             weekday_session.day_number = params[:week_day]["#{s}"]
             weekday_session.session_start_hour = params[:session_hour]["#{s}"]
             weekday_session.save!
+        end
+    end
+
+    def bulk_register_weekday_sessions(course, sessions_array)
+        counter = 1
+        sessions_array.each do |s|
+            #vienen en el formato "d-H:m"
+            current_session = s.split("-")
+            ws = CourseSessionWeekday.new()
+            ws.course_id = course.id
+            ws.order = counter
+            ws.day_number = current_session[0]
+            ws.session_start_hour = current_session[1]
+            ws.save!
+            counter+=1
         end
     end
 

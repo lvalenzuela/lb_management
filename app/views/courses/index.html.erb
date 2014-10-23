@@ -60,7 +60,7 @@
                                                         <div class="col-xs-4">
                                                             <table class="table">
                                                                 <tr>
-                                                                    <th>Cantidad de Alumnos</th>
+                                                                    <th>Alumnos</th>
                                                                     <td><%=course.current_students_qty%> de <%=course.students_qty%>
                                                                     </td>
                                                                 </tr>
@@ -68,11 +68,10 @@
                                                                     <th>Profesor</th>
                                                                     <td><%=user_name(course.main_teacher_id)%></td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <th>Profesor Asignado</th>
-                                                                    <td><%=user_name(course.main_teacher_id)%></td>
+                                                                 <tr>
+                                                                    <th>Inicio</th>
+                                                                    <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
                                                                 </tr>
-                                                                
                                                             </table>
                                                         </div>
                                                         <div class="col-xs-4">
@@ -84,10 +83,6 @@
                                                                 <tr>
                                                                     <th>Libro</th>
                                                                     <td><%=template_name(course.course_template_id)%></td>
-                                                                </tr>
-                                                                 <tr>
-                                                                    <th>Inicio</th>
-                                                                    <td><%=l(course.start_date, :format => "%d de %B del %Y")%></td>
                                                                 </tr>
                                                             </table>
                                                         </div>
