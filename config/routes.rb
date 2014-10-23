@@ -27,6 +27,8 @@ Rails.application.routes.draw do
       get "new"
       get "show"
       post "create"
+      get "import_courses"
+      post "bulk_course_creation"
       get "edit"
       post "update"
       get "change_status"
@@ -121,9 +123,11 @@ Rails.application.routes.draw do
       get "enable_product"
       get "teachers_manager"
       get "teacher_availability"
+      #productos de longbourn
       get "zoho_product_list"
       get "disable_course_mode"
       post "save_products"
+      get "update_zoho_products"
       #administracion de cursos
       get "course_modes"
       post "create_course_mode"
@@ -141,6 +145,12 @@ Rails.application.routes.draw do
       #disponibilidad de usuarios
       post "set_user_disponibility"
       delete "delete_disponibility"
+      #salas de clases
+      get "classrooms_list"
+      post "create_classroom"
+      get "edit_classroom"
+      post "update_classroom"
+      delete "delete_classroom"
     end
   end
 

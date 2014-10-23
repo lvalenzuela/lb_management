@@ -170,6 +170,28 @@ class MainController < ApplicationController
         redirect_to :action => :course_modes
     end
 
+    def update_zoho_products
+        #agrega productos que no estan y actualiza los productos existentes
+        raw_products = get_zoho_product_list
+        if raw_products["code"] == 0
+            zoho_products = raw_products["items"].select{|i| i["status"] == "active"}
+        end
+
+        zoho_products.each do |zp|
+            product = CourseModeZohoProductMap.find_by_zoho_product_id(zp["item_id"])
+            if product.blank?
+                #si el producto no existe, se crea
+                CourseModeZohoProductMap.create(:product_name => zp["name"], :zoho_product_id => zp["item_id"], :price => zp["rate"], :enabled => true)
+            else
+                #si el producto existe, se actualiza
+                product.product_name = zp["name"]
+                product.price = zp["rate"]
+                product.save!
+            end
+        end
+        redirect_to :action => :zoho_product_list
+    end
+
     def zoho_product_list
         raw_products = get_zoho_product_list
         if raw_products["code"] == 0
@@ -178,7 +200,8 @@ class MainController < ApplicationController
         zoho_products.each do |zp|
             product = CourseModeZohoProductMap.find_by_zoho_product_id(zp["item_id"])
             if product.blank?
-                CourseModeZohoProductMap.create(:product_name => zp["name"], :zoho_product_id => zp["item_id"], :enabled => true)
+                #si el producto no existe, se crea
+                CourseModeZohoProductMap.create(:product_name => zp["name"], :zoho_product_id => zp["item_id"], :price => zp["rate"], :enabled => true)
             end
         end
 
@@ -284,7 +307,31 @@ class MainController < ApplicationController
         redirect_to :action => :course_creation_config
     end
 
+    def classrooms_list
+        @classrooms = CourseClassroom.all()
+        @classroom = CourseClassroom.new()
+    end
+
+    def create_classroom
+        @classroom = CourseClassroom.create(classroom_params)
+        if @classroom.valid?
+            redirect_to :action => :classrooms_list
+        else
+            render :classrooms_list
+        end
+    end
+
+    def edit_classroom
+    end
+
+    def update_classroom
+    end
+
     private
+
+    def classroom_params
+        params.require(:course_classroom).permit(:name, :capacity)
+    end
 
     def request_tag_params
         params.require(:request_tag).permit(:tagname, :area_id, :default_msg)

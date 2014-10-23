@@ -65,8 +65,8 @@
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th>Libro / Plantilla</th>
-                                                                    <td><%=get_course_level(course.course_level_id)%></td>
+                                                                    <th>Profesor</th>
+                                                                    <td><%=user_name(course.main_teacher_id)%></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Profesor Asignado</th>
@@ -78,8 +78,12 @@
                                                         <div class="col-xs-4">
                                                             <table class="table">
                                                                 <tr>
-                                                                    <th>Profesor</th>
-                                                                    <td><%=user_name(course.main_teacher_id)%></td>
+                                                                    <th>Nivel</th>
+                                                                    <td><%=get_course_level(course.course_level_id)%></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Libro</th>
+                                                                    <td><%=template_name(course.course_template_id)%></td>
                                                                 </tr>
                                                                  <tr>
                                                                     <th>Inicio</th>

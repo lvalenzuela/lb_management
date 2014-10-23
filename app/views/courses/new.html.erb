@@ -30,6 +30,11 @@
                                 <div class="box box-info">
                                     <div class="box-header">
                                         <h3 class="box-title">Datos Generales del Curso</h3>
+                                        <div class="box-tools">
+                                            <div class="pull-right">
+                                                <%=link_to "Importación de Cursos", {:controller => :courses, :action => :import_courses}, {:class => "btn btn-default"}%>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="box-body">
                                         <%if @course.errors.any?%>

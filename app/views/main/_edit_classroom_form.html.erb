@@ -1,0 +1,32 @@
+<%=form_for :course_classroom, :url =>{:action => :update_classroom} do |f|%>
+	<div class="box">
+		<div class="box-header">
+			<h3 class="box-title">Nueva Sala de Clases</h3>
+		</div>
+		<div class="box-body">
+			<div class="row">
+				<div class="col-xs-6">
+					<label class="pull-right">Nombre Sala</label>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group">
+						<%=f.text_field :name, :value => classroom.name, :class => "form-control"%>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6">
+					<label class="pull-right">Capacidad</label>
+				</div>
+				<div class="col-xs-6">
+					<%=f.number_field :capacity, :value => classroom.capacit, :class => "form-control"%>
+				</div>
+			</div>
+		</div>
+		<div class="box-footer clearfix">
+			<div class="pull-right">
+				<%=f.submit "Guardar Cambios", :class => "btn btn-primary"%>
+			</div>
+		</div>
+	</div>
+<%end%>

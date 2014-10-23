@@ -1,0 +1,32 @@
+<%=form_for :course_classroom, :url =>{:action => :create_classroom} do |f|%>
+	<div class="box">
+		<div class="box-header">
+			<h3 class="box-title">Nueva Sala de Clases</h3>
+		</div>
+		<div class="box-body">
+			<div class="row">
+				<div class="col-xs-4">
+					<label class="pull-right">Nombre Sala</label>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group">
+						<%=f.text_field :name, :class => "form-control"%>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4">
+					<label class="pull-right">Capacidad</label>
+				</div>
+				<div class="col-xs-6">
+					<%=f.number_field :capacity, :class => "form-control"%>
+				</div>
+			</div>
+		</div>
+		<div class="box-footer clearfix">
+			<div class="pull-right">
+				<%=f.submit "Guardar", :class => "btn btn-primary"%>
+			</div>
+		</div>
+	</div>
+<%end%>

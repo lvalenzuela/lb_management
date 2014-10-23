@@ -39,11 +39,11 @@
                                     <tbody>
                                         <%@members.each do |member|%>
                                             <tr>
-                                                <td><%=member.firstname+" "+member.lastname%></td>
+                                                <td><%=member.name.to_s%></td>
                                                 <td style="text-align: center"><%=member.institution%></td>
                                                 <td style="text-align: center"><%=member.department%></td>
-                                                <td><%=member.coursename%></td>
-                                                <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "user_report", :params => {:user_id => member.userid, :course_id => member.courseid, :format => "pdf"}}, :target => "_blank"%></td>
+                                                <td><%=@course.coursename%></td>
+                                                <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => "reports", :action => "user_report", :params => {:user_id => member.id, :course_id => @course.moodleid, :format => "pdf"}}, :target => "_blank"%></td>
                                             </tr>
                                         <%end%>
                                     </tbody>

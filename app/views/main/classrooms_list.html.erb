@@ -1,0 +1,52 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Salas de Clases
+        <small>Listado de Salas de Clases</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="active">Salas de Clases</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-6">
+			<%if @edit%>
+				<%=render :partial => "edit_classroom_form", :locals => {:classroom => @classroom}%>
+			<%else%>
+				<%=render :partial => "new_classroom_form"%>
+			<%end%>
+		</div>
+		<div class="col-xs-6">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Salas de Clases Longbourn</h3>
+				</div>
+				<div class="box-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th style="text-align: center; width: 180px;">Capacidad de Alumnos</th>
+								<th style="text-align: center; width: 80px;">Editar</th>
+								<th style="text-align: center; width: 80px;">Eliminar</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%@classrooms.each do |cr|%>
+							<tr>
+								<td><%=cr.name%></td>
+								<td style="text-align: center;"><%=cr.capacity%></td>
+								<td style="text-align: center;"></td>
+								<td style="text-align: center;"></td>
+							</tr>
+							<%end%>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

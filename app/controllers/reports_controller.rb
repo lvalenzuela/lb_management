@@ -36,8 +36,9 @@ class ReportsController < ApplicationController
 	end
 
 	def course_members
-		@members = UserReport.where(:courseid => params[:courseid], :created_at => last_report_date).group("userid")
-		@course = MoodleCourseV.find_by_moodleid(@members.first().courseid)
+		student_list = UserReport.where(:courseid => params[:courseid], :created_at => last_report_date).group("userid").map{|m| m.userid}
+		@members = StudentV.where(:id => student_list)
+		@course = MoodleCourseV.find_by_moodleid(params[:courseid])
 		@institution = @members.first().institution
 	end
 

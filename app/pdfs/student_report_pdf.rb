@@ -4,6 +4,7 @@ class StudentReportPdf < Prawn::Document
 	def initialize(user_id,course_id,view_context)
 		super(:margin => 50)
 		font "Helvetica"
+		user_data = StudentV.find(user_id)
 		report_data = UserReport.where(:userid => user_id, :courseid => course_id).order("created_at DESC").first()
 		repeat :all do
 			bounding_box [bounds.left, bounds.top + 30], :width  => bounds.width do
@@ -17,7 +18,7 @@ class StudentReportPdf < Prawn::Document
 
 		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 60) do
 			font "Helvetica", :size => 12
-			general_data(report_data)
+			general_data(user_data,report_data)
 			attendance(report_data)
 			indicadores_academicos(report_data)
 			responsabilidad(report_data)
@@ -34,10 +35,10 @@ class StudentReportPdf < Prawn::Document
 		draw_text "Longbourn Institute", :at => [100,10], size:12
 	end
 
-	def general_data(report_data)
-		data = [["<b>Nombre</b>",report_data.firstname+' '+report_data.lastname],
-				["<b>Empresa</b>",report_data.institution],
-				["<b>Departamento</b>",report_data.department],
+	def general_data(user_data,report_data)
+		data = [["<b>Nombre</b>",user_data.name],
+				["<b>Empresa</b>",user_data.institution],
+				["<b>Departamento</b>",user_data.department],
 				["<b>Curso</b>",report_data.coursename],
 				["<b>Fecha</b>", report_data.created_at.strftime("%d-%m-%Y")]]
 

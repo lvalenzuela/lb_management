@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141020200953) do
+ActiveRecord::Schema.define(version: 20141023132938) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -134,6 +134,13 @@ ActiveRecord::Schema.define(version: 20141020200953) do
     t.date     "created_at"
   end
 
+  create_table "course_classrooms", force: true do |t|
+    t.string   "name"
+    t.integer  "capacity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "course_features", force: true do |t|
     t.integer  "course_id"
     t.string   "feature_name"
@@ -204,6 +211,7 @@ ActiveRecord::Schema.define(version: 20141020200953) do
     t.string   "product_name"
     t.string   "zoho_product_id"
     t.integer  "course_mode_id"
+    t.string   "price"
     t.boolean  "enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -242,6 +250,7 @@ ActiveRecord::Schema.define(version: 20141020200953) do
     t.integer  "order"
     t.integer  "day_number"
     t.string   "session_start_hour"
+    t.integer  "course_classroom_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,0 +1,51 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "courses"%>
+<section class="content-header">
+    <h1>
+        Importación de Cursos
+        <small>Creación de Cursos</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Creación de Cursos</li>
+        <li class="active">Importación de Cursos</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-8 col-xs-offset-2">
+			<%=form_tag :action => :bulk_course_creation do%>
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Archivo de Importación</h3>
+				</div>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-xs-4">
+							<div class="btn btn-primary btn-file" style="width: 200px;">
+								<i class="fa fa-upload"></i> Archivo de Cursos
+								<%=file_field_tag :courses_file%>
+							</div>
+						</div>
+						<div class="col-xs-8">
+							<%=text_field_tag :file_path, nil, {:disabled => true, :class => "form-control", :style => "width: 400px;"}%>
+						</div>
+					</div>
+				</div>
+				<div class="box-footer clearfix">
+					<div class="pull-right">
+						<%=submit_tag "Crear Cursos", :class => "btn btn-primary"%>
+					</div>
+				</div>
+			</div>
+			<%end%>
+		</div>
+	</div>
+</section>
+
+<script>
+$( "#courses_file" ).change(function(){
+    var file_path = $("#courses_file").val();
+    $( "#file_path" ).val(file_path);
+});
+</script>
