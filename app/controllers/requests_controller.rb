@@ -348,34 +348,35 @@ class RequestsController < ApplicationController
 		params.require(:request).permit(:subject, :tagid, :receiverid, :areaid, :priorityid, :statusid, :duedate, :request, :attach, :pic)
 	end
 
-	def notify_user(userid,request,new_request)
-		@user = UserV.find(current_user.id)
+	def notify_user(request_creator,request,new_request)
+		request_user = UserV.find(request_creator)
+		request_receiver = UserV.find(request.receiverid)
 		case request.statusid
 		when 1
 			if new_request
 				subject = "Solicitud Asignada"
 				message = "Una solicitud le ha sido asignada. Por favor, revise sus solicitudes."
-				NotificationMailer.assigned_request(@user,request).deliver
+				NotificationMailer.assigned_request(request_receiver,request).deliver
 			else
 				subject = "Solicitud Pendiente"
 				message = "Una solicitud en espera de confirmación se le ha vuelto a asignar. Por favor, revise sus solicitudes."
-				NotificationMailer.reassigned_request(@user,request).deliver
+				NotificationMailer.reassigned_request(request_receiver,request).deliver
 			end
 
 		when 2
 			subject = "Solicitud Confirmada"
 			message = "Una solicitud con el tema '"+request.subject+"' ha sido confirmada y se ha registrado como resuelta."
-			#NotificationMailer.confirmed_request(@user,request).deliver
+			NotificationMailer.confirmed_request(request_receiver,request).deliver
 		when 3
 			subject = "Solicitud Cancelada"
 			message = "Una solicitud con el tema '"+request.subject+"' ha sido cancelada."
-			NotificationMailer.canceled_request(@user,request).deliver
+			NotificationMailer.canceled_request(request_user,request).deliver
 		when 4
 			subject = "Solicitud Esperando Confirmación"
 			message = "Una solicitud con el tema '"+request.subject+"' ha sido marcada como resuelta y está esperando confirmación. Por favor, revise sus solicitudes enviadas."
-			NotificationMailer.waiting_request(@user,request).deliver
+			NotificationMailer.waiting_request(request_user,request).deliver
 		end
-		Notification.create(:userid => userid, :subject => subject, :message => message)
+		Notification.create(:userid => request_creator, :subject => subject, :message => message)
 	end
 
 	def default_area
