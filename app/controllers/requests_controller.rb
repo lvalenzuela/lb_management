@@ -289,8 +289,8 @@ class RequestsController < ApplicationController
 
 	def get_area_managers(area)
 		c = Context.where(:typeid => 2, :instanceid => area).first()
-		return UserV.joins("as users inner join role_assignations
-						on role_assignations.userid = users.id
+		return UserV.joins("as user_vs inner join role_assignations
+						on role_assignations.userid = user_vs.id
 						and role_assignations.contextid = #{c.id}
 						and role_assignations.roleid in (1,2)")
 	end
