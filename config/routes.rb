@@ -200,6 +200,7 @@ Rails.application.routes.draw do
       get "add_attachment"
       get 'new_request'
       get 'delete_request'
+      post 'update_request_subjects'
       post 'create_request'
       post 'filter_requests'
       post 'update'

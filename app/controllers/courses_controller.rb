@@ -6,16 +6,19 @@ class CoursesController < ApplicationController
 
     def index
         case params[:opt]
-        when "production"
-            c_list = Course.where(:course_status_id => 4).order("start_date ASC")
-            @active = "production"
-        when "canceled"
+        when "desarrollo"
             c_list = Course.where(:course_status_id => 3).order("start_date ASC")
-            @active = "canceled"
+        when "cancel"
+            c_list = Course.where(:course_status_id => 5).order("start_date ASC")
+        when "hidden"
+            c_list = Course.where(:course_status_id => 1).order("start_date ASC")
+        when "finished"
+            c_list = Course.where(:course_status_id => 4).order("start_date ASC")
         else
-            c_list = Course.where(:course_status_id => [1,2]).order("start_date ASC")
-            @active = "staged"
+            #active
+            c_list = Course.where(:course_status_id => 2).order("start_date ASC")
         end
+        @active = params[:opt] ? params[:opt] : "active"
         @courses = c_list.page(params[:page]).per(10)
     end
 
@@ -372,7 +375,7 @@ class CoursesController < ApplicationController
             course_attachment.unlink
         end
         #se cambia el estado del curso a "en desarrollo"
-        course.course_status_id = 4
+        course.course_status_id = 3
         course.save!
         redirect_to :action => :index, :opt => "production"
     end
@@ -381,17 +384,21 @@ class CoursesController < ApplicationController
         c = Course.find(params[:id])
         case params[:status]
         when "cancel"
-            c.course_status_id = 3
+            c.course_status_id = 5
+            c.save!
+        when "activate"
+            if c.current_students_qty > 0
+                c.count_students
+            end
+            c.course_status_id = 2
+            c.save!
+        when "deactivate"
+            c.course_status_id = 1
             c.save!
         else
-            if c.current_students_qty == 0
-                c.course_status_id = 1
-                c.save!
-            else
-                c.course_status_id = 2
-                c.count_students
-                c.save!
-            end
+            #finish
+            c.course_status_id = 4
+            c.save!
         end
         redirect_to :action => :index, :opt => params[:active]
     end
@@ -399,7 +406,7 @@ class CoursesController < ApplicationController
     def cancel_course
         c = Course.find(params[:id])
         #se cancela el curso
-        c.update_attributes(:course_status_id => 3)
+        c.update_attributes(:course_status_id => 5)
         redirect_to :action => :index
     end
 
@@ -592,7 +599,7 @@ class CoursesController < ApplicationController
 
     def teacher_summit_courses_sessions(teacherid)
         #cursos que no esten asociados con un curso en moodle
-        course_list = Course.where(:main_teacher_id => teacherid, :moodleid => nil, :course_status_id => [1,2,4]).map{|c| c.id}
+        course_list = Course.where(:main_teacher_id => teacherid, :moodleid => nil, :course_status_id => [1,2]).map{|c| c.id}
         return CourseSession.where(:commerce_course_id => course_list)
     end
 

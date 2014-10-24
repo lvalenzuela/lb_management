@@ -1,8 +1,10 @@
-<%if active == "staged"%>
+<%if active == "active"%>
     <%=link_to "<i class='fa fa-play fa-lg'></i> Iniciar Curso".html_safe, {:controller => :courses, :action => :init_course_dialog, :params => {:courseid => course.id}}, {:class => "btn btn-success"}%>
+    <%=link_to "<i class='fa fa-eye-slash fa-lg'></i> Desactivar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "deactivate", :active => active}}, {:class => "btn btn-default"}%>
     <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger"}%>
-<%elsif active == "canceled"%>
-    <%=link_to "<i class='fa fa-check fa-lg'></i> Revalidar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "revalidar", :active => active}}, {:class => "btn bg-olive"}%>
-<%else #en produccion%>
+<%elsif active == "desarrollo"%>
+	<%=link_to "<i class='fa fa-plus fa-lg'></i> Finalizar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "finish", :active => active}}, {:class => "btn btn-success"}%>
     <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger"}%>
+<%elsif active == "hidden"%>
+	<%=link_to "<i class='fa fa-check fa-lg'></i> Activar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "activate"}}, {:class => "btn btn-success"}%>
 <%end%>

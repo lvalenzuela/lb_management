@@ -16,14 +16,20 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-                <li class="<%=activate_menu_item("production",@active)%>">
-                    <%=link_to "Cursos en Desarrollo", {:controller => :courses, :action => :index, :params => {:opt => "production"}}%>
+                <li class="<%=activate_menu_item("hidden",@active)%>">
+                    <%=link_to "Cursos Inactivos", {:controller => :courses, :action => :index, :params => {:opt => "hidden"}}%>
                 </li>
-                <li class="<%=activate_menu_item("staged",@active)%>">
-                    <%=link_to "Cursos en Venta", {:controller => :courses, :action => :index, :params => {:opt => "staged"}}%>
+                <li class="<%=activate_menu_item("active",@active)%>">
+                    <%=link_to "Cursos en Venta", {:controller => :courses, :action => :index, :params => {:opt => "active"}}%>
                 </li>
-                <li class="<%=activate_menu_item("canceled",@active)%>">
-                    <%=link_to "Cursos Cancelados", {:controller => :courses, :action => :index, :params => {:opt => "canceled"}}%>
+                <li class="<%=activate_menu_item("desarrollo",@active)%>">
+                    <%=link_to "Cursos en Desarrollo", {:controller => :courses, :action => :index, :params => {:opt => "desarrollo"}}%>
+                </li>
+                <li class="<%=activate_menu_item("finished",@active)%>">
+                    <%=link_to "Cursos Finalizados", {:controller => :courses, :action => :index, :params => {:opt => "finished"}}%>
+                </li>
+                <li class="<%=activate_menu_item("cancel",@active)%>">
+                    <%=link_to "Cursos Cancelados", {:controller => :courses, :action => :index, :params => {:opt => "cancel"}}%>
                 </li>
             </ul>
             <div class="tab-content">
@@ -90,7 +96,7 @@
                                                 </div>
                                                 <div class="box-footer clearfix">
                                                     <div class="pull-right">
-                                                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-default"}%>
+                                                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
                                                         <%=render :partial => "summit_course_options", :locals => {:active => @active, :course => course}%>
                                                     </div>
                                                 </div>

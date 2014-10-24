@@ -85,13 +85,26 @@ class RequestsController < ApplicationController
 		@areas = get_areas(default_area)
 	end
 
+	def update_request_subjects
+		#category_id = 1 son las categorías por defecto
+		@subjects = RequestTag.where(:area_id => params[:selected_area], :category_id => 1)
+		respond_to do |format|
+			format.js
+		end
+	end
+
 	def new_request
-		@request = Request.new()
-		@user = current_user
-		@priorities = RequestPriority.all()
-		@area_tags = RequestTag.where(:area_id => params[:areaid])
-		#temporalmente limitado a enviar solicitudes sólo al área TI
-		@area = Area.find(params[:areaid])
+		if params[:areaid] && params[:tagid]
+			@request = Request.new()
+			@user = current_user
+			@priorities = RequestPriority.all()
+			@area_tags = RequestTag.where(:area_id => params[:areaid], :category_id => 1)
+			@selected_tag = RequestTag.find(params[:tagid])
+			#temporalmente limitado a enviar solicitudes sólo al área TI
+			@area = Area.find(params[:areaid])
+		else
+			redirect_to :action => :area_for_request
+		end
 	end
 
 	def add_attachment

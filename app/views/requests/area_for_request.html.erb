@@ -27,7 +27,14 @@
                     <div class="box-body">
                         <p>Por favor, selecciona el área de Longbourn a la cual deseas enviar el requerimiento</p>
                         <div class="form-group">
-                            <%=select_tag :areaid, options_for_select(@areas.collect{|a| [a.areaname, a.id]}), :class => "form-control"%>
+                            <label>Área de Destino</label>
+                            <%=select_tag :areaid, options_for_select(@areas.collect{|a| [a.areaname, a.id]}), {:class => "form-control", :include_blank => true}%>
+                        </div>
+                        <p>Selecciona el tema por el cual deseas realizar tu solicitud.</p>
+                        <p>Si su solicitud no se encuentra relacionada con ninguno de los temas de la lista, por favor, ponerse en contacto con la Gerencia de su Área.</p>
+                        <div class="form-group">
+                            <label>Tema de la Solicitud</label>
+                            <%=render :partial => "subject_selector", :locals => {:subjects => nil}%>
                         </div>
                     <div class="box-footer">
                         <%=submit_tag "Seleccionar", :class => "btn btn-primary"%>
@@ -38,3 +45,15 @@
         </div>
     </div>
 </section>
+
+<%=form_tag update_request_subjects_requests_path, :remote => true, :id => "request-subject-form" do%>
+<%=hidden_field_tag :selected_area%>
+<%end%>
+
+<script>
+$( "#areaid" ).change(function(){
+    var level_id = $("#areaid option:selected").val();
+    $( "#selected_area" ).val(level_id);
+    $( "#request-subject-form" ).submit();
+});
+</script>
