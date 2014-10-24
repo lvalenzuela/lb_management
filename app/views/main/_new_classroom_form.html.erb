@@ -19,7 +19,7 @@
 					<label class="pull-right">Capacidad</label>
 				</div>
 				<div class="col-xs-6">
-					<%=f.number_field :capacity, :class => "form-control"%>
+					<%=f.number_field :capacity, :class => "form-control", :min => 0%>
 				</div>
 			</div>
 		</div>

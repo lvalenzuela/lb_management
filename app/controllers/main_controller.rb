@@ -322,9 +322,18 @@ class MainController < ApplicationController
     end
 
     def edit_classroom
+        @classroom = CourseClassroom.find(params[:id])
     end
 
     def update_classroom
+        c = CourseClassroom.find(params[:course_classroom][:id])
+        c.update_attributes(classroom_params)
+        redirect_to :action => :classrooms_list
+    end
+
+    def delete_classroom
+        CourseClassroom.find(params[:id]).delete
+        redirect_to :action => :classrooms_list
     end
 
     private

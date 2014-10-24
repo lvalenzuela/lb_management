@@ -133,11 +133,13 @@ class RequestsController < ApplicationController
 			@request.save!
 
 			#se guardan los adjuntos
-			params[:attachments].each do |att|
-				new_attachment = RequestAttachment.new()
-				new_attachment.request_id = @request.id
-				new_attachment.attached_file = att
-				new_attachment.save!
+			if params[:attachments]
+				params[:attachments].each do |att|
+					new_attachment = RequestAttachment.new()
+					new_attachment.request_id = @request.id
+					new_attachment.attached_file = att
+					new_attachment.save!
+				end
 			end
 
 			if !@request.receiverid.nil? && @request.receiverid != ""

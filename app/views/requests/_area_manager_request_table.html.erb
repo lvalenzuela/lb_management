@@ -34,7 +34,7 @@
 	    	<td class="small-col"><small class="badge <%=req_priority_label(r.priorityid)%>"><%=request_priority_desc(r.priorityid)%></small></td>
 	        <td class="small-col"><small>De: <%=link_to get_username(r.userid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></small></td>
 	        <td class="small-col"><small>Para: <%=link_to get_username(r.receiverid), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></small></td>
-	        <td class="subject"><%=link_to truncate(r.subject, :length => 60), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
+	        <td class="subject"><%=link_to truncate(r.subject, :length => 40), :controller => "request_notes", :action => "show", :params => {:id => r.id}%></td>
 	        <td class="time">Vence en <%=days_left(r.duedate)%> días</td>
 	    </tr>
 	    <%end%>
