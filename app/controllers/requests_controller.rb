@@ -362,7 +362,6 @@ class RequestsController < ApplicationController
 				message = "Una solicitud en espera de confirmación se le ha vuelto a asignar. Por favor, revise sus solicitudes."
 				NotificationMailer.reassigned_request(request_receiver,request).deliver
 			end
-
 		when 2
 			subject = "Solicitud Confirmada"
 			message = "Una solicitud con el tema '"+request.subject+"' ha sido confirmada y se ha registrado como resuelta."

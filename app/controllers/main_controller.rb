@@ -308,12 +308,12 @@ class MainController < ApplicationController
     end
 
     def classrooms_list
-        @classrooms = CourseClassroom.all()
-        @classroom = CourseClassroom.new()
+        @classrooms = Classroom.all()
+        @classroom = Classroom.new()
     end
 
     def create_classroom
-        @classroom = CourseClassroom.create(classroom_params)
+        @classroom = Classroom.create(classroom_params)
         if @classroom.valid?
             redirect_to :action => :classrooms_list
         else
@@ -322,24 +322,24 @@ class MainController < ApplicationController
     end
 
     def edit_classroom
-        @classroom = CourseClassroom.find(params[:id])
+        @classroom = Classroom.find(params[:id])
     end
 
     def update_classroom
-        c = CourseClassroom.find(params[:course_classroom][:id])
+        c = Classroom.find(params[:course_classroom][:id])
         c.update_attributes(classroom_params)
         redirect_to :action => :classrooms_list
     end
 
     def delete_classroom
-        CourseClassroom.find(params[:id]).delete
+        Classroom.find(params[:id]).delete
         redirect_to :action => :classrooms_list
     end
 
     private
 
     def classroom_params
-        params.require(:course_classroom).permit(:name, :capacity)
+        params.require(:classroom).permit(:name, :capacity)
     end
 
     def request_tag_params

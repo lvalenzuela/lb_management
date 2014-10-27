@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141023132938) do
+ActiveRecord::Schema.define(version: 20141027144321) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -23,6 +23,28 @@ ActiveRecord::Schema.define(version: 20141023132938) do
   create_table "calendar_holydays", force: true do |t|
     t.date     "date"
     t.integer  "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "classroom_availabilities", force: true do |t|
+    t.integer  "classroom_id"
+    t.integer  "weekday"
+    t.time     "start_hour"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "classroom_matchings", force: true do |t|
+    t.string   "matching_array"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "classrooms", force: true do |t|
+    t.string   "name"
+    t.string   "location"
+    t.integer  "capacity"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -135,8 +157,10 @@ ActiveRecord::Schema.define(version: 20141023132938) do
   end
 
   create_table "course_classrooms", force: true do |t|
-    t.string   "name"
-    t.integer  "capacity"
+    t.integer  "course_id"
+    t.integer  "classroom_matching_id"
+    t.date     "course_start_date"
+    t.date     "course_end_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
