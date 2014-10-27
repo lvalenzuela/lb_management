@@ -344,7 +344,7 @@ class RequestsController < ApplicationController
 	end
 
 	def request_tag_params
-		params.require(:request_tag).permit(:tagname, :default_user_id)
+		params.require(:request_tag).permit(:tagname, :area_id, :default_user_id)
 	end
 
 	def request_params

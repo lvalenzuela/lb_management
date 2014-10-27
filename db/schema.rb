@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141027144321) do
+ActiveRecord::Schema.define(version: 20141027173520) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 20141027144321) do
     t.integer  "classroom_id"
     t.integer  "weekday"
     t.time     "start_hour"
+    t.integer  "duration"
+    t.integer  "prime"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
