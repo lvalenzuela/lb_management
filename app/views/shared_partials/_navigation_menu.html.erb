@@ -19,40 +19,24 @@ usuario
             <ul class="nav navbar-nav">
                 <li class="dropdown notifications-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <%if session[:req_pending] != 0%>
-                            <i class="fa fa-inbox fa-lg"></i> <span class="label label-danger"><%=session[:req_pending]%></span <i class="fa fa-caret-down"></i>
+                        <%if session[:req_pending] != 0 || session[:req_waiting_conf] != 0%>
+                            <i class="fa fa-inbox fa-lg"></i> <span class="label label-danger"><%=session[:req_pending] + session[:req_waiting_conf]%></span <i class="fa fa-caret-down"></i>
                         <%else%>
                             <i class="fa fa-inbox"></i> <i class="fa fa-caret-down"></i>
                         <%end%>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">Requerimientos Pendientes<li>
+                        <li class="header">Requerimientos<li>
                         <li>
                             <ul class="menu">
                                 <li>
                                     <%=link_to :controller => :requests, :action => :index do%>
-                                        <i class="fa fa-warning danger"></i><strong><%=session[:req_pending].to_s%></strong> Requerimientos Pendientes
+                                        <i class="fa fa-warning danger"></i><strong><%=session[:req_pending].to_s%></strong> Pendientes
                                     <%end%>
                                 </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown notifications-menu">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <%if session[:req_waiting_conf] != 0%>
-                            <i class="fa fa-check-square-o fa-lg"></i> <span class="label label-danger"><%=session[:req_waiting_conf]%></span> <i class="fa fa-caret-down"></i>
-                        <%else%>
-                            <i class="fa fa-check-square-o"></i> <i class="fa fa-caret-down"></i>
-                        <%end%>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li class="header">Esperando Confirmación</li>
-                        <li>
-                            <ul class="menu">
                                 <li>
                                     <%=link_to :controller => :requests, :action => :sent_requests, :params => {:f => "wconf"} do%>
-                                    <i class="fa fa-check-square-o warning"></i><strong><%=session[:req_waiting_conf].to_s%></strong> Requerimientos
+                                    <i class="fa fa-check-square-o warning"></i><strong><%=session[:req_waiting_conf].to_s%></strong> Esperando Confirmación
                                     <%end%>
                                 </li>
                             </ul>

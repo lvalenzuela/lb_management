@@ -16,10 +16,22 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-4">
+					<label class="pull-right">Ubicación</label>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group">
+						<%=f.text_field :location, :class => "form-control", :min => 0%>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4">
 					<label class="pull-right">Capacidad</label>
 				</div>
 				<div class="col-xs-6">
-					<%=f.number_field :capacity, :class => "form-control", :min => 0%>
+					<div class="form-group">
+						<%=f.number_field :capacity, :class => "form-control", :min => 0%>
+					</div>
 				</div>
 			</div>
 		</div>

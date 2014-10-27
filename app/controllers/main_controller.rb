@@ -339,7 +339,7 @@ class MainController < ApplicationController
     private
 
     def classroom_params
-        params.require(:classroom).permit(:name, :capacity)
+        params.require(:classroom).permit(:name, :location, :capacity)
     end
 
     def request_tag_params
