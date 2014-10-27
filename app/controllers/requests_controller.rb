@@ -141,6 +141,9 @@ class RequestsController < ApplicationController
 	def create_request
 		@request = Request.create(request_params)
 		if @request.valid?
+			tag = RequestTag.find(params[:request][:tagid]).tagname
+			#se añade el tag al principio del requerimiento
+			@request.subject = tag+" - "+@request.subject
 			#Se marca el usuario que envió el requerimiento
 			@request.userid = current_user.id
 			@request.save!
