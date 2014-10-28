@@ -157,7 +157,8 @@ Rails.application.routes.draw do
       get "classroom_availability"
       post "upload_classroom_availability"
       get "availability_file_example"
-      get "match_classrooms"
+      get "classroom_matching"
+      post "upload_classroom_matching"
     end
   end
 

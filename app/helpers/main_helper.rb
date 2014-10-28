@@ -1,5 +1,18 @@
 module MainHelper
 
+	def print_classroom_matching(matching_array)
+		array = matching_array.split(",")
+		printing = ""
+		array.each do |a|
+			slot = ClassroomAvailability.find(a.to_i)
+			printing = printing+"#{week_day(slot.weekday)} - #{l(slot.start_hour, :format => '%H:%M')} - Sala: #{Classroom.find(slot.classroom_id).name}"
+			if a != array.last
+				printing = printing+" || "
+			end
+		end
+		return printing
+	end
+
 	def check_disponibility(disponibility, day)
 		disp = disponibility.select{|d| d.day_number == day}.first()
 

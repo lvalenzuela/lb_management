@@ -358,8 +358,8 @@ class MainController < ApplicationController
         file_contents = params[:classroom_availability].read
         csv_availability = CSV.parse(file_contents, :headers => true)
         csv_availability.each do |row|
-            new_entry = ClassroomAvailability.new()
             if row["SALA_ID"] || row["DIA"] || row["HORA"] || row["DURACION"] || row["PRIME"]
+                new_entry = ClassroomAvailability.new()
                 new_entry.classroom_id = row["SALA_ID"]
                 new_entry.weekday = row["DIA"]
                 new_entry.start_hour = row["HORA"]
@@ -371,8 +371,22 @@ class MainController < ApplicationController
         redirect_to :action => :classroom_availability
     end
 
-    def match_classrooms
-        
+    def classroom_matching
+        @matchings = ClassroomMatching.all()
+    end
+
+    def upload_classroom_matching
+        #se trunca la tabla de "slots", dado que será sobre escrita
+        ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_matchings")
+        #nuevos registros
+        file_contents = params[:matchings].read
+        csv_matchings = CSV.parse(file_contents, :headers => true)
+        csv_matchings.each do |row|
+            new_entry = ClassroomMatching.new()
+            new_entry.matching_array = row["TUPLA1"]+","+row["TUPLA2"]
+            new_entry.save!
+        end
+        redirect_to :action => :classroom_matching
     end
 
     private

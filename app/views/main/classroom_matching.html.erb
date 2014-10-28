@@ -3,11 +3,11 @@
 <section class="content-header no-margin">
     <h1>
         Salas de Clases
-        <small>Disponibilidad de Salas</small>
+        <small>Cotejamiento de Horarios</small>
     </h1>
     <ol class="breadcrumb">
         <li>Salas de Clases</li>
-        <li class="active">Disponibilidad de Salas</li>
+        <li class="active">Cotejamiento de Horarios</li>
     </ol>
 </section>
 
@@ -19,11 +19,11 @@
                 <li>
                     <%=link_to "Listado de Salas", {:controller => :main, :action => :classrooms_list}%>
                 </li>
-                <li class="active">
+                <li>
                     <%=link_to "Horarios de Salas", {:controller => :main, :action => :classroom_availability}%>
                 </li>
-                <li>
-                    <%=link_to "Cotejamiento de Salas", {:controller => :main, :action => :classroom_matching}%>
+                <li class="active">
+                	<%=link_to "Cotejamiento de Salas", {:controller => :main, :action => :classroom_matching}%>
                 </li>
             </ul>
             <div class="tab-content">
@@ -31,59 +31,50 @@
                     <section id="new">
                         <div class="row">
                             <div class="col-xs-6">
-                                <div class="box box-warning">
+                                <div class="box box-info">
                                     <div class="box-header">
-                                        <h3 class="box-title">Disponibilidad de salas</h3>
+                                        <h3 class="box-title">Cotejamiento Actual</h3>
                                     </div>
                                     <div class="box-body">
-                                        <table class="table table-striped">
+                                        <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Sala</th>
-                                                    <th>Día</th>
-                                                    <th>Hora</th>
-                                                    <th>Duración</th>
-                                                    <th>Prime</th>
+                                                    <th>ID</th>
+                                                    <th>Asociación de Salas</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <%if @availability.blank?%>
-                                                    <tr>
-                                                        <td colspan="5">No hay registros para mostrar</td>
-                                                    </tr>   
+                                                <%if @matchings.blank?%>
+                                                <tr>
+                                                    <td colspan="2">No hay datos para mostrar</td>
+                                                </tr>
                                                 <%else%>
-                                                    <%@availability.each do |a|%>
+                                                    <%@matchings.each do |m|%>
                                                     <tr>
-                                                        <td><%=a.classroom_id%></td>
-                                                        <td><%=week_day(a.weekday)%></td>
-                                                        <td><%=a.start_hour ? l(a.start_hour, :format => "%H:%M") : nil%></td>
-                                                        <td><%=a.duration%></td>
-                                                        <td><%=a.prime%></td>
+                                                        <td><%=m.id%></td>
+                                                        <td><%=print_classroom_matching(m.matching_array)%></td>
                                                     </tr>
                                                     <%end%>
                                                 <%end%>
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="box-footer">
+                                    <div class="box-footer clearfix">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-6">
-                                <%=form_tag upload_classroom_availability_main_index_path, :multipart => true do%>
-                                <div class="box box-info">
+                                <%=form_tag upload_classroom_matching_main_index_path, :multipart => true do%>
+                                <div class="box box-warning">
                                     <div class="box-header">
-                                        <h3 class="box-title">Importar Disponibilidad</h3>
+                                        <h3 class="box-title">Importar Cotejamiento</h3>
                                     </div>
                                     <div class="box-body">
-                                        <p>Importar un documento separado por comas (.csv) que contenga la disponibilidad de las salas de clases de Longbourn.</p>
-                                        <p>Tener en cuenta que <b>la cantidad de salas señaladas</b> en este documento <b>debe ser menor o igual</b> a la cantidad de salas registradas en el sistema</p>
-                                        <p>Para ver un ejemplo del formato del documento a subir, guiarse por el siguiente <%=link_to "documento", {:controller => :main, :action => :availability_file_example}, {:target => "_blank"} %></p>
                                         <div class="row">
                                             <div class="col-xs-2">
                                                 <div class="btn btn-primary btn-file">
                                                     <i class="fa fa-upload"></i> Horarios
-                                                    <%=file_field_tag :classroom_availability%>
+                                                    <%=file_field_tag :matchings%>
                                                 </div>
                                             </div>
                                             <div class="col-xs-8 col-xs-offset-2">
@@ -100,9 +91,6 @@
                                 <%end%>
                             </div>
                         </div>
-                        <div class="row">
-
-                        </div>
                     </section>
                 </div>
             </div>
@@ -111,8 +99,8 @@
 </section>
 
 <script>
-$( "#classroom_availability" ).change(function(){
-    var file_path = $("#classroom_availability").val();
+$( "#matchings" ).change(function(){
+    var file_path = $("#matchings").val();
     $( "#file_path" ).val(file_path);
 });
 </script>
