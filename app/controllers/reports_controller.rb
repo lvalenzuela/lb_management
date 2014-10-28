@@ -139,7 +139,7 @@ class ReportsController < ApplicationController
 					@selected_group = params[:department]
 				end
 			else
-				@institution_list = CourseGroupReport.select("institution, count(distinct userid) as users, count(distinct groupid) as groups").group("institution")
+				@institution_list = CourseGroupReport.select("institution, count(distinct userid) as users, count(distinct groupid) as groups").where("institution is not null and institution <> ''").group("institution")
 			end
 		else
 			@active = "groups"
