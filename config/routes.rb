@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       get "edit_course_observation"
       post "update_course_observation"
       post "create_course_observation"
+      #cursos en observacion
+      get "alarm_courses"
     end
   end
 
@@ -151,6 +153,8 @@ Rails.application.routes.draw do
       get "edit_classroom"
       post "update_classroom"
       delete "delete_classroom"
+      get "classroom_availability"
+      post "upload_classroom_availability"
     end
   end
 

@@ -146,7 +146,43 @@ class DashboardController < ApplicationController
 		redirect_to :action => :configuration
 	end
 
+	def alarm_courses
+		case params[:opt]
+		when "delayed_sessions"
+			courses_list = delayed_sessions_courses
+			@active = "delayed_sessions"
+		when "low_grades"
+			courses_list = low_grades_courses
+			@active = "low_grades"
+		else #low_attendance
+			courses_list = low_attendance_courses
+			@active = "low_attendance"
+		end
+		@courses = courses_list.page(params[:page]).per(10)
+	end
+
 	private
+
+	def low_attendance_courses
+		min_attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first().value.to_i
+		return DashboardCoursesV.where("(avg_attendance_ratio*100) < #{min_attendance} and visible = 1")
+	end
+
+	def low_grades_courses
+		min_grade = CourseAlarmParameter.where(:param_name => "approve_grade").first().value
+		min_grade = grade_to_points(min_grade)
+		return DashboardCoursesV.where("mean_grade < #{min_grade} and visible = 1 and gradetype = 2")
+	end
+
+	def delayed_sessions_courses
+		max_delay = CourseAlarmParameter.where(:param_name => "max_attendance_delay").first().value.to_i
+		return DashboardCoursesV.where("(current_booked_sessions - current_taken_sessions) > #{max_delay} and visible = 1")
+	end
+
+	def grade_to_points(grade)
+		grade_array = grade.split(".")
+		return (grade[0].to_i - 1) * 10 + grade[1].to_i + 1
+	end
 
 	def course_observation_params
 		params.require(:course_observation).permit(:course_id, :user_id, :subject, :message, :attachment)

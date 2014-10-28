@@ -4,6 +4,22 @@ module ApplicationHelper
 		return User.find(userid).avatar.url
 	end
 
+	def check_user_alerts(userid)
+		alerts = {}
+		#nota minima de aprobacion
+		min_grade = CourseAlarmParameter.where(:param_name => "approve_grade").first().value
+		min_grade = grade_to_points(min_grade)
+		#porcentaje mínimo de asistencia
+		min_attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first().value.to_i
+		#maximo atraso en clases
+		max_delay = CourseAlarmParameter.where(:param_name => "max_attendance_delay").first().value.to_i
+
+		alerts[:failing_grades] = DashboardCoursesV.where("mean_grade < #{min_grade} and visible = 1 and gradetype = 2").distinct.count(:courseid)
+		alerts[:failing_attendance] = DashboardCoursesV.where("(avg_attendance_ratio*100) < #{min_attendance} and visible = 1").distinct.count(:courseid)
+		alerts[:late_sessions] = DashboardCoursesV.where("(current_booked_sessions - current_taken_sessions) > #{max_delay} and visible = 1").distinct.count(:courseid)
+		return alerts
+	end
+
 	def check_user_requests(userid)
 		wconf = Request.where("userid = #{userid} and statusid = 4").order("updated_at ASC").count
 		if wconf.nil?

@@ -10,49 +10,68 @@
     </ol>
 </section>
 
+
 <section class="content">
-	<div class="row">
-		<div class="col-xs-6">
-			<%if @edit%>
-				<%=render :partial => "edit_classroom_form", :locals => {:classroom => @classroom}%>
-			<%else%>
-				<%=render :partial => "new_classroom_form"%>
-			<%end%>
-		</div>
-		<div class="col-xs-6">
-			<div class="box box-info">
-				<div class="box-header">
-					<h3 class="box-title">Salas de Clases Longbourn</h3>
-				</div>
-				<div class="box-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Nombre</th>
-								<th style="text-align: center; width: 80px;">Capacidad</th>
-								<th style="width: 120px;">Ubicación</th>
-								<th style="text-align: center; width: 80px;">Editar</th>
-								<th style="text-align: center; width: 80px;">Eliminar</th>
-							</tr>
-						</thead>
-						<tbody>
-							<%if @classrooms.blank?%>
-								<tr>
-									<td colspan="4">No hay salas registradas en el sistema.</td>
-								</tr>
-							<%else%>
-								<%@classrooms.each do |cr|%>
-								<tr>
-									<td><%=cr.name%></td>
-									<td style="text-align: center;"><%=cr.capacity%></td>
-									<td><%=cr.location%></td>
-									<td style="text-align: center;"><%=link_to "<i class='fa fa-edit'></i>".html_safe, {:controller => :main, :action => :edit_classroom, :params => {:id => cr.id}}, {:class => "btn btn-warning"}%></td>
-									<td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :main, :action => :delete_classroom, :params => {:id => cr.id}}, {:class => "btn btn-danger", :data => {:confirm => "Estas Seguro?"}, :method => :delete}%></td>
-								</tr>
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <%=link_to "Listado de Salas", {:controller => :main, :action => :classrooms_list}%>
+                </li>
+                <li>
+                    <%=link_to "Horarios de Salas", {:controller => :main, :action => :classroom_availability}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section id="new">
+						<div class="row">
+							<div class="col-xs-6">
+								<%if @edit%>
+									<%=render :partial => "edit_classroom_form", :locals => {:classroom => @classroom}%>
+								<%else%>
+									<%=render :partial => "new_classroom_form"%>
 								<%end%>
-							<%end%>
-						</tbody>
-					</table>
+							</div>
+							<div class="col-xs-6">
+								<div class="box box-info">
+									<div class="box-header">
+										<h3 class="box-title">Salas de Clases Longbourn</h3>
+									</div>
+									<div class="box-body">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Nombre</th>
+													<th style="text-align: center; width: 80px;">Capacidad</th>
+													<th style="width: 120px;">Ubicación</th>
+													<th style="text-align: center; width: 80px;">Editar</th>
+													<th style="text-align: center; width: 80px;">Eliminar</th>
+												</tr>
+											</thead>
+											<tbody>
+												<%if @classrooms.blank?%>
+													<tr>
+														<td colspan="4">No hay salas registradas en el sistema.</td>
+													</tr>
+												<%else%>
+													<%@classrooms.each do |cr|%>
+													<tr>
+														<td><%=cr.name%></td>
+														<td style="text-align: center;"><%=cr.capacity%></td>
+														<td><%=cr.location%></td>
+														<td style="text-align: center;"><%=link_to "<i class='fa fa-edit'></i>".html_safe, {:controller => :main, :action => :edit_classroom, :params => {:id => cr.id}}, {:class => "btn btn-warning"}%></td>
+														<td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :main, :action => :delete_classroom, :params => {:id => cr.id}}, {:class => "btn btn-danger", :data => {:confirm => "Estas Seguro?"}, :method => :delete}%></td>
+													</tr>
+													<%end%>
+												<%end%>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
 				</div>
 			</div>
 		</div>

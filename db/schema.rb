@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141027173520) do
+ActiveRecord::Schema.define(version: 20141028125143) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20141027173520) do
   create_table "course_alarm_data", force: true do |t|
     t.integer  "courseid"
     t.integer  "late_sessions"
+    t.decimal  "mean_attendance",    precision: 5, scale: 2
     t.decimal  "failing_attendance", precision: 5, scale: 2
     t.decimal  "failing_grades",     precision: 5, scale: 2
     t.decimal  "course_grade",       precision: 5, scale: 2

@@ -1,0 +1,114 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Salas de Clases
+        <small>Disponibilidad de Salas</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Salas de Clases</li>
+        <li class="active">Disponibilidad de Salas</li>
+    </ol>
+</section>
+
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <%=link_to "Listado de Salas", {:controller => :main, :action => :classrooms_list}%>
+                </li>
+                <li class="active">
+                    <%=link_to "Horarios de Salas", {:controller => :main, :action => :classroom_availability}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section id="new">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="box box-warning">
+                                    <div class="box-header">
+                                        <h3 class="box-title">Disponibilidad de salas</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sala</th>
+                                                    <th>Día</th>
+                                                    <th>Hora</th>
+                                                    <th>Duración</th>
+                                                    <th>Prime</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <%if @availability.blank?%>
+                                                    <tr>
+                                                        <td colspan="5">No hay registros para mostrar</td>
+                                                    </tr>   
+                                                <%else%>
+                                                    <%@availability.each do |a|%>
+                                                    <tr>
+                                                        <td><%=a.classroom_id%></td>
+                                                        <td><%=week_day(a.weekday)%></td>
+                                                        <td><%=l(a.start_hour, :format => "%H:%M")%></td>
+                                                        <td><%=a.duration%></td>
+                                                        <td><%=a.prime%></td>
+                                                    </tr>
+                                                    <%end%>
+                                                <%end%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="box-footer">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <%=form_tag upload_classroom_availability_main_index_path, :multipart => true do%>
+                                <div class="box box-info">
+                                    <div class="box-header">
+                                        <h3 class="box-title">Importar Disponibilidad</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <p>Importar un documento separado por comas que contenga la disponibilidad de las salas de clases de Longbourn.</p>
+                                        <p>Tener en cuenta que <b>la cantidad de salas señaladas</b> en este documento <b>debe ser menor o igual</b> a la cantidad de salas registradas en el sistema</p>
+                                        <div class="row">
+                                            <div class="col-xs-2">
+                                                <div class="btn btn-primary btn-file">
+                                                    <i class="fa fa-upload"></i> Horarios
+                                                    <%=file_field_tag :classroom_availability%>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-8 col-xs-offset-2">
+                                                <%=text_field_tag :file_path, nil, {:disabled => true, :class => "form-control"}%>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="pull-right">
+                                            <%=submit_tag "Guardar", :class => "btn btn-success"%>
+                                        </div>
+                                    </div>
+                                </div>
+                                <%end%>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+$( "#classroom_availability" ).change(function(){
+    var file_path = $("#classroom_availability").val();
+    $( "#file_path" ).val(file_path);
+});
+</script>
