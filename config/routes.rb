@@ -144,6 +144,7 @@ Rails.application.routes.draw do
       #calendario
       get "calendar_management"
       post "upload_holydays"
+      get "calendar_file_example"
       #disponibilidad de usuarios
       post "set_user_disponibility"
       delete "delete_disponibility"
@@ -155,6 +156,8 @@ Rails.application.routes.draw do
       delete "delete_classroom"
       get "classroom_availability"
       post "upload_classroom_availability"
+      get "availability_file_example"
+      get "match_classrooms"
     end
   end
 

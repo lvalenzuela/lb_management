@@ -65,7 +65,7 @@ class CourseReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
 			if date
 				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
@@ -83,10 +83,10 @@ class CourseReportPdf < Prawn::Document
 				att_pct = 0
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 130, 1 => 130, 2 => 60, 3 => 60, 4 => 65, 5 => 60}, 
+		table(data, :column_widths => {0 => 130, 1 => 94, 2 => 93, 3 => 94, 4 => 93}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
@@ -108,7 +108,7 @@ class CourseReportPdf < Prawn::Document
 		
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
 			if date
 				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
@@ -133,10 +133,10 @@ class CourseReportPdf < Prawn::Document
 			else
 				sence = r_sence
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
+		table(data, :column_widths => {0 => 130, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
@@ -158,16 +158,16 @@ class CourseReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Departamento</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio</b>"]
+		data << ["<b>Nombre</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
 		members.each do |member|
 			if date
 				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
 			else
 				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
 			end
-			data << [member_data.firstname+" "+member_data.lastname, member_data.department, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_course)+"</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_course)+"</b>"]
 		end
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
+		table(data, :column_widths => {0 => 130, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do

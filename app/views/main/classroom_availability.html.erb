@@ -22,6 +22,9 @@
                 <li class="active">
                     <%=link_to "Horarios de Salas", {:controller => :main, :action => :classroom_availability}%>
                 </li>
+                <li>
+                    <%=link_to "Cotejamiento de Salas", {:controller => :main, :action => :match_classrooms}%>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active">
@@ -53,7 +56,7 @@
                                                     <tr>
                                                         <td><%=a.classroom_id%></td>
                                                         <td><%=week_day(a.weekday)%></td>
-                                                        <td><%=l(a.start_hour, :format => "%H:%M")%></td>
+                                                        <td><%=a.start_hour ? l(a.start_hour, :format => "%H:%M") : nil%></td>
                                                         <td><%=a.duration%></td>
                                                         <td><%=a.prime%></td>
                                                     </tr>
@@ -73,8 +76,9 @@
                                         <h3 class="box-title">Importar Disponibilidad</h3>
                                     </div>
                                     <div class="box-body">
-                                        <p>Importar un documento separado por comas que contenga la disponibilidad de las salas de clases de Longbourn.</p>
+                                        <p>Importar un documento separado por comas (.csv) que contenga la disponibilidad de las salas de clases de Longbourn.</p>
                                         <p>Tener en cuenta que <b>la cantidad de salas señaladas</b> en este documento <b>debe ser menor o igual</b> a la cantidad de salas registradas en el sistema</p>
+                                        <p>Para ver un ejemplo del formato del documento a subir, guiarse por el siguiente <%=link_to "documento", {:controller => :main, :action => :availability_file_example}, {:target => "_blank"} %></p>
                                         <div class="row">
                                             <div class="col-xs-2">
                                                 <div class="btn btn-primary btn-file">

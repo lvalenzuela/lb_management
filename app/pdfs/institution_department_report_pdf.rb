@@ -113,7 +113,7 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Curso</b>","<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio</b>"]
+		data << ["<b>Nombre</b>", "<b>Curso</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
 		members.each do |member|
 			if reportdate.nil?
 				member_data = CourseGroupReport.where(:userid => member.userid, :institution => institution, :department => department).order("created_at DESC").first()
@@ -121,9 +121,9 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 				member_data = CourseGroupReport.where(:userid => member.userid, :institution => institution, :department => department, :created_at => reportdate).first()
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, get_groupname(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_writing_tests), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
+			data << [member_data.firstname+" "+member_data.lastname, get_groupname(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 50, 3 => 55, 4 => 50, 5 => 50, 6 => 50, 7 => 50}, 
+		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 60, 6 => 60}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do

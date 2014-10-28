@@ -241,6 +241,10 @@ class MainController < ApplicationController
         end
     end
 
+    def calendar_file_example
+        send_file Rails.root.join("app","assets","file_examples","holyday_input.csv")
+    end
+
     def upload_holydays
         #se borran las fechas anteriores
         CalendarHolyday.all().destroy_all
@@ -340,22 +344,35 @@ class MainController < ApplicationController
         @availability = ClassroomAvailability.all()
     end
 
+    def availability_file_example
+        send_file Rails.root.join("app","assets","file_examples","tuplas.csv")
+    end
+
     def upload_classroom_availability
         #se trunca la tabla de disponibilidad de salas
+        #se trunca ademas la tabla de "slots", dado que si cambia la tabla de 
+        #disponibilidades, la tabla de slots no sera valida
         ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_availabilities")
+        ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_matchings")
         #creacion de nuevos registros
         file_contents = params[:classroom_availability].read
         csv_availability = CSV.parse(file_contents, :headers => true)
         csv_availability.each do |row|
             new_entry = ClassroomAvailability.new()
-            new_entry.classroom_id = row["SALA_ID"]
-            new_entry.weekday = row["DIA"]
-            new_entry.start_hour = row["HORA"]
-            new_entry.duration = row["DURACION"]
-            new_entry.prime = row["PRIME"]
-            new_entry.save!
+            if row["SALA_ID"] || row["DIA"] || row["HORA"] || row["DURACION"] || row["PRIME"]
+                new_entry.classroom_id = row["SALA_ID"]
+                new_entry.weekday = row["DIA"]
+                new_entry.start_hour = row["HORA"]
+                new_entry.duration = row["DURACION"]
+                new_entry.prime = row["PRIME"]
+                new_entry.save!
+            end
         end
         redirect_to :action => :classroom_availability
+    end
+
+    def match_classrooms
+        
     end
 
     private

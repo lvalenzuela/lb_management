@@ -1,0 +1,39 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Salas de Clases
+        <small>Cotejamiento de Salas de Clases</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Salas de Clases</li>
+        <li>Disponibilidad de Salas</li>
+        <li class="active">Cotejamiento de Salas</li>
+    </ol>
+</section>
+
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li>
+                    <%=link_to "Listado de Salas", {:controller => :main, :action => :classrooms_list}%>
+                </li>
+                <li>
+                    <%=link_to "Horarios de Salas", {:controller => :main, :action => :classroom_availability}%>
+                </li>
+                <li class="active">
+                    <%=link_to "Cotejamiento de Salas", {:controller => :main, :action => :match_classrooms}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section id="new">
+                        
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -123,9 +123,9 @@ class StudentReportPdf < Prawn::Document
 		font "Helvetica", :style => :normal
 		move_down 10
 		data = [] #datos para la tabla
-		data << ["<b>Homework</b><br>30%","<b>Writing Test</b><br>20%","<b>Tests T.E.G</b><br>20%","<b>Tests</b><br>15%","<b>Oral Test</b><br>15%","<b>Promedio</b>"]
-		data << [grade_parser(report_data.grade_homework), grade_parser(report_data.grade_writing_tests), grade_parser(report_data.grade_tests_teg), grade_parser(report_data.grade_tests), grade_parser(report_data.grade_oral_tests), "<b>"+grade_parser(report_data.grade_course)+"</b>"]
-		table(data, :column_widths => {0 => 83, 1 => 83, 2 => 83, 3 => 83, 4 => 83, 5 => 83},
+		data << ["<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
+		data << [grade_parser(report_data.grade_homework), grade_parser(report_data.grade_tests_teg), grade_parser(report_data.grade_tests), grade_parser(report_data.grade_oral_tests), "<b>"+grade_parser(report_data.grade_course)+"</b>"]
+		table(data, :column_widths => {0 => 101, 1 => 100, 2 => 100, 3 => 100, 4 => 100},
 			:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [5,5]}, 
 			:position => :center) do
 			cells.style do |c|
