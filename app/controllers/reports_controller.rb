@@ -20,14 +20,12 @@ class ReportsController < ApplicationController
 		if params[:group_filter] && params[:group_filter].to_i == 2
 			#Listado por departamento
 			groups_list = UserReport.joins("right join moodle_course_vs as courses
-											on user_reports.courseid = courses.moodleid
-											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}') 
+											on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}') 
 											and user_reports.created_at = (select max(created_at) from user_reports)").select("department, institution, count(distinct userid) as alumnos").group("department")
 		else
 			#Listado por curso
 			groups_list = UserReport.joins("right join moodle_course_vs as courses
-											on user_reports.courseid = courses.moodleid
-											and courses.visible = 1").where("lower(institution) = lower('#{params[:institution]}')
+											on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}')
 											and user_reports.created_at = (select max(created_at) from user_reports)").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
 		end
 		@groups = groups_list.page(params[:page]).per(10)
