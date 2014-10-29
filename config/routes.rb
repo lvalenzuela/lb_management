@@ -38,6 +38,9 @@ Rails.application.routes.draw do
       post "template_selector_options"
       post "product_selector_options"
       post "sessions_per_week_inputs"
+      get "session_data"
+      post "modify_session_data"
+      post "session_data_date_warning"
       #inicialización del curso
       get "init_course_dialog"
       get "init_course"
@@ -159,6 +162,7 @@ Rails.application.routes.draw do
       get "availability_file_example"
       get "classroom_matching"
       post "upload_classroom_matching"
+      get "classroom_matching_example"
     end
   end
 

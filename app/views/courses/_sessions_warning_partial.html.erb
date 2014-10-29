@@ -1,0 +1,9 @@
+<div id="session-warning">
+	<%if min_date%>
+		<div class="alert alert-warning">
+			<i class="fa fa-warning"></i>
+			<i>La fecha mínima para utilizar la configuración seleccionada es <strong><%=l(min_date, :format => "%d de %B del %Y")%></strong></i>
+			<%=hidden_field_tag :min_date, min_date%>
+		</div>
+	<%end%>
+</div>

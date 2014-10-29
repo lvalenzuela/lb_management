@@ -74,7 +74,7 @@
                                 </tr>
                                 <tr>
                                     <td><b>Ubicación</b></td>
-                                    <td><%=@course.location%></td>
+                                    <td><%=location_label(@course.location_id)%></td>
                                 </tr>
                                 <tr>
                                     <td><b>ID Web de Estudiantes</b></td>
@@ -100,13 +100,15 @@
                             <tr>
                                 <th>Día</th>
                                 <th>Hora</th>
+                                <th>Sala</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <%@week_sessions.each do |ws|%>
+                            <%@classroom_disp.each do |ws|%>
                             <tr>
-                                <td><%=week_day(ws.day_number)%></td>
-                                <td><%=ws.session_start_hour%></td>
+                                <td><%=week_day(ws.weekday)%></td>
+                                <td><%=l(ws.start_hour, :format => "%H:%M")%></td>
+                                <td><%=classroom_name(ws.classroom_id)%></td>
                             </tr>
                             <%end%>
                         </tbody>

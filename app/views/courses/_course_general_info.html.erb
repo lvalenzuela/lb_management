@@ -14,7 +14,7 @@
         </tr>
         <tr>
             <th style="width:200px;">Ubicación</th>
-            <td><%=course.location%></td>
+            <td><%=location_label(course.location_id)%></td>
         </tr>
     </table>
 </div>
@@ -35,9 +35,7 @@
         <tr>
             <th style="width:200px;">Sesiones</th>
             <td>
-                <%week_sessions.each do |ws|%>
-                    <%=week_day(ws.day_number)%> - <%=ws.session_start_hour%> <br>
-                <%end%>
+                <%=course.classroom_matching_id ? ClassroomMatching.find(course.classroom_matching_id).matching_label : ""%>
             </td>
         </tr>
     </table>

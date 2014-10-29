@@ -341,7 +341,7 @@ class MainController < ApplicationController
     end
 
     def classroom_availability
-        @availability = ClassroomAvailability.all()
+        @availability = ClassroomAvailability.where(:enabled => true)
     end
 
     def availability_file_example
@@ -349,47 +349,88 @@ class MainController < ApplicationController
     end
 
     def upload_classroom_availability
-        #se trunca la tabla de disponibilidad de salas
-        #se trunca ademas la tabla de "slots", dado que si cambia la tabla de 
-        #disponibilidades, la tabla de slots no sera valida
-        ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_availabilities")
-        ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_matchings")
+        #Se desabilitan las disponibilidades de salas definidas previamente
+        #Se desabilitan tambien los slots, dado que cambiaran las disponibilidades de salas 
+        disable_classroom_availabilities
+        disable_classroom_matchings
+        count = 1
         #creacion de nuevos registros
         file_contents = params[:classroom_availability].read
         csv_availability = CSV.parse(file_contents, :headers => true)
         csv_availability.each do |row|
             if row["SALA_ID"] || row["DIA"] || row["HORA"] || row["DURACION"] || row["PRIME"]
                 new_entry = ClassroomAvailability.new()
+                new_entry.sort_order = count
                 new_entry.classroom_id = row["SALA_ID"]
                 new_entry.weekday = row["DIA"]
                 new_entry.start_hour = row["HORA"]
                 new_entry.duration = row["DURACION"]
                 new_entry.prime = row["PRIME"]
                 new_entry.save!
+                count+=1
             end
         end
         redirect_to :action => :classroom_availability
     end
 
     def classroom_matching
-        @matchings = ClassroomMatching.all()
+        @matchings = ClassroomMatching.where(:enabled => true)
     end
 
     def upload_classroom_matching
-        #se trunca la tabla de "slots", dado que será sobre escrita
-        ActiveRecord::Base.connection.execute("TRUNCATE TABLE classroom_matchings")
+        #se desabilitan los registros de tabla de "slots", dado que será sobre escrita
+        disable_classroom_matchings
         #nuevos registros
         file_contents = params[:matchings].read
         csv_matchings = CSV.parse(file_contents, :headers => true)
         csv_matchings.each do |row|
-            new_entry = ClassroomMatching.new()
-            new_entry.matching_array = row["TUPLA1"]+","+row["TUPLA2"]
-            new_entry.save!
+            #lectura temporal del archivo
+            tp1 = ClassroomAvailability.where(:enabled => true, :sort_order => row["TUPLA1"].to_i).first()
+            tp2 = ClassroomAvailability.where(:enabled => true, :sort_order => row["TUPLA2"].to_i).first()
+            label = week_day(tp1.weekday)+" - "+l(tp1.start_hour, :format => "%H:%M")+" - Sala: #{Classroom.find(tp1.classroom_id).name} || "
+            label = label + week_day(tp2.weekday)+" - "+l(tp2.start_hour, :format => "%H:%M")+" - Sala: #{Classroom.find(tp2.classroom_id).name}"
+            if tp1 && tp2
+                new_entry = ClassroomMatching.new()
+                new_entry.matching_array = tp1.id.to_s+","+tp2.id.to_s
+                new_entry.matching_label = label
+                new_entry.save!
+            end
         end
         redirect_to :action => :classroom_matching
     end
 
+    def classroom_matching_example
+        send_file Rails.root.join("app","assets","file_examples","classroom_match.csv")
+    end
+
     private
+
+    def week_day(day_number)
+        case day_number
+        when 1
+            return "Lunes"
+        when 2
+            return "Martes"
+        when 3
+            return "Miércoles"
+        when 4
+            return "Jueves"
+        when 5
+            return "Viernes"
+        when 6
+            return "Sábado"
+        else
+            return "Domingo"
+        end
+    end
+
+    def disable_classroom_availabilities
+        ClassroomAvailability.all().update_all(:enabled => false)
+    end
+
+    def disable_classroom_matchings
+        ClassroomMatching.all().update_all(:enabled => false)
+    end
 
     def classroom_params
         params.require(:classroom).permit(:name, :location, :capacity)

@@ -1,5 +1,21 @@
 module CoursesHelper
 
+	def classroom_name(classroom_id)
+		if classroom_id
+			return Classroom.find(classroom_id).name
+		else
+			return ""
+		end
+	end
+
+	def location_label(location_id)
+		if location_id
+			return Location.find(location_id).name
+		else
+			return ""
+		end
+	end
+
 	def simulation(simulated,teacherid)
 		if simulated && simulated.id == teacherid
 			return true

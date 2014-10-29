@@ -52,7 +52,7 @@
                                                     <%@matchings.each do |m|%>
                                                     <tr>
                                                         <td><%=m.id%></td>
-                                                        <td><%=print_classroom_matching(m.matching_array)%></td>
+                                                        <td><%=m.matching_label%></td>
                                                     </tr>
                                                     <%end%>
                                                 <%end%>
@@ -70,6 +70,8 @@
                                         <h3 class="box-title">Importar Cotejamiento</h3>
                                     </div>
                                     <div class="box-body">
+                                        <p>Importar cotejamiento de salas correspondiente a la configuracion de salas manejada actualmente.</p>
+                                        <p>El siguiente <%=link_to "documento", {:controller => :main, :action => :classroom_matching_example}, {:target => "_blank"}%> entrega una nocion del formato que se debe utilizar para la importación.</p>
                                         <div class="row">
                                             <div class="col-xs-2">
                                                 <div class="btn btn-primary btn-file">

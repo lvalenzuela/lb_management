@@ -78,7 +78,7 @@
                                             </div>
                                             <div class="col-xs-4">
                                                 <div class="form-group">
-                                                    <%=f.text_field :location, :class => "form-control"%>
+                                                    <%=f.select :location_id, options_for_select(@locations.collect{|l| [l.name, l.id]}, @course.location_id),{:include_blank => true},{:class => "form-control"}%>
                                                 </div>
                                             </div>
                                         </div>
@@ -91,18 +91,6 @@
                                             <div class="col-xs-4">
                                                 <div class="form-group">
                                                     <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]}), {}, {:class => "form-control"}%>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-4">
-                                                <div class="form-group pull-right">
-                                                    <label>Sesiones Por Semana</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-4">
-                                                <div class="form-group">
-                                                    <%=f.select :sessions_per_week, options_for_select((1..6).step(1).collect{|p| [p, p]},@course.sessions_per_week), {}, {:class => "form-control"}%>
                                                 </div>
                                             </div>
                                         </div>
@@ -167,19 +155,6 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-xs-4">
-                                                <div class="form-group pull-right">
-                                                    <label>Fecha de Inicio</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-4">
-                                                <div class="form-group">
-                                                    <%=f.date_field :start_date,:class => "form-control"%>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <%=render :partial => "sessions_per_week_inputs", :locals => {:per_week => @course.sessions_per_week ? @course.sessions_per_week : 2, :week_sessions => @week_sessions}%>
-                                        <div class="row">
                                             <div class="col-xs-4 col-xs-offset-4">
                                                 <div class="pull-right">
                                                 <%=f.submit "Editar Curso", :class => "btn btn-primary btn-lg"%>
@@ -216,18 +191,5 @@ $( "#course_mode" ).change(function(){
     $( "#coursemode" ).val(level_id);
     $( "#product_options_form" ).submit();
 });
+</script>
 
-</script>
-<script type="text/javascript">
-$(function() {
-    //Timepicker
-    $("#timepicker1").timepicker({
-        showInputs: false,
-        showMeridian: false 
-    });
-    $("#timepicker2").timepicker({
-        showInputs: false,
-        showMeridian: false 
-    });
-});
-</script>

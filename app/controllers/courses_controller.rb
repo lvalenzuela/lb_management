@@ -84,6 +84,7 @@ class CoursesController < ApplicationController
 
     def new
         @products = nil
+        @locations = Location.all()
     	@types = CourseType.all()
     	@course = Course.new()
         @course_levels = CourseLevel.all()
@@ -94,11 +95,7 @@ class CoursesController < ApplicationController
     def create
         @course = Course.create(course_params)
     	if @course.valid?
-            #Registro de los días de la semana en que hay clases
-            register_weekday_sessions(@course)
-            #creacion de las sesiones correspondientes al curso
-            create_course_sessions(@course)
-            redirect_to :action => :assign_teacher, :id => @course.id
+            redirect_to :action => :session_data, :id => @course.id
     	else
     		if @course.mode
                 @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
@@ -113,9 +110,49 @@ class CoursesController < ApplicationController
     	end
     end
 
+    def session_data_date_warning
+        dt = Course.where(:classroom_matching_id => params[:selected_match]).order("end_date DESC").first()
+
+        if dt.blank?
+            @min_date = Date.today()
+        else
+            @min_date = dt.end_date
+        end
+
+        respond_to do |format|
+            format.js
+        end
+    end
+
+    def session_data
+        @course = Course.find(params[:id])
+        if @course.classroom_matching_id
+            @current_matching = ClassroomMatching.find(@course.classroom_matching_id)
+        end
+        @matchings = ClassroomMatching.where(:enabled => true) 
+    end
+
+    def modify_session_data
+        if params[:start_date] < params[:min_date]
+            flash[:notice] = "Debe escoger una fecha superior a la fecha mínima indicada para la configuracion seleccionada".
+            redirect_to :action => :session_data, :id => params[:courseid]
+        else
+            #guardar datos de la sesion
+            course = Course.find(params[:courseid])
+            course.start_date = params[:start_date]
+            course.classroom_matching_id = params[:classroom_match]
+            course.save!
+            #eliminacion de las sesiones antiguas del curso, si es que las hay
+            CourseSession.where(:commerce_course_id => course.id).destroy_all
+            create_course_sessions(course)
+            redirect_to :action => :assign_teacher, :id => course.id
+        end
+    end
+
     def edit
         @types = CourseType.all()
         @course = Course.find(params[:id])
+        @locations = Location.all()
         if @course.mode
             @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
         else
@@ -124,33 +161,24 @@ class CoursesController < ApplicationController
         @modes = CourseMode.where(:enabled => true)
         @templates = CourseTemplate.where(:course_level_id => @course.course_level_id, :deleted => 0)
         @course_levels = CourseLevel.all()
-        @week_sessions = CourseSessionWeekday.where(:course_id => params[:id])
     end
 
     def update
         @course = Course.find(params[:course][:id])
         @course.update_attributes(course_params)
         if @course.valid?
-            #Eliminacion de los datos correspondientes a las sesiones en la semana
-            CourseSessionWeekday.where(:course_id => @course.id).destroy_all
-            #Registro de los días de la semana en que hay clases
-            register_weekday_sessions(@course)
-            #eliminacion de las sesiones antiguas del curso
-            CourseSession.where(:commerce_course_id => @course.id).destroy_all
-            #creacion de las nuevas sesiones correspondientes al curso
-            create_course_sessions(@course)
-            redirect_to :action => :index
+            redirect_to :action => :session_data, :id => @course.id
         else
             if @course.mode
                 @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course.mode)
             else
                 @products = nil
             end
+            @locations = Location.all()
             @modes = CourseMode.where(:enabled => true)
             @types = CourseType.all()
             @course_levels = CourseLevel.all()
             @templates = CourseTemplate.where(:deleted => 0)
-            @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
             render :edit    
         end
     end
@@ -234,7 +262,13 @@ class CoursesController < ApplicationController
 
     def show 
         @course = Course.find(params[:id])
-        @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
+        if @course.classroom_matching_id
+            cm = ClassroomMatching.find(@course.classroom_matching_id)
+            classroom_av_list = cm.matching_array.split(",")
+        else
+            classroom_av_list= []
+        end
+        @classroom_disp = ClassroomAvailability.where(:id => classroom_av_list)
         if @course.main_teacher_id
             @teacher = TeacherV.find(@course.main_teacher_id)
         else
@@ -639,8 +673,9 @@ class CoursesController < ApplicationController
 
     def create_course_sessions(course)
         total_sessions = CourseTemplate.find(course.course_template_id).total_sessions.to_i
-        week_sessions_info = CourseSessionWeekday.where(:course_id => course.id)
-        desired_days = week_sessions_info.map{|wd| wd.day_number}
+        c_matching = ClassroomMatching.find(course.classroom_matching_id)
+        week_sessions_info = ClassroomAvailability.where(:id => c_matching.matching_array.split(","))
+        desired_days = week_sessions_info.map{|wd| wd.weekday}
         for session_number in 1..total_sessions
             new_session = CourseSession.new()
             new_session.commerce_course_id = course.id
@@ -665,10 +700,9 @@ class CoursesController < ApplicationController
         #Se verifica que las sesiones se asignen a los días de la semana que corresponden
         #y a días que no sean considerados festivos
         session_date += 1.days while ( !desired_days.include?(session_date.wday) || holydays.include?(session_date))
-        raw_hour = week_sessions_info.select{|ws| ws.day_number == session_date.wday}.first().session_start_hour
-        session_hour = raw_hour.split(":")
+        raw_hour = week_sessions_info.select{|ws| ws.weekday == session_date.wday}.first().start_hour
         #se modifica la hora segun la que se haya registrado
-        session_date = session_date.change(:hour => session_hour[0].to_i, :min => session_hour[1].to_i)
+        session_date = session_date.change(:hour => raw_hour.hour.to_i, :min => raw_hour.min.to_i)
         return session_date
     end
 
@@ -691,7 +725,7 @@ class CoursesController < ApplicationController
     end
 
     def course_params
-    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :sessions_per_week, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :start_date, :location, :course_type_id)
+    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :location_id, :course_type_id)
     end
 
     def check_authentication

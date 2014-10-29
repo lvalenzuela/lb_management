@@ -19,6 +19,9 @@
                 <li>
                     <%=link_to "Datos Generales", :action => :edit, :params => {:id => @course.id}%>
                 </li>
+                <li>
+                    <%=link_to "Sesiones del Curso", :controller => :courses, :action => :session_data, :params => {:id => @course.id}%>
+                </li>
                 <li class="active">
                     <a href="javascript:;">Asignación de Profesor</a>
                 </li>

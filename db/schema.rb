@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141028125143) do
+ActiveRecord::Schema.define(version: 20141029185844) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -28,17 +28,21 @@ ActiveRecord::Schema.define(version: 20141028125143) do
   end
 
   create_table "classroom_availabilities", force: true do |t|
+    t.integer  "sort_order"
     t.integer  "classroom_id"
     t.integer  "weekday"
     t.time     "start_hour"
     t.integer  "duration"
     t.integer  "prime"
+    t.boolean  "enabled",      default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "classroom_matchings", force: true do |t|
     t.string   "matching_array"
+    t.string   "matching_label"
+    t.boolean  "enabled",        default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -329,9 +333,8 @@ ActiveRecord::Schema.define(version: 20141028125143) do
     t.string   "coursename"
     t.string   "description"
     t.integer  "course_level_id"
-    t.integer  "sessions_per_week"
     t.integer  "students_qty"
-    t.integer  "current_students_qty", default: 0
+    t.integer  "current_students_qty",  default: 0
     t.string   "mode"
     t.integer  "main_teacher_id"
     t.datetime "created_at"
@@ -341,9 +344,10 @@ ActiveRecord::Schema.define(version: 20141028125143) do
     t.integer  "course_status_id"
     t.date     "start_date"
     t.date     "end_date"
+    t.integer  "classroom_matching_id"
     t.string   "discount_pct"
     t.integer  "discount_factor"
-    t.string   "location"
+    t.integer  "location_id",           default: 1
     t.integer  "moodleid"
     t.integer  "course_type_id"
   end
@@ -377,6 +381,13 @@ ActiveRecord::Schema.define(version: 20141028125143) do
     t.integer  "requestid"
     t.integer  "userid"
     t.datetime "last_check_datetime"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "locations", force: true do |t|
+    t.string   "name"
+    t.string   "address"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

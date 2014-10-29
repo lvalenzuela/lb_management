@@ -39,6 +39,7 @@
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
+                                                    <th>ID</th>
                                                     <th>Sala</th>
                                                     <th>Día</th>
                                                     <th>Hora</th>
@@ -49,11 +50,12 @@
                                             <tbody>
                                                 <%if @availability.blank?%>
                                                     <tr>
-                                                        <td colspan="5">No hay registros para mostrar</td>
+                                                        <td colspan="6">No hay registros para mostrar</td>
                                                     </tr>   
                                                 <%else%>
                                                     <%@availability.each do |a|%>
                                                     <tr>
+                                                        <td><%=a.id%></td>
                                                         <td><%=a.classroom_id%></td>
                                                         <td><%=week_day(a.weekday)%></td>
                                                         <td><%=a.start_hour ? l(a.start_hour, :format => "%H:%M") : nil%></td>
