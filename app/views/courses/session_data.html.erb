@@ -23,7 +23,9 @@
                     <a href="javascript:;">Sesiones del Curso</a>
                 </li>
                 <li>
-                    <a href="javascript:;">Asignación de Profesor</a>
+                    <%=link_to "Asignación de Profesor", :action => :assign_teacher, :params => {:id => @course.id}%>
+                </li>
+                <li><%=link_to "Ver Curso", :controller => :courses, :action => :show, :params => {:id => @course.id}%>
                 </li>
             </ul>
             <div class="tab-content">
@@ -40,9 +42,15 @@
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-xs-8 col-xs-offset-2">
+                                                <%if flash[:notice]%>
+                                                <div class="alert alert-danger">
+                                                    <i class="fa fa-warning"></i>
+                                                    <p><%=flash[:notice].html_safe%></p>
+                                                </div>
+                                                <%end%>
                                                 <%if @current_matching%>
-                                                <div class="alert alert-success">
-                                                    <p>El curso cuenta con sesiones desde el <strong><%=l(@course.start_date, :format => "%d de %B del %Y")%></strong> hasta el <strong><%=l(@course.end_date, :format => "%d de %B del %Y")%></strong></p>
+                                                <div class="alert alert-info">
+                                                    <p>Este curso cuenta con sesiones desde el <strong><%=l(@course.start_date, :format => "%d de %B del %Y")%></strong> hasta el <strong><%=l(@course.end_date, :format => "%d de %B del %Y")%></strong></p>
                                                     <p>Sesiones del curso: <strong><%=@current_matching.matching_label%></strong></p>
                                                 </div>
                                                 <%end%>
@@ -50,18 +58,18 @@
                                                     <label>Sesiones del Curso</label>
                                                     <%=select_tag :classroom_match, options_for_select(@matchings.collect{|m| [m.matching_label, m.id]}), {:class => "form-control", :include_blank => true}%>
                                                 </div>
-                                                <%=render :partial => "sessions_warning_partial", :locals => {:min_date => @min_date}%>
                                                 <div class="form-group">
                                                     <label>Fecha de Inicio del Curso</label>
                                                     <%=date_field_tag :start_date, nil, :class => "form-control"%>
                                                 </div>
+                                                <%=render :partial => "sessions_warning_partial", :locals => {:courses => @p_colitions, :end_date => @end_date}%>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="box-footer clearfix">
                                         <div class="col-xs-8 col-xs-offset-2">
                                             <div class="pull-right">
-                                                <%=submit_tag "Guardar", :class => "btn btn-success btn-lg"%>
+                                                <%=submit_tag "Guardar Configuracion", :class => "btn btn-success btn-lg"%>
                                             </div>
                                         </div>
                                     </div>
@@ -78,11 +86,18 @@
 
 <%=form_tag session_data_date_warning_courses_path, :remote => true, :id => "session_data_warning_form" do%>
 <%=hidden_field_tag :selected_match%>
+<%=hidden_field_tag :selected_date%>
+<%=hidden_field_tag :courseid, @course.id%>
 <%end%>
 <script>
 $( "#classroom_match" ).change(function(){
     var sessions = $("#classroom_match option:selected").val();
     $( "#selected_match" ).val(sessions);
+    $( "#session_data_warning_form" ).submit();
+});
+$( "#start_date" ).change(function(){
+    var sessions = $("#start_date").val();
+    $( "#selected_date" ).val(sessions);
     $( "#session_data_warning_form" ).submit();
 });
 </script>

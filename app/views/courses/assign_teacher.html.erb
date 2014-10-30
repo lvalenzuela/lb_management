@@ -153,7 +153,13 @@
                                                     <td style="text-align: center;"><%=radio_button_tag :teacherid, t.id, simulation(@simulated,t.id) ? true : false%></td>
                                                     <td><%=t.name%></td>
                                                     <td style="text-align: center;"><%=teacher_level_label(t.teacher_level_id)%></td>
-                                                    <td style="text-align: center;"><%=link_to "<i class='fa fa-cogs fa-lg'></i>".html_safe, {:action => :assign_teacher, :params => {:id => @course.id, :teacherid => t.id}}%></td>
+                                                    <td style="text-align: center;">
+                                                        <%if @course.main_teacher_id == t.id%>
+                                                            <i class="fa fa-check fa-lg"></i>
+                                                        <%else%>
+                                                            <%=link_to "<i class='fa fa-cogs fa-lg'></i>".html_safe, {:action => :assign_teacher, :params => {:id => @course.id, :teacherid => t.id}}%>
+                                                        <%end%>
+                                                    </td>
                                                 </tr>
                                             <%end%>
                                             </tbody>

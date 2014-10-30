@@ -1,9 +1,37 @@
-<div id="session-warning">
-	<%if min_date%>
+<div class="form-group" id="session-warning">
+	<%if courses.blank? && !end_date.blank?%>
+		<div class="alert alert-success">
+			<i class="fa fa-check"></i>
+			<p>La configuración actual no presenta problemas con el resto de los cursos del sistema</p>
+		</div>
+	<%elsif !courses.blank?%>
 		<div class="alert alert-warning">
 			<i class="fa fa-warning"></i>
-			<i>La fecha mínima para utilizar la configuración seleccionada es <strong><%=l(min_date, :format => "%d de %B del %Y")%></strong></i>
-			<%=hidden_field_tag :min_date, min_date%>
+			<strong>Advertencia!</strong>
+			<%if @end_date%>
+			<p>Con la fecha de inicio seleccionada, el curso terminaría en la fecha: <strong><%=l(@end_date, :format => "%d-%m-%Y")%></strong></p>
+			<%end%>
+			<p>Los siguientes cursos presentan colisiones con las sesiones para el horario y fechas seleccionados.</p>
+			<table class="table table-bordered" style="margin-top: 10px;">
+				<thead>
+					<tr>
+						<th>Curso</th>
+						<th style="width: 150px;">Fecha Inicio</th>
+						<th style="width: 150px;">Fecha de Término</th>
+					</tr>
+				</thead>
+				<tbody>
+					<%courses.each do |c|%>
+					<tr>
+						<td><%=c.coursename%></td>
+						<td><%=l(c.start_date, :format => "%d-%m-%Y")%></td>
+						<td><%=l(c.end_date, :format => "%d-%m-%Y")%></td>
+					</tr>
+					<%end%>
+				</tbody>
+			</table>
+			<br>
+			<p>Por favor, seleccione otra fecha u otro horario.</p>
 		</div>
 	<%end%>
 </div>

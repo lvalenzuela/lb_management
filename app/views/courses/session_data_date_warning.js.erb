@@ -1,1 +1,1 @@
-$("#session-warning").replaceWith("<%= escape_javascript(render(:partial => 'sessions_warning_partial', :locals => {:min_date => @min_date}))%>");
+$("#session-warning").replaceWith("<%= escape_javascript(render(:partial => 'sessions_warning_partial', :locals => {:courses => @p_colitions, :end_date => @end_date}))%>");

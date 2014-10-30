@@ -111,14 +111,15 @@ class CoursesController < ApplicationController
     end
 
     def session_data_date_warning
-        dt = Course.where(:classroom_matching_id => params[:selected_match]).order("end_date DESC").first()
-
-        if dt.blank?
-            @min_date = Date.today()
-        else
-            @min_date = dt.end_date
+        #colisiones_potenciales
+        @p_colitions = Course.where("classroom_matching_id = #{params[:selected_match]} and id != #{params[:courseid]} and end_date >= curtime()")
+        if !params[:selected_date].blank?
+            c_matching = ClassroomMatching.find(params[:selected_match])
+            week_session_info = ClassroomAvailability.where(:id => c_matching.matching_array.split(","))
+            total_sessions = total_sessions = CourseTemplate.find(Course.find(params[:courseid]).course_template_id).total_sessions
+            @end_date = course_end_date(week_session_info, params[:selected_date], total_sessions)
+            @p_colitions = @p_colitions.where("end_date between '#{params[:selected_date]}' and '#{l(@end_date, :format => '%Y-%m-%d')}' or start_date between '#{params[:selected_date]}' and '#{l(@end_date, :format => '%Y-%m-%d')}'")
         end
-
         respond_to do |format|
             format.js
         end
@@ -133,19 +134,30 @@ class CoursesController < ApplicationController
     end
 
     def modify_session_data
-        if params[:start_date] < params[:min_date]
-            flash[:notice] = "Debe escoger una fecha superior a la fecha mínima indicada para la configuracion seleccionada".
-            redirect_to :action => :session_data, :id => params[:courseid]
+        if !params[:classroom_match].blank? && !params[:start_date].blank?
+            p_colitions = Course.where("classroom_matching_id = #{params[:classroom_match]} and '#{params[:start_date]}' between start_date and end_date")
+            if !p_colitions.blank?
+                flash[:notice] = "<strong>Error!</strong><br> Ya hay un curso con clases en la fecha seleccionada. Por favor, seleccione otra fecha de inicio u otro horario."
+                redirect_to :action => :session_data, :id => params[:courseid]
+            else
+                course = Course.find(params[:courseid])
+                if available_date_for_course(params[:classroom_match], params[:start_date], course.course_template_id)
+                    #guardar datos de la sesion
+                    course.start_date = params[:start_date]
+                    course.classroom_matching_id = params[:classroom_match]
+                    course.save!
+                    #eliminacion de las sesiones antiguas del curso, si es que las hay
+                    CourseSession.where(:commerce_course_id => course.id).destroy_all
+                    create_course_sessions(course)
+                    redirect_to :action => :assign_teacher, :id => course.id
+                else
+                    flash[:notice] = "<strong>Error!</strong><br> Existen cursos con horarios asignados para las fechas seleccionadas. Por favor, seleccione otra fecha de inicio u otro horario."
+                    redirect_to :action => :session_data, :id => params[:courseid]
+                end
+            end
         else
-            #guardar datos de la sesion
-            course = Course.find(params[:courseid])
-            course.start_date = params[:start_date]
-            course.classroom_matching_id = params[:classroom_match]
-            course.save!
-            #eliminacion de las sesiones antiguas del curso, si es que las hay
-            CourseSession.where(:commerce_course_id => course.id).destroy_all
-            create_course_sessions(course)
-            redirect_to :action => :assign_teacher, :id => course.id
+            flash[:notice] = "<strong>Error!</strong><br> Debe seleccionar un horario y una fecha de inicio."
+            redirect_to :action => :session_data, :id => params[:courseid]
         end
     end
 
@@ -185,72 +197,79 @@ class CoursesController < ApplicationController
 
     def assign_teacher
         @course = Course.find(params[:id])
-        @week_session_info = CourseSessionWeekday.where(:course_id => @course.id).order("day_number ASC")
-        teacher_list = available_teachers_for_course(@week_session_info, false)
-        extra_teachers_list = available_teachers_for_course(@week_session_info, true)
+        if @course.classroom_matching_id
+            #Si se ha definido el horario y la sala en que el curso
+            #se llevara a cabo...
+            c_matching = ClassroomMatching.find(@course.classroom_matching_id)
+            @week_session_info = ClassroomAvailability.where(:id => c_matching.matching_array.split(","))
 
-        #listado de profesores disponibles en horario normal
-        @teachers = TeacherV.where(:id => teacher_list)
-        #listado de profesores disponibles en horario extra
-        @teachers_extra = TeacherV.where(:id => extra_teachers_list)
+            teacher_list = available_teachers_for_course(@week_session_info, false)
+            extra_teachers_list = available_teachers_for_course(@week_session_info, true)
 
-        gon.events = []
+            #listado de profesores disponibles en horario normal
+            @teachers = TeacherV.where(:id => teacher_list)
+            #listado de profesores disponibles en horario extra
+            @teachers_extra = TeacherV.where(:id => extra_teachers_list)
 
-        #sesiones del nuevo curso
-        c_sessions = CourseSession.where(:commerce_course_id => @course.id)
-        c_sessions.each do |cs|
-            gon.events << {
-                "title" => @course.coursename,
-                "start" => cs.startdatetime,
-                "allDay" => false,
-                "backgroundColor" => "#0073b7",#azul
-                "borderColor" => "#0073b7"
-            }
-        end
+            gon.events = []
 
-        if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
-            #sesiones de la simulacion [cursos moodle]
-            @simulated = TeacherV.find(params[:teacherid])
-            t_sessions = teacher_courses_sessions(params[:teacherid])
-            t_sessions.each do |s|
+            #sesiones del nuevo curso
+            c_sessions = CourseSession.where(:commerce_course_id => @course.id)
+            c_sessions.each do |cs|
                 gon.events << {
-                    "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
-                    "start" => s.session_date,
+                    "title" => @course.coursename,
+                    "start" => cs.startdatetime,
                     "allDay" => false,
-                    "backgroundColor" => "#f56954",#rojo
-                    "borderColor" => "#f56954"
+                    "backgroundColor" => "#0073b7",#azul
+                    "borderColor" => "#0073b7"
                 }
             end
-            #sesiones de la simulación[Cursos summit]
-            s_sessions = teacher_summit_courses_sessions(params[:teacherid])
-            s_sessions.each do |ss|
-                gon.events << {
-                    "title" => Course.find(ss.commerce_course_id).coursename,
-                    "start" => ss.startdatetime,
-                    "allDay" => false,
-                    "backgroundColor" => "#f39c12",#Amarillo
-                    "borderColor" => "#f39c12"
-                }
-            end
-            @moodle_collisions = find_collisions(t_sessions.map{|moodle| moodle.session_date}, c_sessions.map{|new_course| new_course.startdatetime})
-            @summit_collisions = find_collisions(s_sessions.map{|summit| summit.startdatetime}, c_sessions.map{|new_course| new_course.startdatetime})
-        end
-        if @course.main_teacher_id
-            #sesiones del profesor que ya tiene el curso asignado
-            m_sessions = teacher_courses_sessions(@course.main_teacher_id)
-            m_sessions.each do |ms|
-                gon.events << {
-                    "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
-                    "start" => ms.session_date,
-                    "allDay" => false,
-                    "backgroundColor" => "#00a65a",#verde
-                    "borderColor" => "#00a65a"
-                }
-            end
-        end
 
-        @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
-
+            if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
+                #sesiones de la simulacion [cursos moodle]
+                @simulated = TeacherV.find(params[:teacherid])
+                t_sessions = teacher_courses_sessions(params[:teacherid])
+                t_sessions.each do |s|
+                    gon.events << {
+                        "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
+                        "start" => s.session_date,
+                        "allDay" => false,
+                        "backgroundColor" => "#f56954",#rojo
+                        "borderColor" => "#f56954"
+                    }
+                end
+                #sesiones de la simulación[Cursos summit]
+                s_sessions = teacher_summit_courses_sessions(params[:teacherid])
+                s_sessions.each do |ss|
+                    gon.events << {
+                        "title" => Course.find(ss.commerce_course_id).coursename,
+                        "start" => ss.startdatetime,
+                        "allDay" => false,
+                        "backgroundColor" => "#f39c12",#Amarillo
+                        "borderColor" => "#f39c12"
+                    }
+                end
+                @moodle_collisions = find_collisions(t_sessions.map{|moodle| moodle.session_date}, c_sessions.map{|new_course| new_course.startdatetime})
+                @summit_collisions = find_collisions(s_sessions.map{|summit| summit.startdatetime}, c_sessions.map{|new_course| new_course.startdatetime})
+            end
+            if @course.main_teacher_id
+                #sesiones del profesor que ya tiene el curso asignado
+                m_sessions = teacher_courses_sessions(@course.main_teacher_id)
+                m_sessions.each do |ms|
+                    gon.events << {
+                        "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
+                        "start" => ms.session_date,
+                        "allDay" => false,
+                        "backgroundColor" => "#00a65a",#verde
+                        "borderColor" => "#00a65a"
+                    }
+                end
+            end
+            @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
+        else
+            flash[:notice] = "Debe definir el horario en que se realizará el curso"
+            redirect_to :action => :session_data, :id => @course.id
+        end
     end
 
     def bind_course_teacher
@@ -584,7 +603,7 @@ class CoursesController < ApplicationController
     end
 
     def available_teachers_for_course(week_session_info, extra)
-        desired_days = week_session_info.map{|ws| ws.day_number} #array de dias de clases
+        desired_days = week_session_info.map{|ws| ws.weekday} #array de dias de clases
         #identificar a los profesores disponibles en las fechas correspondientes
         candidate_teachers = TeacherV.all().map{|t| t.id}
         teachers_availability = UserDisponibility.all()
@@ -592,7 +611,7 @@ class CoursesController < ApplicationController
             #revisar horarios extras
             desired_days.each do |day|
                 teachers_availability = teachers_availability.where(:user_id => candidate_teachers)
-                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:day_number => day).first.session_start_hour}') between time(extra_start_time) and time(extra_end_time)").group("user_id")
+                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:weekday => day).first.start_hour}') between time(extra_start_time) and time(extra_end_time)").group("user_id")
                 candidate_teachers = available_teachers.map{|at| at.user_id} #listado de profesores que cumplieron las condiciones
             end
             #cambio de nombre de la variable
@@ -603,7 +622,7 @@ class CoursesController < ApplicationController
             #revisar horario normal
             desired_days.each do |day|
                 teachers_availability = teachers_availability.where(:user_id => candidate_teachers)
-                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:day_number => day).first.session_start_hour}') between time(start_time) and time(end_time)").group("user_id")
+                available_teachers = teachers_availability.where("day_number = #{day} and time('#{week_session_info.where(:weekday => day).first.start_hour}') between time(start_time) and time(end_time)").group("user_id")
                 candidate_teachers = available_teachers.map{|at| at.user_id} #listado de profesores que cumplieron las condiciones
             end
             #cambio de nombre de la variable
@@ -683,6 +702,7 @@ class CoursesController < ApplicationController
             if session_number == 1
                 #solo para la primera sesion
                 current_session_date = session_datetime(desired_days, course.start_date, week_sessions_info)
+                course.start_date = current_session_date
             else
                 current_session_date = session_datetime(desired_days, current_session_date + 1.days, week_sessions_info)
             end
@@ -704,6 +724,41 @@ class CoursesController < ApplicationController
         #se modifica la hora segun la que se haya registrado
         session_date = session_date.change(:hour => raw_hour.hour.to_i, :min => raw_hour.min.to_i)
         return session_date
+    end
+
+    def available_date_for_course(match_id,start_date,template_id)
+        c_matching = ClassroomMatching.find(match_id)
+        #Sesiones del curso
+        total_sessions = CourseTemplate.find(template_id).total_sessions
+        #la fecha mas próxima de inicio de un curso
+        p_colitions = Course.where("classroom_matching_id = #{match_id} and start_date > '#{start_date}'").order("start_date ASC")
+        if p_colitions.blank?
+            #si no hay cursos con los que colisionar
+            return true
+        else
+            next_date = p_colitions.first().start_date
+        end
+        week_session_info = ClassroomAvailability.where(:id => c_matching.matching_array.split(","))
+        end_date = course_end_date(week_session_info, start_date, total_sessions)
+        if end_date < next_date
+            #si el curso termina antes que inicie el siguiente
+            return true
+        else
+            return false
+        end
+    end
+
+    def course_end_date(week_session_info, start_date, total_sessions)
+        holydays = CalendarHolyday.all().map{|h| DateTime.parse(l(h.date, :format => "%d-%m-%Y"))} #array de días en los que no habrá clases 
+        desired_days = week_session_info.map{|wd| wd.weekday} #dias en que puede haber clases
+        session_date = Date.parse(start_date)
+        for count in 1..total_sessions
+            if session_date != start_date
+                session_date +=1
+            end
+            session_date+= 1.days while(!desired_days.include?(session_date.wday) || holydays.include?(session_date))
+        end
+        return session_date #fecha del ultimo dia de clases del curso
     end
 
     def get_teachers_list
