@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       post "create_course_observation"
       #cursos en observacion
       get "alarm_courses"
+      get "alarm_teachers"
+      get "teacher_low_performance"
     end
   end
 

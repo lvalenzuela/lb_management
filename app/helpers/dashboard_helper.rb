@@ -1,5 +1,9 @@
 module DashboardHelper
 
+	def low_performance_courses_for_teacher(courses_array,teacher_id)
+		return MoodleRoleAssignationV.where(:courseid => courses_array, :userid => teacher_id, :roleid => [4,9]).distinct.count(:courseid)
+	end
+
 	def moodle_course_role(user_id, course_id)
 		role = MoodleRoleAssignationV.where(:courseid => course_id, :userid => user_id).first()
 		if role.blank?
@@ -59,7 +63,7 @@ module DashboardHelper
 		end
 	end
 
-	def min_attendance()
+	def min_attendance
 		return CourseAlarmParameter.where(:param_name => "min_attendance").first().value
 	end
 
@@ -133,6 +137,15 @@ module DashboardHelper
 			else
 				return "bg-light-blue"
 			end
+		end
+	end
+
+	def attendance_badge_class(attendance_pct)
+		case attendance_pct
+		when 0..min_attendance.to_i
+			return "bg-red"
+		else
+			return "bg-light-blue"
 		end
 	end
 

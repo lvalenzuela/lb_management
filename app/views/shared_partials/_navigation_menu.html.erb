@@ -48,7 +48,7 @@ usuario
                 <li class="dropdown notifications-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <%if alerts[:late_sessions] + alerts[:failing_grades] + alerts[:failing_attendance] > 0%>
-                            <i class="fa fa-warning fa-lg"></i> <span class="label label-danger"><%=alerts[:late_sessions] + alerts[:failing_grades] + alerts[:failing_attendance]%></span <i class="fa fa-caret-down"></i>
+                            <i class="fa fa-warning fa-lg"></i> <span class="label label-danger"><i class="fa fa-exclamation"></i></span>
                         <%else%>
                             <i class="fa fa-warning"></i> <i class="fa fa-caret-down"></i>
                         <%end%>
@@ -70,6 +70,11 @@ usuario
                                 <li>
                                     <%=link_to :controller => :dashboard, :action => :alarm_courses, :params => {:opt => "low_attendance"} do%>
                                     <i class="fa fa-sort-amount-desc warning"></i><strong><%=alerts[:failing_attendance]%></strong> Cursos con baja asistencia
+                                    <%end%>
+                                </li>
+                                <li>
+                                    <%=link_to :controller => :dashboard, :action => :alarm_teachers do%>
+                                    <i class="fa fa-user primary"></i><strong><%=alerts[:alert_teachers]%></strong> Profesores con cursos en alerta
                                     <%end%>
                                 </li>
                             </ul>

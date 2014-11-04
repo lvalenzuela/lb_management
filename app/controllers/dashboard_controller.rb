@@ -154,14 +154,37 @@ class DashboardController < ApplicationController
 		when "low_grades"
 			courses_list = low_grades_courses
 			@active = "low_grades"
-		else #low_attendance
+		else #"low_attendance"
 			courses_list = low_attendance_courses
 			@active = "low_attendance"
 		end
 		@courses = courses_list.page(params[:page]).per(10)
 	end
 
+	def alarm_teachers
+		@lp_courses = alarm_courses_list
+		@teachers = TeacherV.where(:id => low_performance_teachers).page(params[:page]).per(10)
+	end
+
+	def teacher_low_performance
+		@user = TeacherV.find(params[:userid])
+		lp_courses = MoodleRoleAssignationV.where(:userid => @user.id, :courseid => alarm_courses_list, :roleid => [4,9]).map{|c| c.courseid}
+		@courses = DashboardCoursesV.where(:courseid => lp_courses).page(params[:page]).per(10)
+	end
+
 	private
+
+	def alarm_courses_list
+		courses = low_attendance_courses.map{|c| c.courseid}
+		courses << low_grades_courses.where("courseid not in (?)",courses).map{|c| c.courseid}
+		courses << delayed_sessions_courses.where("courseid not in (?)",courses).map{|c| c.courseid}
+		return courses.flatten
+	end
+
+	def low_performance_teachers
+		teachers = MoodleRoleAssignationV.where("courseid in (?) and roleid in (9,4)",alarm_courses_list).map{|u| u.userid}
+		return teachers
+	end
 
 	def low_attendance_courses
 		min_attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first().value.to_i

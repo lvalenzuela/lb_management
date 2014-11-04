@@ -21,10 +21,14 @@
 			<%courses.each do |c|%>
 				<tr>
 					<td><%=c.courseid%></td>
+					<%if controller_name == "users"%>
+					<td><%=link_to c.coursename, :controller => :users, :action => :show_course, :params => {:courseid => c.courseid}%></td>
+					<%else%>
 					<td><%=link_to c.coursename, :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
-					<td style="text-align: center;"><%=dashboard_grade_parser(c.mean_grade, c.gradetype.to_i)%></td>
+					<%end%>
+					<td style="text-align: center;"><span class="badge <%=grade_badge_class(c.mean_grade,c.gradetype)%>"><%=dashboard_grade_parser(c.mean_grade, c.gradetype.to_i)%></span></td>
 					<td style="text-align: center;"><%=failing_grades_students(c)%></td>
-					<td style="text-align: center;"><%=number_with_precision(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0, :precision => 1)%>%</td>
+					<td style="text-align: center;"><span class="badge <%=attendance_badge_class(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0)%>"><%=number_with_precision(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0, :precision => 1)%>%</span></td>
 					<td style="text-align: center;"><%=failing_attendance_students(c)%></td>
 					<td style="text-align: center;"><%=c.current_taken_sessions.to_s+" de "+c.current_booked_sessions.to_s%></td>
 					<td style="text-align: center;"><%=c.total_sessions%></td>

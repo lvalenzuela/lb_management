@@ -29,24 +29,24 @@
 			</div>
 			<%end%>
 			<div class="box-body table-responsive">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Nombre</th>
-							<th>Correo</th>
-							<th># Cursos</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%@teachers.each do |t|%>
-						<tr>
-							<td><%=link_to user_name(t.id), :controller => :dashboard, :action => :teacher, :params => {:id => t.id}%></td>
-							<td><%=user_mail(t.id)%></td>
-							<td><%=count_teacher_courses(t.id)%></td>
-						</tr>
-						<%end%>
-					</tbody>
-				</table>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th># Cursos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%@teachers.each do |t|%>
+                        <tr>
+                            <td><%=link_to user_name(t.id), :controller => :dashboard, :action => :teacher, :params => {:id => t.id}%></td>
+                            <td><%=user_mail(t.id)%></td>
+                            <td><%=count_teacher_courses(t.id)%></td>
+                        </tr>
+                        <%end%>
+                    </tbody>
+                </table>
 			</div>
             <div class="box-footer clearfix">
                 <div class="pull-right">

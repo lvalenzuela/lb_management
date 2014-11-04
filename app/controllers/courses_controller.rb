@@ -112,14 +112,22 @@ class CoursesController < ApplicationController
 
     def session_data_date_warning
         #colisiones_potenciales
-        @p_colitions = Course.where("classroom_matching_id = #{params[:selected_match]} and id != #{params[:courseid]} and end_date >= curtime()")
+        if !params[:selected_match].blank?
+            @p_colitions = Course.where("classroom_matching_id = #{params[:selected_match]} and id != #{params[:courseid]} and end_date >= curtime()")
+        end
+
         if !params[:selected_date].blank?
+            #alternativas de horarios
             c_matching = ClassroomMatching.find(params[:selected_match])
             week_session_info = ClassroomAvailability.where(:id => c_matching.matching_array.split(","))
-            total_sessions = total_sessions = CourseTemplate.find(Course.find(params[:courseid]).course_template_id).total_sessions
+            total_sessions = CourseTemplate.find(Course.find(params[:courseid]).course_template_id).total_sessions
             @end_date = course_end_date(week_session_info, params[:selected_date], total_sessions)
+        end
+
+        if !params[:selected_match].blank? && !params[:selected_date].blank?
             @p_colitions = @p_colitions.where("end_date between '#{params[:selected_date]}' and '#{l(@end_date, :format => '%Y-%m-%d')}' or start_date between '#{params[:selected_date]}' and '#{l(@end_date, :format => '%Y-%m-%d')}'")
         end
+        
         respond_to do |format|
             format.js
         end
