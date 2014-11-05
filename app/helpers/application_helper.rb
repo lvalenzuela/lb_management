@@ -16,19 +16,25 @@ module ApplicationHelper
 		f_grades = DashboardCoursesV.where("mean_grade < #{min_grade} and visible = 1 and gradetype = 2")
 		f_attendance = DashboardCoursesV.where("(avg_attendance_ratio*100) < #{min_attendance} and visible = 1")
 		f_late = DashboardCoursesV.where("(current_booked_sessions - current_taken_sessions) > #{max_delay} and visible = 1")
+		if f_grades.blank? && f_attendance.blank? && f_late.blank?
+			alerts[:failing_grades] = 0
+			alerts[:failing_attendance] = 0
+			alerts[:late_sessions] = 0
+			alerts[:alert_teachers] = 0
+		else
+			courses = []
+			courses.push(f_grades.map{|c| c.courseid})
+			courses.push(f_attendance.where.not(:courseid => courses).map{|c| c.courseid})
+			courses.push(f_late.where.not(:courseid => courses).map{|c| c.courseid})
+			available_teachers = TeacherV.all().map{|t| t.id}
 
-		courses = []
-		courses.push(f_grades.map{|c| c.courseid})
-		courses.push(f_attendance.where.not(:courseid => courses).map{|c| c.courseid})
-		courses.push(f_late.where.not(:courseid => courses).map{|c| c.courseid})
-		available_teachers = TeacherV.all().map{|t| t.id}
+			f_teachers = MoodleRoleAssignationV.where("courseid in (?) and roleid in (9,4) and userid in (?)",courses.flatten, available_teachers.flatten)
 
-		f_teachers = MoodleRoleAssignationV.where("courseid in (?) and roleid in (9,4) and userid in (?)",courses.flatten, available_teachers.flatten)
-
-		alerts[:failing_grades] = f_grades.distinct.count(:courseid)
-		alerts[:failing_attendance] = f_attendance.distinct.count(:courseid)
-		alerts[:late_sessions] = f_late.distinct.count(:courseid)
-		alerts[:alert_teachers] = f_teachers.distinct.count(:userid)
+			alerts[:failing_grades] = f_grades.distinct.count(:courseid)
+			alerts[:failing_attendance] = f_attendance.distinct.count(:courseid)
+			alerts[:late_sessions] = f_late.distinct.count(:courseid)
+			alerts[:alert_teachers] = f_teachers.distinct.count(:userid)
+		end
 		return alerts
 	end
 
