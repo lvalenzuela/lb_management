@@ -105,22 +105,21 @@ class UsersController < ApplicationController
 			courses_list = low_attendance_courses
 			@active = "low_attendance"
 		end
-		@courses = courses_list.where(:courseid => my_courses).page(params[:page]).per(10)
+		@courses = courses_list.where(:courseid => my_courses_list).page(params[:page]).per(10)
 	end
 
 	def my_courses
 		@filters = {}
-		@user = current_user
-		my_courses = MoodleRoleAssignationV.where(:userid => @user.id).group(:courseid).map{|c| c.courseid}
+		@user = UserV.find(current_user.id)
 		if params[:filter]
 			if params[:filter][:show_hidden]
-				@courses = DashboardCoursesV.where(:courseid => my_courses)
+				@courses = DashboardCoursesV.where(:courseid => my_courses_list)
 				@filters[:show_hidden] = true
 			else
-				@courses = DashboardCoursesV.where(:courseid => my_courses, :visible => 1)
+				@courses = DashboardCoursesV.where(:courseid => my_courses_list, :visible => 1)
 			end
 		else
-			@courses = DashboardCoursesV.where(:courseid => my_courses, :visible => 1)
+			@courses = DashboardCoursesV.where(:courseid => my_courses_list, :visible => 1)
 		end
 	end
 
@@ -189,7 +188,7 @@ class UsersController < ApplicationController
 
 	private
 
-	def my_courses
+	def my_courses_list
 		return MoodleRoleAssignationV.where(:userid => current_user.id, :roleid => [4,9]).map{|u| u.courseid}
 	end
 
