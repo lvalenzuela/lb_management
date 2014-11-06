@@ -1,0 +1,54 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "users"%>
+
+<section class="content-header">
+    <h1>
+        Alarmas de Cursos
+       	<small>Cursos con Bajo Desempeño</small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Mis Cursos</li>
+        <li class="active">Cursos con Bajo Desempeño</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="<%=activate_menu_item("low_attendance",@active)%>">
+                    <%=link_to "Baja Asistencia", {:controller => :users, :action => :my_courses_alarms, :params => {:opt => "low_attendance"}}%>
+                </li>
+                <li class="<%=activate_menu_item("delayed_sessions",@active)%>">
+                    <%=link_to "Sesiones Atrasadas", {:controller => :users, :action => :my_courses_alarms, :params => {:opt => "delayed_sessions"}}%>
+                </li>
+                <li class="<%=activate_menu_item("low_grades",@active)%>">
+                    <%=link_to "Promedio Bajo", {:controller => :users, :action => :my_courses_alarms, :params => {:opt => "low_grades"}}%>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <section id="new">
+                    	<div class="row">
+                    		<div class="col-xs-12">
+								<div class="box box-info">
+									<div class="box-header">
+										<h3 class="box-title">Listado de Cursos</h3>
+									</div>
+									<div class="box-body">
+										<%=render :partial => "dashboard/courses_table_partial", :locals => {:courses => @courses}%>
+									</div>
+									<div class="box-footer clearfix">
+						                <div class="pull-right">
+						                    <%=paginate @courses%>
+						                </div>
+									</div>
+								</div>
+                    		</div>
+                    	</div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

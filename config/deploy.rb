@@ -18,8 +18,8 @@ server "50.16.3.249", :app, :web, :db, :primary => true
 
 set :rvm_ruby_string, :local        # use the same ruby as used locally for deployment
 
-before 'deploy', 'rvm:install_rvm'  # install/update RVM
-before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
+#before 'deploy', 'rvm:install_rvm'  # install/update RVM
+#before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
 
 before "deploy:assets:precompile" do
   run ["ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings.yml",

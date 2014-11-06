@@ -6,35 +6,26 @@ module ApplicationHelper
 
 	def check_user_alerts(userid)
 		alerts = {}
-		#nota minima de aprobacion
-		min_grade = CourseAlarmParameter.where(:param_name => "approve_grade").first().value
-		min_grade = grade_to_points(min_grade)
-		#porcentaje mínimo de asistencia
-		min_attendance = CourseAlarmParameter.where(:param_name => "min_attendance").first().value.to_i
-		#maximo atraso en clases
-		max_delay = CourseAlarmParameter.where(:param_name => "max_attendance_delay").first().value.to_i
-		f_grades = DashboardCoursesV.where("mean_grade < #{min_grade} and visible = 1 and gradetype = 2")
-		f_attendance = DashboardCoursesV.where("(avg_attendance_ratio*100) < #{min_attendance} and visible = 1")
-		f_late = DashboardCoursesV.where("(current_booked_sessions - current_taken_sessions) > #{max_delay} and visible = 1")
-		if f_grades.blank? && f_attendance.blank? && f_late.blank?
+		a = CourseCurrentAlarm.find_by_userid(userid)
+		if a.blank?
 			alerts[:failing_grades] = 0
 			alerts[:failing_attendance] = 0
 			alerts[:late_sessions] = 0
-			alerts[:alert_teachers] = 0
 		else
-			courses = []
-			courses.push(f_grades.map{|c| c.courseid})
-			courses.push(f_attendance.where.not(:courseid => courses).map{|c| c.courseid})
-			courses.push(f_late.where.not(:courseid => courses).map{|c| c.courseid})
-			available_teachers = TeacherV.all().map{|t| t.id}
-
-			f_teachers = MoodleRoleAssignationV.where("courseid in (?) and roleid in (9,4) and userid in (?)",courses.flatten, available_teachers.flatten)
-
-			alerts[:failing_grades] = f_grades.distinct.count(:courseid)
-			alerts[:failing_attendance] = f_attendance.distinct.count(:courseid)
-			alerts[:late_sessions] = f_late.distinct.count(:courseid)
-			alerts[:alert_teachers] = f_teachers.distinct.count(:userid)
+			alerts[:failing_grades] = a.courses_failing_grades ? a.courses_failing_grades : 0
+			alerts[:failing_attendance] = a.courses_failing_attendance ? a.courses_failing_attendance : 0
+			alerts[:late_sessions] = a.courses_late_sessions ? a.courses_late_sessions : 0
 		end
+		return alerts
+	end
+
+	def check_system_alerts
+		alerts = {}
+		a = CourseCurrentAlarm.find_by_userid(0) #userid = 0 contiene los datos generales
+		alerts[:failing_grades] = a.courses_failing_grades
+		alerts[:failing_attendance] = a.courses_failing_attendance
+		alerts[:late_sessions] = a.courses_late_sessions
+		alerts[:alert_teachers] = a.teachers_low_performance
 		return alerts
 	end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141029185844) do
+ActiveRecord::Schema.define(version: 20141106175521) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -132,17 +132,6 @@ ActiveRecord::Schema.define(version: 20141029185844) do
     t.datetime "updated_at"
   end
 
-  create_table "course_alarm_data", force: true do |t|
-    t.integer  "courseid"
-    t.integer  "late_sessions"
-    t.decimal  "mean_attendance",    precision: 5, scale: 2
-    t.decimal  "failing_attendance", precision: 5, scale: 2
-    t.decimal  "failing_grades",     precision: 5, scale: 2
-    t.decimal  "course_grade",       precision: 5, scale: 2
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "course_alarm_parameters", force: true do |t|
     t.string   "param_name"
     t.string   "param_description"
@@ -168,6 +157,16 @@ ActiveRecord::Schema.define(version: 20141029185844) do
     t.integer  "classroom_matching_id"
     t.date     "course_start_date"
     t.date     "course_end_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_current_alarms", force: true do |t|
+    t.integer  "userid"
+    t.integer  "courses_failing_grades"
+    t.integer  "courses_failing_attendance"
+    t.integer  "courses_late_sessions"
+    t.integer  "teachers_low_performance"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -483,6 +482,12 @@ ActiveRecord::Schema.define(version: 20141029185844) do
   create_table "request_default_titles", force: true do |t|
     t.integer  "area_id"
     t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "request_enabled_areas", force: true do |t|
+    t.integer  "area_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

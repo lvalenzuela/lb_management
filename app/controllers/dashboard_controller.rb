@@ -49,7 +49,7 @@ class DashboardController < ApplicationController
 		@course = MoodleCourseV.find_by_moodleid(params[:id])
 		@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
 		#obtencion del contenido de las sesiones
-		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.description}
+		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
 		@course_observations = CourseObservation.where(:course_id => params[:id])
 		if @students_info.blank?
 			@institution = ""
@@ -104,7 +104,7 @@ class DashboardController < ApplicationController
 
 	def teacher
 		@user = TeacherV.find(params[:id])
-		courses_list = MoodleRoleAssignationV.where(:userid => params[:id]).map{|c| c.courseid}
+		courses_list = MoodleRoleAssignationV.where(:userid => params[:id], :roleid => [4,9]).map{|c| c.courseid}
 		if params[:filter]
 			if params[:filter][:show_hidden]
 				@show_hidden = true

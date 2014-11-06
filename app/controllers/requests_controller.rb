@@ -94,7 +94,7 @@ class RequestsController < ApplicationController
 	end
 
 	def new_request
-		if params[:areaid] && params[:tagid]
+		if params[:areaid] != "" && params[:tagid] != ""
 			@request = Request.new()
 			@user = current_user
 			@priorities = RequestPriority.all()
@@ -382,6 +382,6 @@ class RequestsController < ApplicationController
 	end
 
 	def default_area
-		area = [4]
+		return RequestEnabledArea.all().map{|a| a.area_id}
 	end
 end

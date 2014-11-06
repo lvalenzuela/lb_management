@@ -159,6 +159,16 @@
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <div class="col-xs-4">
+                                                <div class="form-group pull-right">
+                                                    <label>ID Moodle</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <%=f.number_field :moodleid, :class => "form-control", :min => 1%>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-xs-4 col-xs-offset-4">
                                                 <div class="pull-right">
                                                 <%=f.submit "Editar Curso", :class => "btn btn-primary btn-lg"%>

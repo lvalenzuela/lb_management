@@ -13,11 +13,6 @@ module DashboardHelper
 		end
 	end
 
-	def count_teacher_courses(teacher_id)
-		raw_courses = MoodleRoleAssignationV.where(:userid => teacher_id).group(:courseid).map{|rc| rc.courseid}
-		return DashboardCoursesV.where(:courseid => raw_courses).count(:courseid)
-	end
-
 	def inclass_attitude(attitude)
 		case attitude
 		when 1

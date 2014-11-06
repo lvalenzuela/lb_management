@@ -1,5 +1,6 @@
 <%check_user_requests(current_user.id)%>
-<%alerts = check_user_alerts(current_user.id)%>
+<%alerts = check_system_alerts%>
+<%user_alerts = check_user_alerts(current_user.id)%>
 <%user = current_user%>
 <%#
 inicialización de variables para recuperar los datos del
@@ -27,7 +28,7 @@ usuario
                         <%end%>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">Requerimientos<li>
+                        <li class="header">Requerimientos</li>
                         <li>
                             <ul class="menu">
                                 <li>
@@ -44,6 +45,37 @@ usuario
                         </li>
                     </ul>
                 </li>
+                <li class="dropdown notifications-menu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <%if user_alerts[:late_sessions] + user_alerts[:failing_grades] + user_alerts[:failing_attendance] > 0%>
+                            <i class="fa fa-bell fa-lg"></i> <span class="label label-danger"><i class="fa fa-exclamation"></i></span>
+                        <%else%>
+                            <i class="fa fa-bell"></i> <i class="fa fa-caret-down"></i>
+                        <%end%>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Mis Alarmas</li>
+                        <li>
+                            <ul class="menu">
+                                <li>
+                                    <%=link_to :controller => :users, :action => :my_courses_alarms, :params => {:opt => "delayed_sessions"} do%>
+                                        <i class="fa fa-clock-o info"></i><strong><%=user_alerts[:late_sessions]%></strong> Cursos con sesiones atrasadas
+                                    <%end%>
+                                </li>
+                                <li>
+                                    <%=link_to :controller => :users, :action => :my_courses_alarms, :params => {:opt => "low_grades"} do%>
+                                    <i class="fa fa-times danger"></i><strong><%=user_alerts[:failing_grades]%></strong> Cursos con promedio bajo
+                                    <%end%>
+                                </li>
+                                <li>
+                                    <%=link_to :controller => :users, :action => :my_courses_alarms, :params => {:opt => "low_attendance"} do%>
+                                    <i class="fa fa-sort-amount-desc warning"></i><strong><%=user_alerts[:failing_attendance]%></strong> Cursos con baja asistencia
+                                    <%end%>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
                 <%if user.system_role_id <= 2 %>
                 <li class="dropdown notifications-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -54,7 +86,7 @@ usuario
                         <%end%>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">Alarmas<li>
+                        <li class="header">Alarmas de Longbourn</li>
                         <li>
                             <ul class="menu">
                                 <li>
@@ -265,6 +297,10 @@ usuario
                     <ul class="treeview-menu">
                         <li><%=link_to :controller => :users, :action => :my_courses do%>
                             <i class="fa fa-angle-double-right"></i> Mis Cursos
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => :users, :action => :my_courses_alarms do%>
+                            <i class="fa fa-angle-double-right"></i> Alertas de Cursos
                             <%end%>
                         </li>
                         <li><%=link_to :controller => :users, :action => :my_calendar do%>

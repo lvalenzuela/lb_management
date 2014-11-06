@@ -32,17 +32,23 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Nombre</th>
                             <th>Correo</th>
-                            <th># Cursos</th>
+                            <th>Nivel de Profesor</th>
+                            <th style="text-align: center; width: 80px;">Cursos</th>
+                            <th style="width: 150px;">Puntaje Evaluación</th>
                         </tr>
                     </thead>
                     <tbody>
                         <%@teachers.each do |t|%>
                         <tr>
+                            <td><%=t.id%></td>
                             <td><%=link_to user_name(t.id), :controller => :dashboard, :action => :teacher, :params => {:id => t.id}%></td>
                             <td><%=user_mail(t.id)%></td>
-                            <td><%=count_teacher_courses(t.id)%></td>
+                            <td><%=teacher_level_label(t.teacher_level_id)%></td>
+                            <td style="text-align: center;"><%=teacher_courses_count(t.id)%></td>
+                            <td></td>
                         </tr>
                         <%end%>
                     </tbody>

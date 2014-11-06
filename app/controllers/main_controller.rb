@@ -31,6 +31,24 @@ class MainController < ApplicationController
         redirect_to :action => "system_manager"
     end
 
+    def change_area_request_status
+        case params[:status]
+        when "enable"
+            area = RequestEnabledArea.find_by_area_id(params[:area])
+            if area.blank?
+                new_area = RequestEnabledArea.new()
+                new_area.area_id = params[:area]
+                new_area.save! 
+            else
+                #el area ya esta habilitada
+            end
+        else #disable
+            #se elimina el registro
+            RequestEnabledArea.find_by_area_id(params[:area]).destroy
+        end
+        redirect_to :action => :area_manager, :opt => params[:area]
+    end
+
     def area_manager
         #Administración de las áreas de Longborun y de los roles de los usuarios en ellas
         @areas = areas_for_user(current_user.id)
@@ -70,14 +88,60 @@ class MainController < ApplicationController
         redirect_to :action => "area_manager", :opt => params[:area]
     end
 
+    def teacher_grades_config
+        @teacher_levels = UserTeacherLevel.all()
+    end
+
+    def create_teacher_level
+        @teacher_level = UserTeacherLevel.create(teacher_level_params)
+        if @teacher_level.valid?
+            redirect_to :action => :teacher_grades_config
+        else
+            @teacher_levels = UserTeacherLevel.all()
+            render :teacher_grades_config
+        end
+    end
+
+    def edit_teacher_level
+        @teacher_levels = UserTeacherLevel.all()
+        @teacher_level = UserTeacherLevel.find(params[:id])
+        render :teacher_grades_config
+    end
+
+    def update_teacher_level
+        @teacher_level = UserTeacherLevel.find(params[:user_teacher_level][:id])
+        @teacher_level.update_attributes(teacher_level_params)
+        if @teacher_level.valid?
+            redirect_to :action => :teacher_grades_config
+        else
+            @teacher_levels = UserTeacherLevel.all()
+            render :teacher_grades_config
+        end
+    end
+
+    def delete_teacher_level
+        UserTeacherLevel.find(params[:id]).destroy
+        redirect_to :action => :teacher_grades_config
+    end
+
     def teachers_manager
         @teachers = TeacherV.all()
     end
 
-    def teacher_availability
+    def set_teacher_level
+        if params[:teacher_level]
+            teacher = User.find(params[:id])
+            teacher.teacher_level_id = params[:teacher_level]
+            teacher.save!
+        end
+        redirect_to :action => :teacher_overview, :id => params[:id]
+    end
+
+    def teacher_overview
         @teacher = TeacherV.find(params[:id])
+        @teacher_levels = UserTeacherLevel.all()
         @disponibility = UserDisponibility.where(:user_id => params[:id])
-        course_ids = MoodleRoleAssignationV.where(:userid => params[:id]).map{|c| c.courseid}
+        course_ids = MoodleRoleAssignationV.where(:userid => params[:id], :roleid => [4,9]).map{|c| c.courseid}
         @courses = MoodleCourseV.where(:moodleid => course_ids, :visible => 1)
         sessions = MoodleCourseSessionV.joins("as mcs inner join moodle_course_vs as courses
                                                 on mcs.courseid = courses.moodleid").where("
@@ -137,7 +201,7 @@ class MainController < ApplicationController
                 new_disp.save!
             end
         end
-        redirect_to :action => :teacher_availability, :id => params[:userid]
+        redirect_to :action => :teacher_overview, :id => params[:userid]
     end
 
     def course_modes
@@ -403,7 +467,13 @@ class MainController < ApplicationController
         send_file Rails.root.join("app","assets","file_examples","classroom_match.csv")
     end
 
+
+
     private
+
+    def teacher_level_params
+        params.require(:user_teacher_level).permit(:level_label, :description)
+    end
 
     def week_day(day_number)
         case day_number

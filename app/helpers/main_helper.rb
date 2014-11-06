@@ -1,5 +1,22 @@
 module MainHelper
 
+	def active_area(area_id)
+		enabled = RequestEnabledArea.find_by_area_id(area_id)
+		if enabled.blank?
+			return false
+		else
+			return true
+		end
+	end
+
+	def teacher_level_label(teacher_level)
+		if teacher_level
+			return UserTeacherLevel.find(teacher_level).level_label
+		else
+			return "-"
+		end
+	end
+
 	def print_classroom_matching(matching_array)
 		array = matching_array.split(",")
 		printing = ""
@@ -67,9 +84,13 @@ module MainHelper
 	end
 
 	def teacher_courses_count(teacherid)
-		return MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as courses
-											on mra.courseid = courses.moodleid").where("
-											courses.visible = 1 and mra.userid = #{teacherid}").count()
+		raw_courses = MoodleRoleAssignationV.where(:userid => teacherid, :roleid => [4,9]).group(:courseid).map{|rc| rc.courseid}
+		return DashboardCoursesV.where(:courseid => raw_courses, :visible => 1).count(:courseid)
+		
+		#otra forma de conteo
+		#return MoodleRoleAssignationV.joins("as mra inner join moodle_course_vs as courses
+		#									on mra.courseid = courses.moodleid").where("
+		#									courses.visible = 1 and mra.userid = #{teacherid} and mra.roleid in (9,4)").count()
 	end
 
 	def get_rolename(roleid)

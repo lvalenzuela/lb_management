@@ -115,10 +115,13 @@ Rails.application.routes.draw do
       delete "unassign_system_manager"
       get 'control_panel'
       get 'horarios'
+      #administracion de areas
+      post "change_area_request_status"
       get 'area_manager'
       get 'area_dashboard'
       post 'assign_to_area'
       post 'modify_assignation'
+      ##
       get 'extras'
       delete 'destroy'
       get "manage_products"
@@ -128,8 +131,15 @@ Rails.application.routes.draw do
       post "create_product"
       delete "delete_product"
       get "enable_product"
+      #profesores
       get "teachers_manager"
-      get "teacher_availability"
+      get "teacher_overview"
+      get "teacher_grades_config"
+      post "create_teacher_level"
+      get "edit_teacher_level"
+      post "update_teacher_level"
+      delete "delete_teacher_level"
+      post "set_teacher_level"
       #productos de longbourn
       get "zoho_product_list"
       get "disable_course_mode"
@@ -258,6 +268,7 @@ Rails.application.routes.draw do
       #panel de usuarios
       get "my_calendar"
       get "my_courses"
+      get "my_courses_alarms"
       get "show_course"
       get "show_student"
       #observaciones en los cursos

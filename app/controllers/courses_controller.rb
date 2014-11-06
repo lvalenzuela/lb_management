@@ -788,7 +788,7 @@ class CoursesController < ApplicationController
     end
 
     def course_params
-    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :location_id, :course_type_id)
+    	params.require(:course).permit(:coursename, :course_template_id, :description, :course_level_id, :mode, :teacher_user_id, :students_qty, :zoho_product_id, :location_id, :course_type_id, :moodleid)
     end
 
     def check_authentication

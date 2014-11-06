@@ -24,6 +24,58 @@
             <div class="tab-content">
                 <div class="tab-pane active">
                     <section>
+                    <%=form_tag :action => :change_area_request_status do%>
+                    <%=hidden_field_tag :area, @selected_area.id%>
+                        <%if active_area(@selected_area)%>
+                            <%=hidden_field_tag :status, "disable"%>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="box box-success">
+                                        <div class="box-header">
+                                            <h3 class="box-title">Área Habilitada para Solicitudes</h3>
+                                            <div class="box-tools pull-right">
+                                                <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                                <button class="btn btn-default btn-sm" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="alert alert-success">
+                                                <i class="fa fa-check"></i>
+                                                <p>El área esta actualmente habilitada para recibir solicitudes de otras áreas</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-footer clearfix">
+                                            <%=submit_tag "Desabilitar Área",:class => "btn btn-sm btn-danger pull-right"%>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <%else%>
+                            <%=hidden_field_tag :status, "enable"%>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="box box-danger">
+                                        <div class="box-header">
+                                            <h3 class="box-title">Área <strong>no</strong> habilitada para solicitudes</h3>
+                                            <div class="box-tools pull-right">
+                                                <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                                <button class="btn btn-default btn-sm" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="alert alert-warning">
+                                                <i class="fa fa-warning"></i>
+                                                <p>El área actualmente no está disponible para que se le realicen solicitudes</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-footer clearfix">
+                                            <%=submit_tag "Habilitar Área", :class => "btn btn-sm btn-success pull-right"%>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <%end%>
+                    <%end%>
                         <%=render :partial => "area_dashboard", :locals => {:area => @selected_area, :roles => @roles, :area_users => @area_users, :system_users => @system_users}%>
                     </section>
                 </div>
