@@ -291,8 +291,13 @@ class MainController < ApplicationController
 
     def calendar_management
         holydays = CalendarHolyday.all()
-        @last_date = holydays.order("date DESC").first().date
-        @total_dates = holydays.count
+        if holydays.blank?
+            @last_date = nil
+            @total_dates = 0
+        else
+            @last_date = holydays.order("date DESC").first().date
+            @total_dates = holydays.count
+        end
         gon.events = []
         holydays.each do |h|
             gon.events << {
