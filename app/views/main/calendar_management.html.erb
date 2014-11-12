@@ -25,7 +25,7 @@
 					<p>Recordar que el calendario debe contener <strong>TODAS</strong> las fechas que se deseen considerar festivos.</p>
 					<p>Al subir un nuevo calendario, se borrarán los datos guardados anteriormente.</p>
 					<p>Actualmente se cuenta con <strong><%=@total_dates%></strong> fechas festivas.</p>
-					<p>La última fecha registrada corresponde a <strong><%=l(@last_date, :format => "%d-%m-%Y")%></strong>.</p>
+					<p>La última fecha registrada corresponde a <strong><%=@last_date ? l(@last_date, :format => "%d-%m-%Y") : "-"%></strong>.</p>
 					<p>Utilizar el siguiente <%=link_to "documento", {:controller => :main, :action => :calendar_file_example}, {:target => "_blank"}%> como guía para el formato del horario a subir.</p>
 					<div class="row">
 						<div class="col-xs-2">
