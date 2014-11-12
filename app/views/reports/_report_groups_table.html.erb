@@ -1,6 +1,6 @@
 <%#seleccion por departamento%>
 <%if selected.to_i == 2%>
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Departamento</th>
@@ -10,6 +10,11 @@
             </tr>
         </thead>
         <tbody>
+        <%if groups.blank?%>
+        <tr>
+            <td colspan="4">No hay datos para mostrar</td>
+        </tr>
+        <%else%>
             <%@groups.each do |group|%>
                 <tr>
                     <td><%=link_to group.department.blank? ? "[NO-INFO]" : group.department, :controller => :reports, :action => :department_members, :params => {:department => group.department, :institution => group.institution} %></td>
@@ -18,11 +23,12 @@
                     <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :department_report, :params => {:institution => group.institution, :department => group.department, :format => "pdf"}}, :target => "_blank"%></td>
                 </tr>
             <%end%>
+        <%end%>
         </tbody>
     </table>
 <%else%>
 <%#seleccion por curso%>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Curso</th>
@@ -32,13 +38,19 @@
         </tr>
     </thead>
     <tbody>
-        <%groups.each do |g|%>
+        <%if groups.blank?%>
         <tr>
-            <td><%=link_to g.coursename, :controller => :reports, :action => :course_members, :params => {:courseid => g.courseid} %></td>
-            <td style="text-align: center"><%=g.institution%></td>
-            <td style="text-align: center"><%=g.alumnos%></td>
-            <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => g.institution, :courseid => g.courseid, :format => "pdf"}}, :target => "_blank"%></td>
+            <td colspan="4">No hay datos para mostrar</td>
         </tr>
+        <%else%>
+            <%groups.each do |g|%>
+            <tr>
+                <td><%=link_to g.coursename, :controller => :reports, :action => :course_members, :params => {:courseid => g.courseid} %></td>
+                <td style="text-align: center"><%=g.institution%></td>
+                <td style="text-align: center"><%=g.alumnos%></td>
+                <td style="text-align: center"><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :reports, :action => :course_report, :params => {:institution => g.institution, :courseid => g.courseid, :format => "pdf"}}, :target => "_blank"%></td>
+            </tr>
+            <%end%>
         <%end%>
     </tbody>
 </table>

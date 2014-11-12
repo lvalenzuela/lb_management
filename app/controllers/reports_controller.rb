@@ -19,14 +19,32 @@ class ReportsController < ApplicationController
 	def courses
 		if params[:group_filter] && params[:group_filter].to_i == 2
 			#Listado por departamento
-			groups_list = UserReport.joins("right join moodle_course_vs as courses
-											on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}') 
-											and user_reports.created_at = (select max(created_at) from user_reports)").select("department, institution, count(distinct userid) as alumnos").group("department")
+			if params[:show_hidden]
+				groups_list = UserReport.joins("right join moodle_course_vs as courses
+												on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}') 
+												and user_reports.created_at = (select max(created_at) from user_reports)").select("department, institution, count(distinct userid) as alumnos").group("department")
+				@show_hidden = true
+			else
+				groups_list = UserReport.joins("right join moodle_course_vs as courses
+												on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}') 
+												and user_reports.created_at = (select max(created_at) from user_reports)
+												and courses.visible = 1").select("department, institution, count(distinct userid) as alumnos").group("department")
+				@show_hidden = false
+			end
 		else
 			#Listado por curso
-			groups_list = UserReport.joins("right join moodle_course_vs as courses
-											on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}')
-											and user_reports.created_at = (select max(created_at) from user_reports)").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
+			if params[:show_hidden]
+				groups_list = UserReport.joins("right join moodle_course_vs as courses
+												on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}')
+												and user_reports.created_at = (select max(created_at) from user_reports)").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
+				@show_hidden = true
+			else
+				groups_list = UserReport.joins("right join moodle_course_vs as courses
+												on user_reports.courseid = courses.moodleid").where("lower(institution) = lower('#{params[:institution]}')
+												and user_reports.created_at = (select max(created_at) from user_reports)
+												and courses.visible = 1").select("courseid, user_reports.coursename as coursename, institution, count(distinct userid) as alumnos").group("courseid")
+				@show_hidden = false
+			end
 		end
 		@groups = groups_list.page(params[:page]).per(10)
 		@institution = params[:institution]
