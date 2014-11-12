@@ -65,8 +65,9 @@ class DepartmentReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Grupo Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>RUT</b>", "<b>Grupo Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
+			user = StudentV.find(member_data.userid)
 			if date
 				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
 			else
@@ -83,10 +84,10 @@ class DepartmentReportPdf < Prawn::Document
 				att_pct = 0
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [user.lastname+", "+user.firstname, user.idnumber, group_name(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 130, 1 => 130, 2 => 60, 3 => 60, 4 => 65, 5 => 60}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 65, 3 => 65, 4 => 65, 5 => 65, 6 => 65}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
@@ -102,52 +103,43 @@ class DepartmentReportPdf < Prawn::Document
 	def course_attendance(members,date)
 		move_down 20
 		font "Helvetica", :style => :bold
-		text "1. Indicadores de Asistencia"
+		text "1. Indicadores de Asistencia (SENCE)"
 		font "Helvetica", :style => :normal
 		move_down 10
-		
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["Nombre", "RUT", "Presente", "Total Clases", "Tiempo Presente", "Tiempo a la Fecha", "Asistencia"]
 		members.each do |member|
-			if date
-				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
-			else
-				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid).order("created_at DESC").first()
-			end
-			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
+			user = StudentV.find(member.userid)
+			user_attendance_info = SenceAttendanceReport.where("course_id = #{member.courseid} and user_idnumber = '#{user.idnumber}' and date(created_at) = curdate()").first()
 			
-			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil? && !member_data.p_sessions.nil?
-				a_sessions = member_data.a_sessions + member_data.t_sessions
+			if user_attendance_info.blank?
+				data << [user.lastname+" "+user.firstname, user.idnumber, "-", "-", "-", "-", "-"]
 			else
-				a_sessions = 0
-				member_data.p_sessions = 0
-				member_data.current_sessions = 0
-				att_pct = 0
+				user_seconds = user_attendance_info.current_user_seconds % 60
+				user_minutes = (user_attendance_info.current_user_seconds / 60) % 60
+				user_hours = user_attendance_info.current_user_seconds / (60*60)
+				course_seconds = user_attendance_info.current_course_seconds % 60
+				course_minutes = (user_attendance_info.current_course_seconds / 60) % 60
+				course_hours = user_attendance_info.current_course_seconds / (60*60)
+
+				data << [user.lastname+", "+user.firstname, user.idnumber, user_attendance_info.p_sessions, user_attendance_info.current_sessions, format("%02d:%02d:%02d",user_hours,user_minutes,user_seconds), format("%02d:%02d:%02d",course_hours,course_minutes,course_seconds), (user_attendance_info.current_user_seconds.round(2)*100/user_attendance_info.current_course_seconds).round(2).to_s+"%"]
 			end
-			
-			total_sence = member_data.total_sessions/4
-			r_sence = total_sence-a_sessions
-			if r_sence < 0
-				sence = "No Aplica"
-			else
-				sence = r_sence
-			end
-			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 65, 3 => 65, 4 => 65, 5 => 65, 6 => 65, 7 => 65}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
 			cells.style do |c|
 				if c.row == 0
 					c.background_color = "F0F0F0"
+					c.font_style = :bold
 				end
 			end
 		end
 		move_down 10
-		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence (Máximo 25% del total).", size:9, :inline_format => true
+		text "Aquellos alumnos con asistencia bajo 75% no calificarán al beneficio otorgado por la Franquicia SENCE.", size:9, :inline_format => true
 	end
 
 	def indicadores_academicos(members, date)
@@ -158,16 +150,17 @@ class DepartmentReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Curso</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
+		data << ["<b>Nombre</b>", "<b>RUT</b>", "<b>Curso</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
 		members.each do |member|
+			user = StudentV.find(member_data.userid)
 			if date
 				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid, :created_at => date).first()
 			else
 				member_data = CourseGroupReport.where(:userid => member.userid, :groupid => member.groupid).order("created_at DESC").first()
 			end
-			data << [member_data.firstname+" "+member_data.lastname, group_name(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
+			data << [user.lastname+", "+user.firstname, user.idnumber, group_name(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 60, 6 => 60}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 54, 3 => 54, 4 => 54, 5 => 54, 6 => 54, 7 => 54}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do

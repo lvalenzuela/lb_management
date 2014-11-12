@@ -36,7 +36,8 @@ class StudentReportPdf < Prawn::Document
 	end
 
 	def general_data(user_data,report_data)
-		data = [["<b>Nombre</b>",user_data.name],
+		data = [["<b>Nombre</b>",user_data.lastname+", "+user_data.firstname],
+				["<b>RUT</b>", user_data.idnumber],
 				["<b>Empresa</b>",user_data.institution],
 				["<b>Departamento</b>",user_data.department],
 				["<b>Curso</b>",report_data.coursename],

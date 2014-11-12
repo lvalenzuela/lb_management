@@ -58,6 +58,73 @@ class DashboardController < ApplicationController
 		end
 	end
 
+    def template_selector_options
+        @templates = CourseTemplate.where(:course_level_id => params[:courselevel], :deleted => 0)
+        respond_to do |format|
+            format.js
+        end
+    end
+
+    def product_selector_options
+        @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => params[:coursemode])
+        respond_to do |format|
+            format.js
+        end
+    end
+
+	def new_course_details
+		@moodle_course = MoodleCourseV.find_by_moodleid(params[:courseid])
+		@course_details = Course.new()
+
+        @locations = Location.all()
+    	@types = CourseType.all()
+    	@course = Course.new()
+        @course_levels = CourseLevel.all()
+        @modes = CourseMode.where(:enabled => true)
+        @templates = nil
+        #classroom_matchings
+        used_matchings = Course.where("'#{@moodle_course.start_date}' between start_date and end_date and course_status_id in (2,3)").map{|c| c.classroom_matching_id}
+        @classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1",used_matchings.nil? ? used_matchings : [0])
+        @summit_courses = Course.where(:moodleid => nil, :course_status_id => [2,3])
+	end
+
+	def create_course_details
+		@course_details = Course.create(course_details_params)
+		if @course_details.valid?
+			@course_details.course_status_id = 3 #curso en desarrollo
+			@course_details.save!
+			redirect_to :action => :course, :id => @course_details.moodleid
+		else
+			@moodle_course = MoodleCourseV.find_by_moodleid(params[:course_details][:moodleid])
+	        @locations = Location.all()
+	    	@types = CourseType.all()
+	    	@course = Course.new()
+	        @course_levels = CourseLevel.all()
+	        @modes = CourseMode.where(:enabled => true)
+	        @templates = nil
+	        #classroom_matchings
+	        used_matchings = Course.where("'#{@moodle_course.start_date}' between start_date and end_date and course_status_id in (2,3)").map{|c| c.classroom_matching_id}
+	        @classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1",used_matchings.nil? ? used_matchings : [0])
+	        @summit_courses = Course.where(:moodleid => nil, :course_status_id => [2,3])
+	        render :new_course_details
+		end
+	end
+
+	def pair_summit_moodle_course
+		summit_course = Course.find(params[:summit_course_id])
+		summit_course.moodleid = params[:moodle_id]
+		summit_course.save!
+		redirect_to :action => :course, :id => params[:moodle_id]
+	end
+
+	def unpair_summit_moodle_course
+		moodle_course = MoodleCourseV.find(params[:moodleid])
+		summit_course = Course.find(moodle_course.summitid)
+		summit_course.moodleid = nil
+		summit_course.save!
+		redirect_to :action => :course, :id => moodle_course.moodleid
+	end
+
 	def generate_detailed_course_report
 		course = MoodleCourseV.find_by_moodleid(params[:courseid])
 
@@ -173,6 +240,10 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
+	def course_details_params
+		params.require(:course_details).permit(:moodleid, :coursename, :description, :location_id, :course_type_id, :students_qty, :zoho_product_id, :course_template_id, :mode, :course_level_id, :classroom_matching_id, :start_date)
+	end
 
 	def alarm_courses_list
 		courses = low_attendance_courses.map{|c| c.courseid}

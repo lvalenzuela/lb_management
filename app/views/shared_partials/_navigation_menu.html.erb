@@ -172,12 +172,12 @@ usuario
                     </a>
                     <ul class="treeview-menu">
                         <%if user.system_role_id <= 1%>
-                        <li><%=link_to :controller => "main", :action => "system_manager" do%>
+                        <li><%=link_to :controller => :main, :action => :system_manager do%>
                             <i class="fa fa-angle-double-right"></i> Sistema
                             <%end%>
                         </li>
                         <%end%>
-                        <li><%=link_to :controller => "main", :action => "area_manager" do%>
+                        <li><%=link_to :controller => :main, :action => :area_manager do%>
                             <i class="fa fa-angle-double-right"></i> Áreas
                             <%end%>
                         </li>
@@ -192,6 +192,11 @@ usuario
                         <li>
                             <%=link_to :controller => :main, :action => :calendar_management do%>
                             <i class="fa fa-angle-double-right"></i> Calendario
+                            <%end%>
+                        </li>
+                        <li>
+                            <%=link_to :controller => :main, :action => :sence_attendance do%>
+                            <i class="fa fa-angle-double-right"></i> Asistencia Sence
                             <%end%>
                         </li>
                         <li><%=link_to :controller => :main, :action => :course_creation_config do%>

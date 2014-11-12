@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141106175521) do
+ActiveRecord::Schema.define(version: 20141110185514) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -413,6 +413,7 @@ ActiveRecord::Schema.define(version: 20141106175521) do
     t.datetime "start_date"
     t.date     "end_date"
     t.boolean  "sence"
+    t.string   "sence_idnumber",     limit: 100, default: "",   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -570,6 +571,34 @@ ActiveRecord::Schema.define(version: 20141106175521) do
   create_table "roles", force: true do |t|
     t.string   "rolename"
     t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sence_attendance_reports", force: true do |t|
+    t.string   "sence_idnumber"
+    t.integer  "course_id"
+    t.string   "user_idnumber"
+    t.integer  "p_sessions"
+    t.integer  "current_sessions"
+    t.integer  "current_course_seconds"
+    t.integer  "current_user_seconds"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sence_attendances", force: true do |t|
+    t.string   "codigo_sence"
+    t.string   "sence_idnumber"
+    t.string   "institution"
+    t.string   "user_name"
+    t.string   "user_rut"
+    t.integer  "course_total_hours"
+    t.date     "session_date"
+    t.time     "session_start_time"
+    t.time     "session_end_time"
+    t.time     "block_time"
+    t.time     "user_attendance_time"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

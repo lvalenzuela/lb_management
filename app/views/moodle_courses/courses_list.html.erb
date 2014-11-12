@@ -45,22 +45,6 @@
 	                    			<div class="box-body table-responsive">
 	                    				<%=form_tag :controller => :moodle_courses, :action => :set_template do%>
 	                    				<div class="row">
-	                    					<div class="col-xs-4">
-	                    						<%=select_tag :template_id, options_for_select(@templates.collect{|t| [t.name,t.id]}), {:prompt => "Seleccionar Plantilla",:class => "form-control"}%>
-	                    					</div>
-	                    					<div class="col-xs-2">
-	                    						<div class="checkbox">
-	                    							<label>
-	                    								<%=check_box_tag :sence, true%>
-	                    								Sence
-	                    							</label>
-	                    						</div>
-	                    					</div>
-	                    					<div class="col-xs-3">
-	                    						<%=submit_tag "Asignar", :class => "btn btn-primary"%>
-	                    					</div>
-	                    				</div>
-	                    				<div class="row">
 	                    					<div class="col-xs-12">
 			                    				<table class="table">
 			                    					<thead>
@@ -79,7 +63,7 @@
 			                    							<td style="text-align: center;"><%=check_box_tag "courses[]", course.moodleid%></td>
 			                    							<td><%=link_to course.coursename, :controller => :dashboard, :action => :course, :params => {:id => course.moodleid}%></td>
 			                    							<td><%=get_template_name(course.course_template_id)%></td>
-			                    							<td style="text-align: center;"><%=check_if_sence(course.sence).html_safe%></td>
+			                    							<td style="text-align: center;"><%=check_if_sence(course.sence_idnumber).html_safe%></td>
 			                    							<td style="text-align: center;"><%=course_total_sessions(course.moodleid)%></td>
 			                    							<td style="text-align: center;"><%=link_to "<i class='fa fa-calendar fa-lg'></i>".html_safe, {:action => :course_calendar, :params => {:id => course.moodleid}}, {}%></td>
 			                    						</tr>

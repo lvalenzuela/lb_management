@@ -1,0 +1,52 @@
+<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Asistencia Sence
+        <small>Documento de Asistencia Sence</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li class="active">Asistencia Sence</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-10 col-xs-offset-1">
+			<%=form_tag upload_sence_attendance_main_index_path, :multipart => true do%>
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Asistencia Sence</h3>
+				</div>
+				<div class="box-body">
+					<p>Subir archivo de asistencia para cursos con franquicia Sence</p>
+					<div class="row">
+						<div class="col-xs-2">
+							<div class="btn btn-primary btn-file">
+								<i class="fa fa-upload"></i> Calendario
+								<%=file_field_tag :sence_file%>
+							</div>
+						</div>
+						<div class="col-xs-8">
+							<%=text_field_tag :file_path, nil, {:disabled => true, :class => "form-control", :style => "width: 400px;"}%>
+						</div>
+					</div>
+				</div>
+				<div class="box-footer clearfix">
+					<div class="pull-right">
+						<%=submit_tag "Guardar", :class => "btn btn-success"%>
+					</div>
+				</div>
+			</div>
+			<%end%>
+		</div>
+	</div>
+</section>
+
+<script>
+$( "#sence_file" ).change(function(){
+    var file_path = $("#sence_file").val();
+    $( "#file_path" ).val(file_path);
+});
+</script>

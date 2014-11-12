@@ -1,4 +1,4 @@
-class CourseReportPdf < Prawn::Document
+class SenceCourseReportPdf < Prawn::Document
 
 	def initialize(course, institution, date, view_context)
 		super(:margin => 50)
@@ -57,6 +57,36 @@ class CourseReportPdf < Prawn::Document
 		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
 	end
 
+	def sence_attendance(members,date)
+		move_down 20
+		font "Helvetica", :style => :bold
+		text "1. Indicadores de Asistencia"
+		font "Helvetica", :style => :normal
+		move_down 10
+
+		data = []
+		data << ["Nombre", "RUT", "Presente", "Total Clases", "Horas Presente", "Horas a la Fecha", "Asistencia"]
+		members.each do |member|
+			user = StudentV.find(member.userid)
+			user_attendance_info = SenceAttendanceReport.where(:user_idnumber => user.idnumber, :created_at => date).first()
+			data << [user.lastname+" "+user.firstname, user.idnumber, user_attendance_info.p_sessions, user_attendance_info.current_sessions, l(user_attendance_info.current_user_time, :format => "%H:%M"), l(user_attendance_info.current_course_time, :format => "%H:%M"), ""]
+		end
+
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 81, 3 => 81, 4 => 81, 5 => 82, 6 => 81}, 
+					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
+					:position => :center,
+					:header => true) do
+			cells.style do |c|
+				if c.row == 0
+					c.background_color = "F0F0F0"
+					c.font_style = :bold
+				end
+			end
+		end
+		move_down 10
+	end
+
+
 	def course_attendance_no_sence(members,date)
 		move_down 20
 		font "Helvetica", :style => :bold
@@ -103,43 +133,53 @@ class CourseReportPdf < Prawn::Document
 	def course_attendance(members,date)
 		move_down 20
 		font "Helvetica", :style => :bold
-		text "1. Indicadores de Asistencia (SENCE)"
+		text "1. Indicadores de Asistencia"
 		font "Helvetica", :style => :normal
 		move_down 10
+		
 
 		data = []
-		data << ["Nombre", "RUT", "Presente", "Total Clases", "Tiempo Presente", "Tiempo a la Fecha", "Asistencia"]
+		data << ["<b>Nombre</b>", "<b>RUT</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
 			user = StudentV.find(member.userid)
-			user_attendance_info = SenceAttendanceReport.where("course_id = #{member.courseid} and user_idnumber = '#{user.idnumber}' and date(created_at) = curdate()").first()
-			
-			if user_attendance_info.blank?
-				data << [user.lastname+" "+user.firstname, user.idnumber, "-", "-", "-", "-", "-"]
+			if date
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid, :created_at => date).first()
 			else
-				user_seconds = user_attendance_info.current_user_seconds % 60
-				user_minutes = (user_attendance_info.current_user_seconds / 60) % 60
-				user_hours = user_attendance_info.current_user_seconds / (60*60)
-				course_seconds = user_attendance_info.current_course_seconds % 60
-				course_minutes = (user_attendance_info.current_course_seconds / 60) % 60
-				course_hours = user_attendance_info.current_course_seconds / (60*60)
-
-				data << [user.lastname+", "+user.firstname, user.idnumber, user_attendance_info.p_sessions, user_attendance_info.current_sessions, format("%02d:%02d:%02d",user_hours,user_minutes,user_seconds), format("%02d:%02d:%02d",course_hours,course_minutes,course_seconds), (user_attendance_info.current_user_seconds.round(2)*100/user_attendance_info.current_course_seconds).round(2).to_s+"%"]
+				member_data = UserReport.where(:userid => member.userid, :courseid => member.courseid).order("created_at DESC").first()
 			end
+			att_pct = (member_data.p_sessions.to_f*100/member_data.current_sessions.to_f).round(2)
+			
+			if !member_data.a_sessions.nil? && !member_data.t_sessions.nil? && !member_data.p_sessions.nil?
+				a_sessions = member_data.a_sessions + member_data.t_sessions
+			else
+				a_sessions = 0
+				member_data.p_sessions = 0
+				member_data.current_sessions = 0
+				att_pct = 0
+			end
+			
+			total_sence = member_data.total_sessions/4
+			r_sence = total_sence-a_sessions
+			if r_sence < 0
+				sence = "No Aplica"
+			else
+				sence = r_sence
+			end
+			data << [user.lastname+", "+user.firstname, user.idnumber, member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 65, 3 => 65, 4 => 65, 5 => 65, 6 => 65, 7 => 65}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 65, 3 => 65, 4 => 65, 5 => 65, 6 => 65}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
 			cells.style do |c|
 				if c.row == 0
 					c.background_color = "F0F0F0"
-					c.font_style = :bold
 				end
 			end
 		end
 		move_down 10
-		text "Aquellos alumnos con asistencia bajo 75% no calificarán al beneficio otorgado por la Franquicia SENCE.", size:9, :inline_format => true
+		text "<b>(*)</b> Clases restantes a las que el alumno puede ausentarse y seguir cumpliendo con la Franquicia Sence (Máximo 25% del total).", size:9, :inline_format => true
 	end
 
 	def indicadores_academicos(members, date)

@@ -98,7 +98,7 @@
 									</tr>
 									<tr>
 										<th>Sence</th>
-										<td><%=check_if_sence(@course.sence).html_safe%></td>
+										<td><%=check_if_sence(@course.sence_idnumber).html_safe%></td>
 									</tr>
 
 									<tr>
@@ -163,14 +163,20 @@
 							</tr>
 						</thead>
 						<tbody>
-							<%@students_info.each do |si|%>
+							<%if @students_info.blank?%>
 							<tr>
-								<td><%=link_to student_name(si.userid), :controller => :users, :action => :show_student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
-								<td style="text-align: center;"><%=si.present_sessions%></td>
-								<td style="text-align: center;"><%=si.absent_sessions%></td>
-								<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
-								<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
+								<td colspan="5">No hay información para mostrar</td>
 							</tr>
+							<%else%>
+								<%@students_info.each do |si|%>
+								<tr>
+									<td><%=link_to student_name(si.userid), :controller => :users, :action => :show_student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
+									<td style="text-align: center;"><%=si.present_sessions%></td>
+									<td style="text-align: center;"><%=si.absent_sessions%></td>
+									<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
+									<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
+								</tr>
+								<%end%>
 							<%end%>
 						</tbody>
 					</table>
@@ -255,7 +261,3 @@
     	</div>
     </div>
 </section>
-
-<script type="text/javascript">
-    $('.wysihtml5').wysihtml5();
-</script>

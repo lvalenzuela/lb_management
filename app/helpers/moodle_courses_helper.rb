@@ -1,12 +1,11 @@
 module MoodleCoursesHelper
 
 	def check_if_sence(sence)
-		case sence
-		when true
-			return "<i class='fa fa-check fa-lg'></i>"
-		else
+		if sence.nil? || sence == ""
 			return "<i class='fa fa-times fa-lg'></i>"
-		end			
+		else
+			return "<i class='fa fa-check fa-lg'></i>"
+		end		
 	end
 
 	def get_template_name(template_id)
@@ -18,6 +17,6 @@ module MoodleCoursesHelper
 	end
 
 	def course_total_sessions(courseid)
-		MoodleCourseSessionV.where(:courseid => courseid).count()
+		return MoodleCourseSessionV.where(:courseid => courseid).count()
 	end
 end

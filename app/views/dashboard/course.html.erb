@@ -80,6 +80,16 @@
 			<div class="box box-warning">
 				<div class="box-header">
 					<h3 class="box-title">Información Adicional</h3>
+					<div class="box-tools">
+						<%if @course.summitid%>
+							<%=form_tag :action => :unpair_summit_moodle_course do%>
+								<%=hidden_field_tag :moodleid, @course.moodleid%>
+								<%=submit_tag "Desasociar con Curso Summit", :class => "btn btn-danger btn-sm pull-right"%>
+							<%end%>
+						<%else%>
+							<%=link_to "Asociar con datos de Summit", {:controller => :dashboard, :action => :new_course_details, :params => {:courseid => @course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
+						<%end%>
+					</div>
 				</div>
 				<div class="box-body table-responsive">
 					<div class="row">
@@ -100,7 +110,7 @@
 									</tr>
 									<tr>
 										<th>Sence</th>
-										<td><%=check_if_sence(@course.sence).html_safe%></td>
+										<td><%=check_if_sence(@course.sence_idnumber).html_safe%></td>
 									</tr>
 
 									<tr>

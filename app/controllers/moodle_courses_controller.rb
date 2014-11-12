@@ -95,11 +95,6 @@ class MoodleCoursesController < ApplicationController
             if params[:template_id]
                 course.course_template_id = params[:template_id]
             end
-            if params[:sence]
-                course.sence = 1
-            else
-                course.sence = 0
-            end
             course.save!
         end
         redirect_to :action => :courses_list

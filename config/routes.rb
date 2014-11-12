@@ -3,10 +3,18 @@ Rails.application.routes.draw do
 
   resources :dashboard do
     collection do
+      #detalles de cursos
       get "courses_list"
       post "courses_list"
       get "course"
       get "generate_detailed_course_report"
+      get "new_course_details"
+      post "create_course_details"
+      post "product_selector_options"
+      post "template_selector_options"
+      post "pair_summit_moodle_course"
+      post "unpair_summit_moodle_course"
+      #detalles de estudiantes
       get "student"
       get "teachers_list"
       post "teachers_list"
@@ -160,6 +168,9 @@ Rails.application.routes.draw do
       get "calendar_management"
       post "upload_holydays"
       get "calendar_file_example"
+      #Asistencia Sence
+      get "sence_attendance"
+      post "upload_sence_attendance"
       #disponibilidad de usuarios
       post "set_user_disponibility"
       delete "delete_disponibility"

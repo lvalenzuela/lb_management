@@ -37,7 +37,7 @@ class DetailedCourseReportPdf < Prawn::Document
 		data = []
 		table_headers = ["Evaluaciones"]
 		members.each do |m|
-			table_headers << m.name
+			table_headers << m.lastname+", "+m.firstname
 		end
 		data << table_headers
 

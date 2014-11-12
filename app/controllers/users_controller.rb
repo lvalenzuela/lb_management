@@ -110,7 +110,7 @@ class UsersController < ApplicationController
 
 	def my_courses
 		@filters = {}
-		@user = UserV.find(current_user.id)
+		@user = current_user
 		if params[:filter]
 			if params[:filter][:show_hidden]
 				@courses = DashboardCoursesV.where(:courseid => my_courses_list)
@@ -147,7 +147,11 @@ class UsersController < ApplicationController
 			@taken_sessions = StudentAttendanceReport.where("courseid = #{@course.moodleid} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
 			@course_observations = CourseObservation.where(:course_id => @course.moodleid)
 			#para generacion de reportes
-			@institution = StudentV.find(@students_info.first().userid).institution
+			if @students_info.blank?
+				@institution = ""
+			else
+				@institution = StudentV.find(@students_info.first().userid).institution
+			end
 		else
 			redirect_to :action => :my_courses
 		end

@@ -1,0 +1,253 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "dashboard"%>
+
+<section class="content-header">
+    <h1>
+        Detalles de Curso
+       	<small><%=@moodle_course.coursename%></small>
+    </h1>
+    <ol class="breadcrumb">
+    	<li>Detalles de Curso</li>
+        <li class="active"><%=@moodle_course.coursename%></li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+        <div class="col-xs-6">
+            <div class="box box-primary" id="select-course-box">
+                <div class="box-header">
+                    <h3 class="box-title">Cursos Summit</h3>
+                    <div class="box-tools">
+                        <button class="btn btn-default btn-sm pull-right" id="new-course-btn">Nuevo Curso</button>
+                    </div>
+                </div>
+            <%=form_tag :action => :pair_summit_moodle_course do %>
+            <%=hidden_field_tag :moodle_id, @moodle_course.moodleid%>
+                <div class="box-body">
+                    <p>Asociar este curso a uno de los cursos de summit activos actualmente.</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;"></th>
+                                <th>Curso</th>
+                                <th>Nivel</th>
+                                <th>Modalidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%@summit_courses.each do |sc|%>
+                            <tr>
+                                <td style="text-align: center;"><%=radio_button_tag :summit_course_id, sc.id%></td>
+                                <td><%=sc.coursename%></td>
+                                <td><%=get_course_level(sc.course_level_id)%></td>
+                                <td><%=get_course_mode_label(sc.mode)%></td>
+                            </tr>
+                            <%end%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer clearfix">
+                    <%=submit_tag "Guardar", :class => "btn btn-success btn-lg pull-right"%>
+                </div>
+            </div>
+            <%end%>
+        </div>
+		<div class="col-xs-6" id="new-course-box" style="display: none;">
+			<div class="box box-info">
+				<div class="box-header">
+					<h3 class="box-title">Detalles del Curso: <%=@moodle_course.coursename%></h3>
+                    <div class="box-tools">
+                        <button class="btn btn-default btn-sm pull-right" id="select-course-btn">Asociar a Curso Existente</button>
+                    </div>
+				</div>
+            <%=form_for :course_details, :url => {:action => :create_course_details} do |f|%>
+            <%=f.hidden_field :moodleid, :value => @moodle_course.moodleid%>
+				<div class="box-body">
+                    <%if @course_details.errors.any?%>
+                    <div class="alert alert-warning alert-dismissable">
+                        <i class="fa fa-warning"></i>
+                        <%=pluralize(@course_details.errors.count,"errores")%> no permitieron llevar a cabo la operacion 
+                        <ul>
+                            <%@course_details.errors.full_messages.each do |msg|%>
+                                <li><%= msg %></li>
+                            <%end%>
+                        </ul>
+                    </div>
+                    <%end%>
+                	<div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Nombre del Curso</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.text_field :coursename, :value => @moodle_course.coursename, :class => "form-control", :readonly => true%>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Descripcion del Curso</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.text_field :description, :class => "form-control"%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Ubicación</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.select :location_id, options_for_select(@locations.collect{|l| [l.name, l.id]}),{:include_blank => true},{:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Tipo de Curso</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.select :course_type_id, options_for_select(@types.collect{|p| [p.typename, p.id]}), {}, {:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Cantidad de Estudiantes</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.select :students_qty, options_for_select((1..20).step(1).collect{|s| [s,s]}), {}, {:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Modalidad</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                            <%=f.select :mode, options_for_select(@modes.collect{|p| [p.mode_name,p.id]}), {:include_blank => true}, {:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Producto</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=render :partial => "product_selector", :locals => {:products => @products, :selected => nil}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Nivel</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                            <%=f.select :course_level_id, options_for_select(@course_levels.collect{|l| [l.course_level,l.id]}), {:include_blank => true}, {:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Libro / Plantilla</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=render :partial => "template_selector", :locals => {:templates => @templates, :selected => nil}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Fecha de Inicio</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.text_field :start_date, :value => l(@moodle_course.start_date, :format => "%d-%m-%Y"), :class => "form-control" , :readonly => true%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="form-group pull-right">
+                                <label>Horario de Clases</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <%=f.select :classroom_matching_id, options_for_select(@classroom_matchings.collect{|c| [c.matching_label,c.id]}), {}, {:class => "form-control"}%>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+				<div class="box-footer clearfix">
+                    <div class="col-xs-6 col-xs-offset-6">
+                        <div class="pull-right">
+                        <%=f.submit "Asociar Curso", :class => "btn btn-primary btn-lg"%>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			<%end%>
+		</div>
+	</div>
+</section>
+
+<%=form_tag template_selector_options_dashboard_index_path, :remote => true, :id => "template_options_form" do%>
+<%=hidden_field_tag :courselevel%>
+<%end%>
+<%=form_tag product_selector_options_dashboard_index_path, :remote => true, :id => "product_options_form" do%>
+<%=hidden_field_tag :coursemode%>
+<%end%>
+
+<script>
+$( "#course_details_course_level_id" ).change(function(){
+    var level_id = $("#course_details_course_level_id option:selected").val();
+    $( "#courselevel" ).val(level_id);
+    $( "#template_options_form" ).submit();
+
+});
+$( "#course_details_mode" ).change(function(){
+    var mode = $("#course_details_mode option:selected").val();
+    $( "#coursemode" ).val(mode);
+    $( "#product_options_form" ).submit();
+});
+
+$("#new-course-btn").click(function(){
+    $("#new-course-box").toggle("fast");
+    $("#select-course-box").toggle("fast");
+});
+
+$("#select-course-btn").click(function(){
+    $("#new-course-box").toggle("fast");
+    $("#select-course-box").toggle("fast");
+});
+</script>

@@ -62,8 +62,9 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
+		data << ["<b>Nombre</b>", "<b>RUT</b>", "<b>Curso</b>", "<b>Presente</b>", "<b>Ausente / Tarde</b>", "<b>F.S.(*)</b>", "<b>Clases Realizadas</b>", "<b>Asistencia<b>"]	#encabezado de la tabla		
 		members.each do |member|
+			user = StudentV.find(member.userid)
 			if reportdate.nil?
 				member_data = CourseGroupReport.where(:userid => member.userid, :institution => institution, :department => department).order("created_at DESC").first()
 			else
@@ -88,10 +89,10 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 				sence = r_sence
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, get_groupname(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
+			data << [user.lastname+", "+user.firstname, user.idnumber, get_groupname(member_data.groupid), member_data.p_sessions.to_s, a_sessions.to_s, sence.to_s, member_data.current_sessions.to_s+" de "+member_data.total_sessions.to_s, "<b>"+att_pct.to_s+"%</b>"]
 		end
 
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 65, 6 => 60}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 54, 3 => 54, 4 => 54, 5 => 54, 6 => 54, 7 => 54}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
@@ -113,17 +114,18 @@ class InstitutionDepartmentReportPdf < Prawn::Document
 		move_down 10
 
 		data = []
-		data << ["<b>Nombre</b>", "<b>Curso</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
+		data << ["<b>Nombre</b>", "<b>RUT</b>", "<b>Curso</b>","<b>Homework</b>","<b>Tests T.E.G</b>","<b>Tests</b>","<b>Oral Test</b>","<b>Promedio</b>"]
 		members.each do |member|
+			user = StudentV.find(member.userid)
 			if reportdate.nil?
 				member_data = CourseGroupReport.where(:userid => member.userid, :institution => institution, :department => department).order("created_at DESC").first()
 			else
 				member_data = CourseGroupReport.where(:userid => member.userid, :institution => institution, :department => department, :created_at => reportdate).first()
 			end
 
-			data << [member_data.firstname+" "+member_data.lastname, get_groupname(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
+			data << [user.lastname+", "+user.firstname, user.idnumber, get_groupname(member_data.groupid), grade_parser(member_data.grade_homework), grade_parser(member_data.grade_tests_teg), grade_parser(member_data.grade_tests), grade_parser(member_data.grade_oral_tests), "<b>"+grade_parser(member_data.grade_coursegroup)+"</b>"]
 		end
-		table(data, :column_widths => {0 => 100, 1 => 100, 2 => 60, 3 => 60, 4 => 60, 5 => 60, 6 => 60}, 
+		table(data, :column_widths => {0 => 100, 1 => 80, 2 => 54, 3 => 54, 4 => 54, 5 => 54, 6 => 54, 7 => 54}, 
 					:cell_style => {:align => :center, :valign => :center,:size => 8, :border_width => 0.5, :inline_format => true, :padding => [5,5]}, 
 					:position => :center,
 					:header => true) do
