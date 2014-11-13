@@ -352,10 +352,11 @@ ActiveRecord::Schema.define(version: 20141110185514) do
   end
 
   create_table "dashboard_courses_vs", id: false, force: true do |t|
-    t.integer  "courseid"
+    t.integer  "courseid",                limit: 8,   default: 0,    null: false
     t.string   "coursename",              limit: 254, default: "",   null: false
     t.boolean  "visible",                             default: true, null: false
     t.integer  "status_id"
+    t.datetime "start_date"
     t.date     "end_date"
     t.integer  "total_sessions"
     t.integer  "current_booked_sessions"
@@ -374,6 +375,10 @@ ActiveRecord::Schema.define(version: 20141110185514) do
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "feriados", force: true do |t|
+    t.date "fecha", null: false
   end
 
   create_table "last_request_message_checks", force: true do |t|
@@ -403,19 +408,22 @@ ActiveRecord::Schema.define(version: 20141110185514) do
   end
 
   create_table "moodle_course_vs", id: false, force: true do |t|
-    t.integer  "moodleid"
-    t.string   "coursename",         limit: 254, default: "",   null: false
-    t.string   "shortname",                      default: "",   null: false
-    t.boolean  "visible",                        default: true, null: false
-    t.integer  "course_template_id"
-    t.integer  "status_id"
-    t.integer  "location_id"
+    t.integer  "moodleid",              limit: 8,   default: 0,    null: false
+    t.string   "coursename",            limit: 254, default: "",   null: false
+    t.string   "shortname",                         default: "",   null: false
+    t.boolean  "visible",                           default: true, null: false
+    t.string   "sence_idnumber",        limit: 100, default: "",   null: false
     t.datetime "start_date"
+    t.integer  "summitid",                          default: 0
+    t.integer  "course_template_id"
+    t.integer  "course_status_id"
+    t.integer  "location_id",                       default: 1
+    t.date     "summit_start_date"
     t.date     "end_date"
-    t.boolean  "sence"
-    t.string   "sence_idnumber",     limit: 100, default: "",   null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "students_qty"
+    t.integer  "current_students_qty",              default: 0
+    t.integer  "main_teacher_id"
+    t.integer  "classroom_matching_id"
   end
 
   create_table "moodle_courses", force: true do |t|

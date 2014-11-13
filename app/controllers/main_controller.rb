@@ -336,27 +336,39 @@ class MainController < ApplicationController
 
     def upload_sence_attendance
         #guardar asistencias entregadas por el archivo
-        file_contents = params[:sence_file].read
-        csv_attendance = CSV.parse(file_contents, :headers => true, :col_sep => ";", :quote_char => "'")
-        csv_attendance.each do |row|
-            check = SenceAttendance.where(:codigo_sence => row[1], :sence_idnumber => row[0], :user_rut => row[17], :session_date => row[20])
-            if !row[17].nil? && row[17] != "" && check.blank?
-                att = SenceAttendance.new()
-                att.codigo_sence = row[1] #codigo sence
-                att.sence_idnumber = row[0] #codigo accion
-                att.institution = row[11].gsub(/["]/, "") #nombre empresa
-                att.user_name = row[18].gsub(/["]/, "") #nombre participante
-                att.user_rut = row[17].gsub(/["]/, "") #rut participante
-                att.course_total_hours = row[12]
-                att.session_date = row[20]
-                att.session_start_time = row[22]
-                att.session_end_time = row[23]
-                att.block_time = row[24]
-                att.user_attendance_time = row[31]
-                att.save!
+        if params[:sence_file]
+            file_contents = params[:sence_file].read
+            csv_attendance = CSV.parse(file_contents, :headers => true, :col_sep => ";", :quote_char => "'")
+            #longitud del archivo
+            new_entry_count = 0
+            csv_attendance.each do |row|
+                check = SenceAttendance.where(:codigo_sence => row[1], :sence_idnumber => row[0], :user_rut => row[17], :session_date => row[20])
+                if !row[17].nil? && row[17] != "" && check.blank?
+                    att = SenceAttendance.new()
+                    att.codigo_sence = row[1] #codigo sence
+                    att.sence_idnumber = row[0] #codigo accion
+                    att.institution = row[11].gsub(/["]/, "") #nombre empresa
+                    att.user_name = row[18].gsub(/["]/, "") #nombre participante
+                    att.user_rut = row[17].gsub(/["]/, "") #rut participante
+                    att.course_total_hours = row[12]
+                    att.session_date = row[20]
+                    att.session_start_time = row[22]
+                    att.session_end_time = row[23]
+                    att.block_time = row[24]
+                    att.user_attendance_time = row[31]
+                    att.save!
+                    new_entry_count+=1
+                end
+                #linea leida
             end
+            @finished = 1
+            @new_entries = new_entry_count
+        else
+            @finished = 2
         end
-        redirect_to :action => :sence_attendance
+        respond_to do |format|
+            format.js
+        end
     end
 
     def course_creation_config

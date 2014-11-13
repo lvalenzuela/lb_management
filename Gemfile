@@ -64,3 +64,5 @@ gem 'bootstrap-wysihtml5-rails'
 gem 'jquery-turbolinks'
 
 gem "gon"
+
+gem 'remotipart', '~> 1.2'

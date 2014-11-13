@@ -110,10 +110,10 @@ class StudentReportPdf < Prawn::Document
 			inatt_total = 0
 		end
 
-		c = MoodleCourse.find_by_moodleid(report_data.courseid)
-		if c.sence
-			sence_attendance_text(inatt_total, inatt_limit)
-		end
+		#c = MoodleCourse.find_by_moodleid(report_data.courseid)
+		#if c.sence
+		#	sence_attendance_text(inatt_total, inatt_limit)
+		#end
 	end
 
 	def indicadores_academicos(report_data)

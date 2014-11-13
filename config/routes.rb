@@ -117,6 +117,9 @@ Rails.application.routes.draw do
 
   resources :main do
     collection do
+      ##
+      get "progress_bar"
+      ##
       get "search"
       get 'system_manager'
       post "assign_system_manager"
