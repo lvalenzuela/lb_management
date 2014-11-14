@@ -1,4 +1,4 @@
-<%check_user_requests(current_user.id)%>
+<%request_data = check_user_requests%>
 <%alerts = check_system_alerts%>
 <%user_alerts = check_user_alerts(current_user.id)%>
 <%user = current_user%>
@@ -21,8 +21,8 @@ usuario
             <ul class="nav navbar-nav">
                 <li class="dropdown notifications-menu">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <%if session[:req_pending] != 0 || session[:req_waiting_conf] != 0%>
-                            <i class="fa fa-inbox fa-lg"></i> <span class="label label-danger"><%=session[:req_pending] + session[:req_waiting_conf]%></span <i class="fa fa-caret-down"></i>
+                        <%if request_data[:req_pending] != 0 || request_data[:req_waiting_conf] != 0%>
+                            <i class="fa fa-inbox fa-lg"></i> <span class="label label-danger"><%=request_data[:req_pending] + request_data[:req_waiting_conf]%></span <i class="fa fa-caret-down"></i>
                         <%else%>
                             <i class="fa fa-inbox"></i> <i class="fa fa-caret-down"></i>
                         <%end%>
@@ -33,12 +33,12 @@ usuario
                             <ul class="menu">
                                 <li>
                                     <%=link_to :controller => :requests, :action => :index do%>
-                                        <i class="fa fa-warning danger"></i><strong><%=session[:req_pending].to_s%></strong> Pendientes
+                                        <i class="fa fa-warning danger"></i><strong><%=request_data[:req_pending].to_s%></strong> Pendientes
                                     <%end%>
                                 </li>
                                 <li>
                                     <%=link_to :controller => :requests, :action => :sent_requests, :params => {:f => "wconf"} do%>
-                                    <i class="fa fa-check-square-o warning"></i><strong><%=session[:req_waiting_conf].to_s%></strong> Esperando Confirmación
+                                    <i class="fa fa-check-square-o warning"></i><strong><%=request_data[:req_waiting_conf].to_s%></strong> Esperando Confirmación
                                     <%end%>
                                 </li>
                             </ul>
@@ -181,12 +181,28 @@ usuario
                             <i class="fa fa-angle-double-right"></i> Áreas
                             <%end%>
                         </li>
-                        <li><%=link_to :controller => :main, :action => :teachers_manager do%>
-                            <i class="fa fa-angle-double-right"></i> Profesores
-                            <%end%>
-                        </li>
                         <li><%=link_to :controller => :main, :action => :zoho_product_list do%>
                             <i class="fa fa-angle-double-right"></i> Productos Longbourn
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => :main, :action => :course_creation_config do%>
+                            <i class="fa fa-angle-double-right"></i> Creación de Cursos
+                            <%end%>
+                        </li>
+                    </ul>
+                </li>
+                <%end%>
+
+                <%if user.system_role_id <= 2%>
+                <li class="treeview <%=activate_menu_item("config", active_item)%>">
+                    <a href="#">
+                        <i class="fa fa-gears"></i>
+                        <span>Configuración</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><%=link_to :controller => :main, :action => :teachers_manager do%>
+                            <i class="fa fa-angle-double-right"></i> Profesores
                             <%end%>
                         </li>
                         <li>
@@ -197,10 +213,6 @@ usuario
                         <li>
                             <%=link_to :controller => :main, :action => :sence_attendance do%>
                             <i class="fa fa-angle-double-right"></i> Asistencia Sence
-                            <%end%>
-                        </li>
-                        <li><%=link_to :controller => :main, :action => :course_creation_config do%>
-                            <i class="fa fa-angle-double-right"></i> Tareas Creación de Cursos
                             <%end%>
                         </li>
                         <li><%=link_to :controller => :main, :action => :classrooms_list do%>
@@ -321,12 +333,12 @@ usuario
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
-                        <li><%=link_to :controller => "requests", :action => "index" do%>
-                            <i class="fa fa-angle-double-right"></i> Mis Trabajos
-                            <%end%>
-                        </li>
                         <li><%=link_to :controller => "requests", :action => "area_for_request" do%>
                             <i class="fa fa-angle-double-right"></i> Crear Requerimiento
+                            <%end%>
+                        </li>
+                        <li><%=link_to :controller => "requests", :action => "index" do%>
+                            <i class="fa fa-angle-double-right"></i> Mis Trabajos
                             <%end%>
                         </li>
                         <li><%=link_to :controller => "requests", :action => "sent_requests" do%>

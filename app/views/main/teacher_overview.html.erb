@@ -1,4 +1,4 @@
-<%= render "shared_partials/navigation_menu", :active_item => "admin"%>
+<%= render "shared_partials/navigation_menu", :active_item => "config"%>
 
 <section class="content-header no-margin">
     <h1>
@@ -51,6 +51,9 @@
 			<div class="box box-warning">
 				<div class="box-header">
 					<h3 class="box-title">Desempeño</h3>
+					<div class="box-tools">
+						<%=link_to "Evaluacion Docente", {:action => :teacher_evaluation, :params => {:teacherid => @teacher.id}}, {:class => "btn btn-sm btn-default pull-right"}%>
+					</div>
 				</div>
 				<div class="box-body">
 					<i>Valores de ejemplo, no tomar en cuenta</i>

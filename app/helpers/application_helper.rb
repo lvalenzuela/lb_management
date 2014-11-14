@@ -29,21 +29,23 @@ module ApplicationHelper
 		return alerts
 	end
 
-	def check_user_requests(userid)
-		wconf = Request.where("userid = #{userid} and statusid = 4").order("updated_at ASC").count
+	def check_user_requests
+		userid = current_user.id
+		request_data = {}
+		wconf = Request.where(:userid => userid, :statusid => 4).count
 		if wconf.nil?
-			session[:req_waiting_conf] = 0
+			request_data[:req_waiting_conf] = 0
 		else
-			session[:req_waiting_conf] = wconf
+			request_data[:req_waiting_conf] = wconf
 		end
 
-		pending = Request.where(:receiverid => current_user.id, :statusid => [1]).count
+		pending = Request.where(:receiverid => userid, :statusid => [1]).count
 		if pending.nil?
-			session[:req_pending] = 0
+			request_data[:req_pending] = 0
 		else
-			session[:req_pending] = pending
+			request_data[:req_pending] = pending
 		end
-		return session[:req_waiting_conf]
+		return request_data
 	end
 
 	def activate_menu_item(desired,active)

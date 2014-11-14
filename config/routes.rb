@@ -118,8 +118,6 @@ Rails.application.routes.draw do
   resources :main do
     collection do
       ##
-      get "progress_bar"
-      ##
       get "search"
       get 'system_manager'
       post "assign_system_manager"
@@ -133,15 +131,7 @@ Rails.application.routes.draw do
       post 'assign_to_area'
       post 'modify_assignation'
       ##
-      get 'extras'
       delete 'destroy'
-      get "manage_products"
-      get "new_product"
-      get "edit_product"
-      post "update_product"
-      post "create_product"
-      delete "delete_product"
-      get "enable_product"
       #profesores
       get "teachers_manager"
       get "teacher_overview"
@@ -151,6 +141,7 @@ Rails.application.routes.draw do
       post "update_teacher_level"
       delete "delete_teacher_level"
       post "set_teacher_level"
+      get "teacher_evaluation"
       #productos de longbourn
       get "zoho_product_list"
       get "disable_course_mode"

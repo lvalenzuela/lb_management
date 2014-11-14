@@ -77,11 +77,13 @@ class RequestNotesController < ApplicationController
 	end
 
 	def register_last_revision(request,user,c_time)
-		t = LastRequestMessageCheck.where(:requestid => request, :userid => user)
-		if !t.nil?
-			t.destroy_all
+		t = LastRequestMessageCheck.where(:requestid => request, :userid => user).first()
+		if t.blank?
+			LastRequestMessageCheck.create(:requestid => request, :userid => user, :last_check_datetime => c_time)
+		else
+			t.last_check_datetime = c_time
+			t.save!
 		end
-		LastRequestMessageCheck.create(:requestid => request, :userid => user, :last_check_datetime => c_time)
 	end
 
 	def register_last_message(request,c_time)

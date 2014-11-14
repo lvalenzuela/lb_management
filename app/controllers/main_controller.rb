@@ -137,6 +137,10 @@ class MainController < ApplicationController
         redirect_to :action => :teacher_overview, :id => params[:id]
     end
 
+    def teacher_evaluation
+        @teacher = TeacherV.find(params[:teacherid])
+    end
+
     def teacher_overview
         @teacher = TeacherV.find(params[:id])
         @teacher_levels = UserTeacherLevel.all()
@@ -283,8 +287,10 @@ class MainController < ApplicationController
             #m[0] = mode_id
             #m[1] = zoho_product_id
             product = CourseModeZohoProductMap.find_by_zoho_product_id(m[1])
-            product.course_mode_id = m[0].to_i
-            product.save!
+            if !product.blank?
+                product.course_mode_id = m[0].to_i
+                product.save!
+            end
         end
         redirect_to :action => :zoho_product_list
     end

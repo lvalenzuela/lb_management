@@ -49,7 +49,7 @@
 		                    						</div>
 		                    						<div class="col-xs-4">
 		                    							<div class="form-group">
-		                    								<%=select_tag "product[]",options_for_select(@course_modes.collect.map{|m| [m.mode_name, append_with_comma(m.id.to_s, product.zoho_product_id)]}, append_with_comma(product.course_mode_id.to_s, product.zoho_product_id)), :class => "form-control"%>
+		                    								<%=select_tag "product[]",options_for_select(@course_modes.collect.map{|m| [m.mode_name, append_with_comma(m.id.to_s, product.zoho_product_id)]}, append_with_comma(product.course_mode_id.to_s, product.zoho_product_id)), {:class => "form-control", :include_blank => true}%>
 		                    							</div>
 		                    						</div>
 		                    					</div>

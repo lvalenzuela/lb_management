@@ -1,0 +1,45 @@
+<%= render "shared_partials/navigation_menu", :active_item => "config"%>
+
+<section class="content-header no-margin">
+    <h1>
+        Evaluación Docente
+        <small>Calificación de Profesores</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Administración</li>
+        <li>Profesores</li>
+        <li>Evaluación Docente</li>
+        <li class="active"><%=@teacher.name%></li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+        <div class="col-xs-12">
+            <%=form_for :user_evaluation, :url => {} do |f|%>
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Evaluación Docente: <%=@teacher.name%></h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <label class="pull-right">Puntualidad</label>
+                        </div>
+                        <div class="col-xs-4">
+                            <%=f.select :punctuality, options_for_select((0..100).step(5).collect{|p| ["#{p}%",p]}), {}, {:class => "form-control"}%>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <%=f.submit "Guardar Evaluación", :class => "btn btn-lg btn-primary pull-right"%>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%end%>
+        </div>
+    </div>
+</section>
