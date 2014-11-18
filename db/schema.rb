@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141110185514) do
+ActiveRecord::Schema.define(version: 20141118195258) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20141110185514) do
     t.string   "matching_array"
     t.string   "matching_label"
     t.boolean  "enabled",        default: true
+    t.integer  "category_id",    default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
