@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141118195258) do
+ActiveRecord::Schema.define(version: 20141210170944) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -39,9 +39,17 @@ ActiveRecord::Schema.define(version: 20141118195258) do
     t.datetime "updated_at"
   end
 
+  create_table "classroom_matching_categories", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "classroom_matchings", force: true do |t|
     t.string   "matching_array"
     t.string   "matching_label"
+    t.integer  "max_capacity"
     t.boolean  "enabled",        default: true
     t.integer  "category_id",    default: 0
     t.datetime "created_at"
@@ -317,6 +325,7 @@ ActiveRecord::Schema.define(version: 20141118195258) do
     t.integer  "course_level_id"
     t.string   "name"
     t.integer  "total_sessions"
+    t.boolean  "starting_book",   default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "deleted",         default: 0
@@ -380,6 +389,24 @@ ActiveRecord::Schema.define(version: 20141118195258) do
 
   create_table "feriados", force: true do |t|
     t.date "fecha", null: false
+  end
+
+  create_table "job_contact_forms", force: true do |t|
+    t.string   "name"
+    t.string   "university"
+    t.string   "address"
+    t.string   "location"
+    t.string   "email"
+    t.string   "phone"
+    t.string   "job_choice"
+    t.string   "attached_resume_file_name"
+    t.string   "attached_resume_content_type"
+    t.integer  "attached_resume_file_size"
+    t.datetime "attached_resume_updated_at"
+    t.string   "subject"
+    t.text     "msg"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "last_request_message_checks", force: true do |t|
@@ -911,6 +938,20 @@ ActiveRecord::Schema.define(version: 20141118195258) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+  end
+
+  create_table "web_contact_forms", force: true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "free_service"
+    t.string   "paid_service"
+    t.string   "phone"
+    t.string   "location"
+    t.string   "institution"
+    t.string   "subject"
+    t.text     "msg"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "web_users", force: true do |t|
