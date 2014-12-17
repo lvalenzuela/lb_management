@@ -102,6 +102,7 @@ class CoursesController < ApplicationController
             else
                 @products = nil
             end
+            @locations = Location.all()
             @modes = CourseMode.where(:enabled => true)
 	    	@types = CourseType.all()
             @course_levels = CourseLevel.all()

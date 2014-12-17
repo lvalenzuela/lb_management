@@ -32,7 +32,7 @@
                 <div class="tab-pane active">
                     <section>
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-xs-10 col-xs-offset-1">
                                 <%=form_tag :controller => :courses, :action => :modify_session_data do%>
                                 <%=hidden_field_tag :courseid, @course.id%>
                                 <div class="box box-info">
@@ -54,15 +54,6 @@
                                                     <p>Sesiones del curso: <strong><%=@current_matching.matching_label%></strong></p>
                                                 </div>
                                                 <%end%>
-                                                <div class="form-group bootstrap-timepicker">
-                                                    <label>Hora Tentativa</label>
-                                                    <div class="input-group">
-                                                        <%=text_field_tag :session_hour, nil , {:class => "form-control", :id => "timepicker"}%>
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-clock-o"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div class="form-group">
                                                     <label>Sesiones del Curso</label>
                                                     <%=select_tag :classroom_match, options_for_select(@matchings.collect{|m| [m.matching_label, m.id]}), {:class => "form-control", :include_blank => true}%>
