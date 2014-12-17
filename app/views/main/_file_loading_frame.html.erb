@@ -45,6 +45,9 @@
 						<div class="alert alert-danger">
 							<i class="fa fa-ban"></i>
 							<p>Hubo un problema al subir el archivo. Por favor, intentelo nuevamente.</p>
+							<%if @exception_message%>
+								<p><%=@exception_message%></p>
+							<%end%>
 						</div>
 					</div>
 				</div>

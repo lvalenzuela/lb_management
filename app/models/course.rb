@@ -2,7 +2,7 @@ class Course < ActiveRecord::Base
 	before_create :set_defaults
 	after_create :init_instance
 	before_destroy :destroy_features, :destroy_sessions
-	validates :coursename, :start_date, :mode, :course_level_id, :course_template_id, :zoho_product_id, presence: true
+	validates :coursename, :start_date, :mode, :course_level_id, :course_template_id, :zoho_product_id, :presence => true
 
 	def set_defaults
 		#Un curso creado no es activo instantaneamente, hay que activarlo posteriormente

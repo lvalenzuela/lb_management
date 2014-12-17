@@ -1,0 +1,197 @@
+<%if active == "active"%>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title"><%=course.coursename%></h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4><%=course.description%></h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 200px;">Modalidad</th>
+                                        <th>Alumnos</th>
+                                        <th>Inicio</th>
+                                        <th style="width: 200px;">Libro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><%=get_course_mode_label(course.mode)%></td>
+                                        <td><%=course.current_students_qty%> de <%=course.students_qty%></td>
+                                        <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
+                                        <td><%=template_name(course.course_template_id)%></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
+                        <%=link_to "<i class='fa fa-play fa-lg'></i> Iniciar Curso".html_safe, {:controller => :courses, :action => :init_course_dialog, :params => {:courseid => course.id}}, {:class => "btn btn-success"}%>
+                        <%=link_to "<i class='fa fa-eye-slash fa-lg'></i> Desactivar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "deactivate", :active => active}}, {:class => "btn btn-default"}%>
+                        <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger"}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%elsif active == "desarrollo" %>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title"><%=course.coursename%></h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4><%=course.description%></h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 200px;">Modalidad</th>
+                                        <th>Alumnos</th>
+                                        <th>Inicio</th>
+                                        <th>Tareas Completas</th>
+                                        <th style="width: 200px;">Libro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><%=get_course_mode_label(course.mode)%></td>
+                                        <td><%=course.current_students_qty%> de <%=course.students_qty%></td>
+                                        <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
+                                        <td><%=complete_init_tasks(course.id)%> de <%=count_course_init_tasks(course.id)%></td>
+                                        <td><%=template_name(course.course_template_id)%></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4>Tareas de Creación</h4>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tarea</th>
+                                        <th style="width: 200px;">Responsable</th>
+                                        <th style="width: 120px;">Estado</th>
+                                        <th style="width: 200px;">Fecha de Envío</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%Request.where(:id => course_init_tasks(course.id)).each do |r|%>
+
+                                    <tr class="<%=alert_row_class(r.statusid)%>">
+                                        <td><%=get_tagname(r.tagid)%></td>
+                                        <td><%=get_username(r.receiverid)%></td>
+                                        <td><%=request_status_desc(r.statusid)%></td>
+                                        <td><%=l(r.created_at, :format => "%d de %B")%></td>
+                                    </tr>
+                                    <%end%>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
+                        <%=link_to "<i class='fa fa-plus fa-lg'></i> Finalizar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "finish", :active => active}}, {:class => "btn btn-success"}%>
+                        <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger"}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%elsif active == "cancel"%>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title"><%=course.coursename%></h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4><%=course.description%></h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 200px;">Modalidad</th>
+                                        <th>Alumnos</th>
+                                        <th>Inicio</th>
+                                        <th>Tareas Completas</th>
+                                        <th style="width: 200px;">Libro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><%=get_course_mode_label(course.mode)%></td>
+                                        <td><%=course.current_students_qty%> de <%=course.students_qty%></td>
+                                        <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
+                                        <td><%=complete_init_tasks(course.id)%> de <%=count_course_init_tasks(course.id)%></td>
+                                        <td><%=template_name(course.course_template_id)%></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%elsif active == "hidden"%>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title"><%=course.coursename%></h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h4><%=course.description%></h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 200px;">Modalidad</th>
+                                        <th>Alumnos</th>
+                                        <th>Inicio</th>
+                                        <th style="width: 200px;">Libro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><%=get_course_mode_label(course.mode)%></td>
+                                        <td><%=course.current_students_qty%> de <%=course.students_qty%></td>
+                                        <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
+                                        <td><%=template_name(course.course_template_id)%></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer clearfix">
+                    <div class="pull-right">
+                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
+                        <%=link_to "<i class='fa fa-check fa-lg'></i> Activar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "activate"}}, {:class => "btn btn-success"}%>>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%end%>

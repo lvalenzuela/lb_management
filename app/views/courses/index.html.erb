@@ -38,71 +38,12 @@
                         <h4 class="page-header">Listado de Cursos</h4>
                         <div class="row">
                             <div class="col-xs-12">
-                                <%@courses.each do |course|%>
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <div class="box box-info">
-                                                <div class="box-header">
-                                                    <h3 class="box-title"><%=course.coursename%></h3>
-                                                </div>
-                                                <div class="box-body">
-                                                    <div class="row">
-                                                        <div class="col-xs-4">
-                                                            <table class="table">
-                                                                <tr>
-                                                                    <th>Descripcion</th>
-                                                                    <td><%=course.description%></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Modalidad</th>
-                                                                    <td><%=get_course_mode_label(course.mode)%></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Ubicacion</th>
-                                                                    <td><%=location_label(course.location_id)%></td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                        <div class="col-xs-4">
-                                                            <table class="table">
-                                                                <tr>
-                                                                    <th>Alumnos</th>
-                                                                    <td><%=course.current_students_qty%> de <%=course.students_qty%>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Profesor</th>
-                                                                    <td><%=user_name(course.main_teacher_id)%></td>
-                                                                </tr>
-                                                                 <tr>
-                                                                    <th>Inicio</th>
-                                                                    <td><%=l(course.start_date, :format => "%d de %b del %Y")%></td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                        <div class="col-xs-4">
-                                                            <table class="table">
-                                                                <tr>
-                                                                    <th>Nivel</th>
-                                                                    <td><%=get_course_level(course.course_level_id)%></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Libro</th>
-                                                                    <td><%=template_name(course.course_template_id)%></td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="box-footer clearfix">
-                                                    <div class="pull-right">
-                                                        <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
-                                                        <%=render :partial => "summit_course_options", :locals => {:active => @active, :course => course}%>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <%if @courses.blank?%>
+                                    <h4>No hay cursos para mostrar en esta sección</h4>
+                                <%else%>
+                                    <%@courses.each do |course|%>
+                                        <%=render :partial => "summit_course_partial", :locals => {:course => course, :active => @active}%>
+                                    <%end%>
                                 <%end%>
                                 <div class="clearfix">
                                     <div class="pull-right">

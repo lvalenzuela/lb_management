@@ -41,6 +41,7 @@
 					</div>			
 				</div>
 				<div class="box-footer clearfix">
+					<%=f.check_box :starting_book, :checked => @template.starting_book ? true : false%> Primer Libro de la Ruta
 					<div class="pull-right">
 						<%=link_to "Editar Detalles de Plantilla", {:controller => :courses, :action => :template_details, :params => {:id => @template.id}}, :class => "btn btn-default"%>
 						<%=f.submit "Editar Plantilla", :class => "btn btn-primary"%>

@@ -1,5 +1,29 @@
 module CoursesHelper
 
+	def alert_row_class(status)
+		case status
+		when 1 #pendiente
+			return "danger"
+		when 2
+			return "success"
+		else
+			return "warning"
+		end
+	end
+
+	def course_init_tasks(courseid)
+		return CourseInitTask.where(:course_id => courseid).map{|t| t.request_id}
+	end
+
+	def complete_init_tasks(courseid)
+		requests = course_init_tasks(courseid)
+		return Request.where(:id => requests, :statusid => 2).count
+	end
+
+	def count_course_init_tasks(courseid)
+		return CourseInitTask.where(:course_id => courseid).count
+	end
+
 	def classroom_name(classroom_id)
 		if classroom_id
 			return Classroom.find(classroom_id).name

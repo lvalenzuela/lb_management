@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141210170944) do
+ActiveRecord::Schema.define(version: 20141215183159) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -229,6 +229,13 @@ ActiveRecord::Schema.define(version: 20141210170944) do
     t.integer  "assignments_ontime"
     t.integer  "total_assignments"
     t.date     "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "course_init_tasks", force: true do |t|
+    t.integer  "course_id"
+    t.integer  "request_id"
+    t.datetime "created_at"
     t.datetime "updated_at"
   end
 
@@ -959,12 +966,15 @@ ActiveRecord::Schema.define(version: 20141210170944) do
     t.string   "name"
     t.string   "firstname"
     t.string   "lastname"
+    t.string   "rut"
     t.string   "facebook_email"
     t.string   "email"
     t.string   "password"
     t.string   "gender"
     t.string   "phone"
     t.string   "mobile"
+    t.string   "institution"
+    t.string   "department"
     t.string   "location"
     t.string   "facebook_location"
     t.string   "oauth_token"

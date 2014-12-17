@@ -26,8 +26,20 @@
 			<%=f.text_field :lastname, :value => @new_student.lastname, :class => "form-control"%>
 		</div>
 		<div class="form-group">
+			<label>Rut</label>
+			<%=f.text_field :rut, :value => @new_student.rut, :class => "form-control"%>
+		</div>
+		<div class="form-group">
 			<label>E-Mail</label>
 			<%=f.email_field :email, :value => @new_student.email, :class => "form-control"%>
+		</div>
+		<div class="form-group">
+			<label>Empresa</label>
+			<%=f.text_field :institution, :value => @new_student.institution, :class => "form-control"%>
+		</div>
+		<div class="form-group">
+			<label>Departamento</label>
+			<%=f.text_field :department, :value => @new_student.department, :class => "form-control"%>
 		</div>
 		<div class="form-group">
 			<label>Telefono</label>

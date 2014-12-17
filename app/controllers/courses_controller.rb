@@ -389,6 +389,9 @@ class CoursesController < ApplicationController
 
     def init_course
         course = Course.find(params[:courseid])
+        #se cambia el estado del curso a "en desarrollo"
+        course.course_status_id = 3
+        course.save!
         begin
             #archivo de estudiantes
             members_attachment = Tempfile.new(["LISTADO_ALUMNOS_#{course.coursename}",".csv"])
@@ -428,6 +431,11 @@ class CoursesController < ApplicationController
                 attach_course_sessions.request_id = req.id
                 attach_course_sessions.attached_file = course_sessions_attachment
                 attach_course_sessions.save!
+                #asociar request con el curso
+                init_task = CourseInitTask.new()
+                init_task.course_id = course.id
+                init_task.request_id = req.id
+                init_task.save!
             end
         ensure
             members_attachment.close
@@ -435,10 +443,7 @@ class CoursesController < ApplicationController
             course_attachment.close
             course_attachment.unlink
         end
-        #se cambia el estado del curso a "en desarrollo"
-        course.course_status_id = 3
-        course.save!
-        redirect_to :action => :index, :opt => "production"
+        redirect_to :action => :index, :opt => "desarrollo"
     end
 
     def change_status
@@ -447,6 +452,13 @@ class CoursesController < ApplicationController
         when "cancel"
             c.course_status_id = 5
             c.save!
+            #cancelar las requests asociadas
+            course_tasks = CourseInitTask.where(:course_id => c.id).map{|t| t.request_id}
+            course_tasks.each do |r|
+                req = Request.find(r)
+                req.statusid = 3 #cancelado
+                req.save!
+            end
         when "activate"
             if c.current_students_qty > 0
                 c.count_students
@@ -571,11 +583,11 @@ class CoursesController < ApplicationController
         members = WebUser.where(:id => member_list)
 
         #Creacion del archivo adjunto conteniendo al listado de alumnos
-        student_list_headers = ["Nombre", "Apellido", "Email", "Género"]
+        student_list_headers = ["Nombre", "Apellido", "Rut", "Email", "Género", "Empresa", "Departamento"]
         CSV.open(file.path,"w") do |csv|
             csv << student_list_headers
             members.each do |m|
-                csv << [m.firstname, m.lastname, m.email, m.gender.include?("male") ? "Masculino" : "Femenino"]
+                csv << [m.firstname, m.lastname, m.rut, m.email, m.gender.include?("male") ? "Masculino" : "Femenino", m.institution, m.department]
             end
         end
         return file
@@ -642,7 +654,7 @@ class CoursesController < ApplicationController
     end
 
     def web_user_params
-        params.require(:web_user).permit(:firstname, :lastname, :email, :phone, :gender)
+        params.require(:web_user).permit(:firstname, :lastname, :rut, :institution, :department, :email, :phone, :gender)
     end
 
     def enrol_student(student_id, course_id)
@@ -669,7 +681,7 @@ class CoursesController < ApplicationController
     end
 
     def course_template_params
-        params.require(:course_template).permit(:course_level_id,:name,:total_sessions)
+        params.require(:course_template).permit(:course_level_id, :name, :total_sessions, :starting_book)
     end
 
     def register_weekday_sessions(course)
