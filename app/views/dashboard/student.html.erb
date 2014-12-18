@@ -38,6 +38,10 @@
 							<th>Departamento</th>
 							<td><%=@student_info.department%></td>
 						</tr>
+						<tr>
+							<th>Reporte para el Curso</th>
+							<td><%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :dashboard, :action => :generate_detailed_student_report, :params => {:courseid => @course_grades.first().courseid, :institution => @student_info.institution, :studentid => @student_info.id,:format => "pdf"}}, :target => "_blank" %></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

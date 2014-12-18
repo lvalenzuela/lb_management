@@ -35,7 +35,7 @@ class CourseGroupReportPdf < Prawn::Document
 		move_cursor_to 30
 		font "Helvetica", :size => 9
 		text "Coronel Pereira 72 Piso 11, Las Condes", :align => :center
-		text "Fono:(56-2) 2378 7720 - Correo: contacto@longbourn.cl", :align => :center
+		text "Fono:(56 2) 2378 7720 - Correo: contacto@longbourn.cl", :align => :center
 		text "www.longbourn.cl", :align => :center
 	end
 

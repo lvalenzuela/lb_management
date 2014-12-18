@@ -145,7 +145,6 @@ class ReportsController < ApplicationController
 	end
 
 	def course_groups
-
 		case params[:opt]
 		when "department"
 			@active = "department"

@@ -131,7 +131,7 @@ class DashboardController < ApplicationController
 		respond_to do |format|
 			format.pdf do
 				pdf = DetailedCourseReportPdf.new(course,params[:institution],view_context)
-				send_data pdf.render, :filename => course.coursename+"_test.pdf", :type => "application/pdf"
+				send_data pdf.render, :filename => course.coursename+".pdf", :type => "application/pdf"
 			end
 		end
 	end
@@ -159,6 +159,18 @@ class DashboardController < ApplicationController
 		@other_courses = StudentGradesReport.select("distinct(courseid)").where("userid = #{@student_info.id} and courseid != #{params[:courseid]} and created_at = curdate()")
 		@final_grade = @course_grades.where(:categoryname => "?", :itemname => nil).first()
 		@student_attendance = StudentAttendanceReport.where("courseid = #{params[:courseid]} and userid = #{params[:studentid]} and created_at = curdate()" ).order("sessionid ASC")
+	end
+
+	def generate_detailed_student_report
+		course = MoodleCourseV.find_by_moodleid(params[:courseid])
+		student = StudentV.find(params[:studentid])
+
+		respond_to do |format|
+			format.pdf do
+				pdf = DetailedStudentReportPdf.new(course,student,params[:institution],view_context)
+				send_data pdf.render, :filename => student.name+"_"+course.coursename+".pdf", :type => "application/pdf"
+			end
+		end
 	end
 
 	def teachers_list

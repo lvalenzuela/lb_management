@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       post "courses_list"
       get "course"
       get "generate_detailed_course_report"
+      get "generate_detailed_student_report"
       get "new_course_details"
       post "create_course_details"
       post "product_selector_options"

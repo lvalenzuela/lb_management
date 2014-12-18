@@ -1,9 +1,7 @@
-class DetailedCourseReportPdf < Prawn::Document
-
-	def initialize(course, institution, view_context)
-		super(:margin => 50, :page_size => "TABLOID", :page_layout => :landscape)
+class DetailedStudentReportPdf < Prawn::Document
+	def initialize(course, student, institution, view_context)
+		super(:margin => 50)
 		font "Helvetica"
-		members = course_members(course.moodleid)
 
 		repeat :all do
 			bounding_box [bounds.left, bounds.top + 30], :width  => bounds.width do
@@ -17,16 +15,17 @@ class DetailedCourseReportPdf < Prawn::Document
 
 		bounding_box([bounds.left, bounds.top - 40], :width  => bounds.width, :height => bounds.height - 80) do
 			font "Helvetica", :size => 10
-			general_data(institution, course.coursename)
+			general_data(institution, course.coursename, student.name)
 			move_down 20
-			grades_table(course, members)
+			grades_table(course, student)
 		end	
 
-		number_pages "<page> de <total>",:at => [1000, 0], size:10
+		number_pages "<page> de <total>",:at => [480, 0], size:10
 	end
 
-	def grades_table(course, members)
-		course_g_data = StudentGradesReport.where(:courseid => course.moodleid, :hidden => 0, :created_at => Date.today)
+
+	def grades_table(course, student)
+		course_g_data = StudentGradesReport.where(:courseid => course.moodleid, :hidden => 0, :userid => student.id, :created_at => Date.today)
 		g_items = course_g_data.group(:itemid).order("sortorder ASC")
 		g_categories = course_g_data.where("categoryname != '?' and itemname is null").select("distinct categoryid").order("sortorder ASC")
 
@@ -35,10 +34,7 @@ class DetailedCourseReportPdf < Prawn::Document
 		c_counter = 0
 
 		data = []
-		table_headers = ["Evaluaciones"]
-		members.each do |m|
-			table_headers << m.lastname+", "+m.firstname
-		end
+		table_headers = ["Evaluaciones", "Nota"]
 		data << table_headers
 
 		
@@ -50,31 +46,26 @@ class DetailedCourseReportPdf < Prawn::Document
 				if i_name
 					#es un test
 					evaluation << i_name
-					members.each do |m|
-						student_grade_data = course_g_data.where(:itemid => item.itemid, :userid => m.id)
-						if student_grade_data.blank?
-							evaluation << "-"
-						else
-							evaluation << grade_parser(student_grade_data.first().finalgrade, student_grade_data.first().gradetype)
-						end
+					student_grade_data = course_g_data.find_by_itemid(item.itemid)
+					if student_grade_data.blank?
+						evaluation << "-"
+					else
+						evaluation << grade_parser(student_grade_data.finalgrade, student_grade_data.gradetype)
 					end
 					c_counter+= 1 #para saber en que fila se escriben las categorías
 					data << evaluation
 				else
 					#es una categoría
-					category = course_g_data.where(:itemid => item.itemid)
+					category = course_g_data.find_by_itemid(item.itemid)
 				end
 			end
 			#se escribe la categoría al final del resto de las evaluaciones
 			cat_grade = []
-			cat_grade << category.first().categoryname
-			members.each do |m|
-				student_cat_data = category.where(:userid => m.id)
-				if student_cat_data.blank?
-					cat_grade << "-"
-				else
-					cat_grade << grade_parser(student_cat_data.first().finalgrade, student_cat_data.first().gradetype)
-				end
+			cat_grade << category.categoryname
+			if category.blank?
+				cat_grade << "-"
+			else
+				cat_grade << grade_parser(category.finalgrade, category.gradetype)
 			end
 			c_counter +=1
 			category_rows << c_counter
@@ -83,29 +74,30 @@ class DetailedCourseReportPdf < Prawn::Document
 
 		#promedio del curso
 		course_grade = ["Promedio Curso"]
-		members.each do |m|
-			c_grade = course_g_data.where(:userid => m.id, :categoryname => '?', :itemname => nil)
-			if c_grade.blank?
-				course_grade << "-"
-			else
-				course_grade << grade_parser(c_grade.first().finalgrade, c_grade.first().gradetype)
-			end
+		c_grade = course_g_data.where(:categoryname => '?', :itemname => nil)
+		if c_grade.blank?
+			course_grade << "-"
+		else
+			course_grade << grade_parser(c_grade.first().finalgrade, c_grade.first().gradetype)
 		end
+
 		c_counter +=1 #corresponde a la fila en que se escribirá el promedio del curso
 		#category_rows << c_counter
 		data << course_grade
 
-		table(data, :column_widths => {0 => 150}, 
-			:cell_style => {:align => :center, :valign => :center,:size => 10, :borders => [:bottom], :border_width => 0.5, :inline_format => true, :padding => [5,5], :height => 40}, 
+		table(data, :column_widths => {0 => 300, 1 => 200}, 
+			:cell_style => {:align => :center, :valign => :center,:size => 10, :border_width => 0.5, :inline_format => true, :padding => [5,5], :height => 40}, 
 			:position => :center,
 			:header => true) do
 			cells.style do |c|
 				if c.row == 0
 					c.background_color = "F0F0F0"
+					c.size = 12
+					c.font_style = :bold
 				end
 				if category_rows.include?(c.row)
 					c.background_color = "F0F0F0"
-					c.font_style = :bold
+					#c.font_style = :bold
 					c.size = 12
 				end
 				if c.row == c_counter
@@ -114,6 +106,18 @@ class DetailedCourseReportPdf < Prawn::Document
 				end
 			end
 		end
+	end
+
+	def general_data(institution, coursename, studentname)
+		font "Helvetica", :style => :bold
+		text "Informe de Desempeño por Curso"
+		font "Helvetica", :style => :normal
+
+		data = [["<b>Alumno</b>", studentname],
+				["<b>Curso</b>",coursename],
+				["<b>Empresa</b>",institution],
+				["<b>Fecha</b>", Date.today.strftime("%d-%m-%Y")]]
+		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 10,:borders => [], :inline_format => true, :padding => [2,0]}, :position => :left)
 	end
 
 	def header
@@ -131,28 +135,10 @@ class DetailedCourseReportPdf < Prawn::Document
 		text "www.longbourn.cl", :align => :center
 	end
 
-	def general_data(institution, group_name)
-
-		font "Helvetica", :style => :bold
-		text "Informe de Desempeño por Curso"
-		font "Helvetica", :style => :normal
-
-		data = [["<b>Curso</b>",group_name],
-				["<b>Empresa</b>",institution],
-				["<b>Fecha</b>", Date.today.strftime("%d-%m-%Y")]]
-		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 10,:borders => [], :inline_format => true, :padding => [0,0]}, :position => :left)
-	end
-
 	private
 
 	def grade_items(courseid)
 		return StudentGradesReport.where(:courseid => courseid).group(:itemid).order("sortorder ASC").map{|i| i.itemid}
-	end
-
-	def course_members(courseid)
-		#listado de alumnos
-		students = StudentGradesReport.where(:courseid => courseid, :created_at => Date.today).group(:userid).map{|s| s.userid}
-		return StudentV.where(:id => students)
 	end
 
 	def grade_parser(grade, gradetype)
