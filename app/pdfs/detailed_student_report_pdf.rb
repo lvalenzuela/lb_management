@@ -17,14 +17,114 @@ class DetailedStudentReportPdf < Prawn::Document
 			font "Helvetica", :size => 10
 			general_data(institution, course.coursename, student.name)
 			move_down 20
+			if course.sence_idnumber != "" && !course.sence_idnumber.blank?
+				#asistencia sence
+				course_attendance(course, student)
+			else
+				#asistencia no sence
+				course_attendance_no_sence(course, student)
+			end
 			grades_table(course, student)
 		end	
 
 		number_pages "<page> de <total>",:at => [480, 0], size:10
 	end
 
+	def course_attendance(course, user)
+		move_down 20
+		font "Helvetica", :style => :bold, :size => 12
+		text "1. Indicadores de Asistencia (SENCE)"
+		font "Helvetica", :style => :normal, :size => 10
+		move_down 10
+
+		data = []
+		data << ["Nombre", "RUT", "Presente", "Total Clases", "Tiempo Presente", "Tiempo a la Fecha", "Asistencia"]
+		user_attendance_info = SenceAttendanceReport.where("course_id = #{course.moodleid} and user_idnumber = '#{user.idnumber}' and date(created_at) = curdate()").first()
+
+		if user_attendance_info.blank?
+			data << [user.lastname+" "+user.firstname, user.idnumber, "-", "-", "-", "-", "-"]
+		else
+			user_seconds = user_attendance_info.current_user_seconds % 60
+			user_minutes = (user_attendance_info.current_user_seconds / 60) % 60
+			user_hours = user_attendance_info.current_user_seconds / (60*60)
+			course_seconds = user_attendance_info.current_course_seconds % 60
+			course_minutes = (user_attendance_info.current_course_seconds / 60) % 60
+			course_hours = user_attendance_info.current_course_seconds / (60*60)
+
+			data << [user.lastname+", "+user.firstname, user.idnumber, user_attendance_info.p_sessions, user_attendance_info.current_sessions, format("%02d:%02d:%02d",user_hours,user_minutes,user_seconds), format("%02d:%02d:%02d",course_hours,course_minutes,course_seconds), (user_attendance_info.current_user_seconds.round(2)*100/user_attendance_info.current_course_seconds).round(2).to_s+"%"]
+		end
+
+		move_down 10
+		data = [] #datos para la segunda tabla
+		data << ["<b>Tiempo Presente</b>",format("%02d:%02d:%02d",user_hours,user_minutes,user_seconds)]
+		data << ["<b>Tiempo Total</b>", format("%02d:%02d:%02d",course_hours,course_minutes,course_seconds)]
+		data << ["<b>Asistencia SENCE</b>", "<b>"+(user_attendance_info.current_user_seconds.round(2)*100/user_attendance_info.current_course_seconds).round(2).to_s+"%</b>"]
+		table(data, :column_widths => {0 => 300, 1 => 200},
+					:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [10,10]}, 
+					:position => :center) do
+			cells.style do |c|
+				if c.column == 0
+					c.background_color = "F0F0F0"
+				end
+				if c.column == 1 && c.row == 2
+					c.background_color = "F0F0F0"
+				end
+			end
+		end
+	end
+
+	def course_attendance_no_sence(course, user)
+		move_down 20
+		font "Helvetica", :style => :bold, :size => 12
+		text "1. Indicadores de Asistencia"
+		font "Helvetica", :style => :normal, :size => 10
+		move_down 10
+
+		report_data = UserReport.where(:userid => user.id, :courseid => course.moodleid).order("created_at DESC").first()
+
+		if !report_data.p_sessions.nil? && !report_data.current_sessions.nil? && !report_data.a_sessions.nil? && !report_data.t_sessions.nil?
+			att_pct = (report_data.p_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			inatt_pct = (report_data.a_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			late_pct = (report_data.t_sessions.to_f*100/report_data.current_sessions.to_f).round(2)
+			inatt_late_pct = (inatt_pct + late_pct).round(2)
+		else
+			att_pct = 0
+			report_data.p_sessions = 0
+			report_data.current_sessions = 0
+			report_data.a_sessions = 0
+			report_data.t_sessions = 0
+			inatt_pct = 0
+			late_pct = 0
+			inatt_late_pct = 0
+		end
+
+		move_down 10
+		data = [] #datos para la segunda tabla
+		data << ["<b>Asistencias</b>",report_data.p_sessions.to_s]
+		data << ["<b>Clases Totales</b>", report_data.current_sessions.to_s]
+		data << ["<b>Porcentaje de Asistencia</b>", "<b>"+att_pct.to_s+"%</b>"]
+		table(data, :column_widths => {0 => 300, 1 => 200},
+					:cell_style => {:align => :center,:size => 10, :border_width => 1, :inline_format => true, :padding => [10,10]}, 
+					:position => :center) do
+			cells.style do |c|
+				if c.column == 0
+					c.background_color = "F0F0F0"
+				end
+				if c.column == 1 && c.row == 2
+					c.background_color = "F0F0F0"
+				end
+			end
+		end
+	end
 
 	def grades_table(course, student)
+
+		move_down 20
+		font "Helvetica", :style => :bold, :size => 12
+		text "2. Indicadores de Academicos"
+		font "Helvetica", :style => :normal, :size => 10
+		move_down 10
+
 		course_g_data = StudentGradesReport.where(:courseid => course.moodleid, :hidden => 0, :userid => student.id, :created_at => Date.today)
 		g_items = course_g_data.group(:itemid).order("sortorder ASC")
 		g_categories = course_g_data.where("categoryname != '?' and itemname is null").select("distinct categoryid").order("sortorder ASC")
@@ -109,7 +209,7 @@ class DetailedStudentReportPdf < Prawn::Document
 	end
 
 	def general_data(institution, coursename, studentname)
-		font "Helvetica", :style => :bold
+		font "Helvetica", :style => :bold, :size => 12
 		text "Informe de Desempeño por Curso"
 		font "Helvetica", :style => :normal
 
@@ -117,7 +217,7 @@ class DetailedStudentReportPdf < Prawn::Document
 				["<b>Curso</b>",coursename],
 				["<b>Empresa</b>",institution],
 				["<b>Fecha</b>", Date.today.strftime("%d-%m-%Y")]]
-		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 10,:borders => [], :inline_format => true, :padding => [2,0]}, :position => :left)
+		table(data, :column_widths => {0 => 90, 1 => 350}, :cell_style => {:size => 12,:borders => [], :inline_format => true, :padding => [2,0]}, :position => :left)
 	end
 
 	def header

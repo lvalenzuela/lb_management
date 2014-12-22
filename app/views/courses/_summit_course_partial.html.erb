@@ -105,7 +105,7 @@
                     <div class="pull-right">
                         <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
                         <%=link_to "<i class='fa fa-plus fa-lg'></i> Finalizar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "finish", :active => active}}, {:class => "btn btn-success"}%>
-                        <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger"}%>
+                        <%=link_to "<i class='fa fa-times fa-lg'></i> Cancelar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "cancel", :active => active}}, {:class => "btn btn-danger", :data => {:confirm => "Estas seguro?"}}%>
                     </div>
                 </div>
             </div>

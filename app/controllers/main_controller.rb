@@ -370,10 +370,11 @@ class MainController < ApplicationController
                 end
                 @finished = 1
                 @new_entries = new_entry_count
-                else
-                    @finished = 2
+            else
+                @finished = 2
             end
-        rescue Exception => ex
+        rescue => ex
+            #puts error.inspect
             @exception_message = ex.message
             @finished = 2
         end

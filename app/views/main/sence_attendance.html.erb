@@ -18,29 +18,30 @@
 				<div class="box-header">
 					<h3 class="box-title">Asistencia Sence</h3>
 				</div>
-				Por favor tener en cuenta los siguientes aspectos:
-				<ul>
-					<li>La extensión del archivo a subir debe ser CSV</li>
-					<li>El formato del archivo debe ser el mismo que el entregado por el Sence. (No quitar ni agregar columnas)</li>
-					<li>Las fechas del archivo deben estar en el formato 'dd-mm-aaaa'</li>
-					<li>En caso de cumplir con estos requerimientos y presentar problemas, contacte al administrador del sistema.</li>
-				</ul>
-				<%=form_tag upload_sence_attendance_main_index_path, :multipart => true, :remote => true, :id => "sence-file-upload-form" do%>
 				<div class="box-body">
+					<p>Por favor tener en cuenta los siguientes aspectos:</p>
+					<ul>
+						<li>La extensión del archivo a subir debe ser CSV</li>
+						<li>El formato del archivo debe ser el mismo que el entregado por el Sence. (No quitar ni agregar columnas)</li>
+						<li>Las fechas del archivo deben estar en el formato 'dd-mm-aaaa'</li>
+						<li>En caso de cumplir con estos requerimientos y presentar problemas, contacte al administrador del sistema.</li>
+						<li>Borrar la última linea del archivo en caso de que no corresponda al formato general (usualmente contiene el texto <b>"(*): Este registro de asistencia contiene una entrada calculada mayor que su respectiva salida. "</b>)</li>
+					</ul>
 					<p>Subir archivo de asistencia para cursos con franquicia Sence</p>
-					<div class="row">
-						<div class="col-xs-2">
-							<div class="btn btn-primary btn-file">
-								<i class="fa fa-upload"></i> Calendario
-								<%=file_field_tag :sence_file%>
+					<%=form_tag upload_sence_attendance_main_index_path, :multipart => true, :remote => true, :id => "sence-file-upload-form" do%>
+						<div class="row">
+							<div class="col-xs-2">
+								<div class="btn btn-primary btn-file">
+									<i class="fa fa-upload"></i> Calendario
+									<%=file_field_tag :sence_file%>
+								</div>
+							</div>
+							<div class="col-xs-8">
+								<%=text_field_tag :file_path, nil, {:disabled => true, :class => "form-control", :style => "width: 400px;"}%>
 							</div>
 						</div>
-						<div class="col-xs-8">
-							<%=text_field_tag :file_path, nil, {:disabled => true, :class => "form-control", :style => "width: 400px;"}%>
-						</div>
-					</div>
+					<%end%>
 				</div>
-				<%end%>
 				<div class="box-footer clearfix">
 					<div class="pull-right">
 						<button id="submit-button" class="btn btn-success">Subir Archivo</button>
