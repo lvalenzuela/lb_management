@@ -188,7 +188,7 @@
                 <div class="box-footer clearfix">
                     <div class="pull-right">
                         <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
-                        <%=link_to "<i class='fa fa-check fa-lg'></i> Activar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "activate"}}, {:class => "btn btn-success"}%>>
+                        <%=link_to "<i class='fa fa-check fa-lg'></i> Activar".html_safe, {:controller => :courses, :action => :change_status, :params => {:id => course.id, :status => "activate"}}, {:class => "btn btn-success"}%>
                     </div>
                 </div>
             </div>

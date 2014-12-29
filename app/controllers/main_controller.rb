@@ -89,38 +89,38 @@ class MainController < ApplicationController
     end
 
     def teacher_grades_config
-        @teacher_levels = UserTeacherLevel.all()
+        @teacher_levels = TeacherLevel.all()
     end
 
     def create_teacher_level
-        @teacher_level = UserTeacherLevel.create(teacher_level_params)
+        @teacher_level = TeacherLevel.create(teacher_level_params)
         if @teacher_level.valid?
             redirect_to :action => :teacher_grades_config
         else
-            @teacher_levels = UserTeacherLevel.all()
+            @teacher_levels = TeacherLevel.all()
             render :teacher_grades_config
         end
     end
 
     def edit_teacher_level
-        @teacher_levels = UserTeacherLevel.all()
-        @teacher_level = UserTeacherLevel.find(params[:id])
+        @teacher_levels = TeacherLevel.all()
+        @teacher_level = TeacherLevel.find(params[:id])
         render :teacher_grades_config
     end
 
     def update_teacher_level
-        @teacher_level = UserTeacherLevel.find(params[:user_teacher_level][:id])
+        @teacher_level = TeacherLevel.find(params[:user_teacher_level][:id])
         @teacher_level.update_attributes(teacher_level_params)
         if @teacher_level.valid?
             redirect_to :action => :teacher_grades_config
         else
-            @teacher_levels = UserTeacherLevel.all()
+            @teacher_levels = TeacherLevel.all()
             render :teacher_grades_config
         end
     end
 
     def delete_teacher_level
-        UserTeacherLevel.find(params[:id]).destroy
+        TeacherLevel.find(params[:id]).destroy
         redirect_to :action => :teacher_grades_config
     end
 
@@ -143,7 +143,7 @@ class MainController < ApplicationController
 
     def teacher_overview
         @teacher = TeacherV.find(params[:id])
-        @teacher_levels = UserTeacherLevel.all()
+        @teacher_levels = TeacherLevel.all()
         @disponibility = UserDisponibility.where(:user_id => params[:id])
         course_ids = MoodleRoleAssignationV.where(:userid => params[:id], :roleid => [4,9]).map{|c| c.courseid}
         @courses = MoodleCourseV.where(:moodleid => course_ids, :visible => 1)

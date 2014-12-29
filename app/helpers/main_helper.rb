@@ -11,7 +11,7 @@ module MainHelper
 
 	def teacher_level_label(teacher_level)
 		if teacher_level
-			return UserTeacherLevel.find(teacher_level).level_label
+			return TeacherLevel.find(teacher_level).level_label
 		else
 			return "-"
 		end
