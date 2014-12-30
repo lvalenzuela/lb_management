@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141229204019) do
+ActiveRecord::Schema.define(version: 20141229203756) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -747,12 +747,6 @@ ActiveRecord::Schema.define(version: 20141229204019) do
     t.string   "param_name"
     t.string   "description"
     t.string   "param_value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "teacher_evaluations", force: true do |t|
-    t.date     "evaluation_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
