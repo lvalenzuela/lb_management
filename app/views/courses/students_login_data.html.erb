@@ -1,0 +1,57 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "courses"%>
+<section class="content-header no-margin">
+    <h1>
+        Formulario de Datos de Usuario
+        <small><%=@course.coursename%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><%=link_to "Cursos de Longbourn", :controller => :courses, :action => :index%></li>
+        <li><%=link_to @course.coursename.truncate(15), {:controller => :courses, :action => :show, :params => {:id => @course.id}}%></li>
+        <li class="active">Información de Usuarios</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">Información de Cuentas de Usuarios</h3>
+                </div>
+                <%=form_tag :controller => :courses, :action => :send_moodle_student_data do%>
+                	<%=hidden_field_tag :courseid, @course.id%>
+	                <div class="box-body">
+	                	<%if flash[:notice]%>
+                            <div class="alert alert-success alert-dismissable">
+                                <i class="fa fa-check"></i>
+                                <p><%=flash[:notice]%></p>
+                            </div>
+	                	<%end%>
+	                	<%@students.each do |s|%>
+	                	<div class="row form-group">
+	                		<div class="col-xs-1">
+	                			<%=check_box_tag "student_ids[]", s.id%>
+	                		</div>
+	                		<div class="col-xs-3">
+	                			<%=s.name.truncate(20)%>
+	                		</div>
+	                		<div class="col-xs-3">
+	                			<label><%=s.email%></label>
+	                		</div>
+	                		<div class="col-xs-5">
+	                			<%=text_field_tag "password_#{s.id}", nil, :class => "form-control"%>
+	                		</div>
+	                	</div>
+	                	<%end%>
+	                </div>
+	                <div class="box-footer clearfix">
+	                	<div class="pull-right">
+	                		<%=submit_tag "Enviar Correo".html_safe, :class => "btn btn-primary"%>
+	                	</div>
+	                </div>
+				<%end%>
+            </div>
+        </div>
+    </div>
+</section>

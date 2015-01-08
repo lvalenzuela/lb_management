@@ -1,6 +1,20 @@
 class NotificationMailer < ActionMailer::Base
   default from: "no-reply@longbourn.cl"
 
+  #notificaciones de creación de usuarios
+  def notify_new_user(receiver_user, password)
+    @new_student = receiver_user
+    @password = password
+    mail(to: @new_student.email, subject: "Web de Estudiantes Longbourn: Bienvenido a Longbourn!")
+  end
+
+  #notificacion de inicio de curso para estudiantes
+  def course_init_student_notification(student, course)
+    @student = student
+    @course = course
+    mail(to: @student.email, subject: "Inicio de Curso en Longbourn: #{course.coursename}")
+  end
+
   def request_for_area(receiver_user,request)
   	@user = receiver_user
   	@request = request

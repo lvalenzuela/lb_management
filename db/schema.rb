@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141229203756) do
+ActiveRecord::Schema.define(version: 20150108174417) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -155,6 +155,7 @@ ActiveRecord::Schema.define(version: 20141229203756) do
     t.integer  "total_sessions"
     t.integer  "current_booked_sessions"
     t.integer  "current_taken_sessions"
+    t.integer  "last_visited_page"
     t.datetime "last_taken_session_date"
     t.float    "avg_attendance_ratio"
     t.float    "std_dev_assistance"
@@ -175,6 +176,7 @@ ActiveRecord::Schema.define(version: 20141229203756) do
     t.integer  "courses_failing_grades"
     t.integer  "courses_failing_attendance"
     t.integer  "courses_late_sessions"
+    t.integer  "courses_offset_content"
     t.integer  "teachers_low_performance"
     t.datetime "created_at"
     t.datetime "updated_at"

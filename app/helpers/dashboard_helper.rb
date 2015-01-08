@@ -64,7 +64,11 @@ module DashboardHelper
 
 	def taken_session_content(index,array)
 		if array[index-1]
-			return array[index-1]
+			if array[index-1] == 0
+				return "-"
+			else
+				return array[index-1]
+			end
 		else
 			return "-"
 		end

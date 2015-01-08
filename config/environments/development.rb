@@ -32,7 +32,7 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
   Paperclip.options[:command_path] = "/usr/bin/"
-
+  config.action_mailer.asset_host = "http://summit.longbourn.cl"
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address:              'smtp.gmail.com',

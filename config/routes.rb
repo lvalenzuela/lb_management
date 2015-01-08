@@ -53,6 +53,8 @@ Rails.application.routes.draw do
       post "modify_session_data"
       post "session_data_date_warning"
       #inicialización del curso
+      get "students_login_data"
+      post "send_moodle_student_data"
       get "init_course_dialog"
       get "init_course"
       #templates

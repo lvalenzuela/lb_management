@@ -1,0 +1,36 @@
+<%=render :partial => "mailer_header"%>
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>Estimad@ <%= @new_student.firstname%>,</h1>
+      <p>
+        Hemos creado tu cuenta de ingreso a la <%=link_to "Web de Estudiantes de Longbourn", "students.longbourn.cl"%>
+      </p>
+      <p>
+        Tus datos de acceso son los siguientes
+        <div class="row">
+          <div class="col-xs-6">
+            <table class="table table-bordered">
+              <tr>
+                <th>Usuario</th>
+                <td><%=@new_student.email%></td>
+              </tr>
+              <tr>
+                <th>Password</th>
+                <td><%=@password%></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </p>
+      <br>
+      <p>Te recomendamos que realices el cambio de tu contraseña a la brevedad.</p>
+      <p>Si el correo le ha llegado de forma erronea, se le solicita borrarlo y notificar a contacto@longbourn.cl</p>
+      
+      -------------------------------------------------------
+      <p>Este correo fue generado automáticamente, por lo cual se sugiere no responderlo.</p>
+    </div>
+  </div>
+</section>
+
+<%=render :partial => "mailer_footer"%>

@@ -27,7 +27,7 @@
 					<p>El listado de tareas a realizar para la creación del curso corresponde al que se muestra a continuacion:</p>
 					<div class="row">
 						<div class="col-xs-10 col-xs-offset-1">
-							<table class="table">
+							<table class="table table-bordered">
 								<thead>
 									<tr>
 										<th>Tarea</th>
@@ -47,6 +47,8 @@
 							</table>
 						</div>
 					</div>
+					<br>
+					<p>De forma adicional a esta lista de tareas, se enviará un correo a todos los alumnos registrados del curso indicando que éste dará inicio en la fecha <b><%=l(@course.start_date, :format => "%d de %B del %Y")%></b>, como lo indica su configuración.</p>
 				</div>
 				<div class="box-footer clearfix">
 					<div class="pull-right">

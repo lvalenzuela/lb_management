@@ -22,9 +22,9 @@
 				<tr>
 					<td><%=c.courseid%></td>
 					<%if controller_name == "users"%>
-					<td><%=link_to c.coursename, :controller => :users, :action => :show_course, :params => {:courseid => c.courseid}%></td>
+					<td><%=link_to c.coursename.truncate(30), :controller => :users, :action => :show_course, :params => {:courseid => c.courseid}%></td>
 					<%else%>
-					<td><%=link_to c.coursename, :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
+					<td><%=link_to c.coursename.truncate(30), :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
 					<%end%>
 					<td style="text-align: center;"><span class="badge <%=grade_badge_class(c.mean_grade,c.gradetype)%>"><%=dashboard_grade_parser(c.mean_grade, c.gradetype.to_i)%></span></td>
 					<td style="text-align: center;"><%=failing_grades_students(c)%></td>

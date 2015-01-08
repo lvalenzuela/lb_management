@@ -1,0 +1,12 @@
+<%=render :partial => "mailer_header"%>
+<section class="content">
+	<div class="row">
+		<div class="col-xs-10 col-xs-offset-1">
+			<h1>Estimad@ <%=@student.firstname%>,</h1>
+			<p>Tenemos el agrado de notificarle que el curso <b><%=@course.coursename%></b>, en el cual se ecuentra registrado como estudiante, dará inicio en la fecha <b><%=l(@course.start_date, :format => "%d de %B del %Y")%></b>.</p>
+			<p>Desde ya, te deseamos éxito y que disfrutes la experiencia Longbourn.</p>
+			<p><b>Te esperamos!</b></p>
+		</div>
+	</div>
+</section>
+<%=render :partial => "mailer_footer"%>

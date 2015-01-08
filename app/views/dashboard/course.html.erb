@@ -56,8 +56,8 @@
 							<tr>
 								<th style="text-align: center; width: 25px;">Sesión</th>
 								<th style="text-align: center; width: 120px">Tipo de Clase</th>
-								<th>Pag. - Contenido</th>
-								<th style="text-align: center; width: 60px;">Pag. Cubierta</th>
+								<th style="text-align: center; width: 100px;">Pagina Plan</th>
+								<th style="text-align: center;">Pagina Cubierta</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -65,8 +65,8 @@
 							<tr>
 								<td style="text-align: center;"><%=ts.session_number%></td>
 								<td style="text-align: center;"><%=get_session_type(ts.session_type_id)%></td>
-								<td><%=ts.page.to_s+" - "+ts.contents.to_s%></td>
-								<td style="text-align: center;"><%=taken_session_content(ts.session_number,@taken_sessions)%></td>
+								<td style="text-align: center;"><%=ts.page.to_s%></td>
+								<td style="text-align: center;"><%=taken_session_content(ts.session_number,@session_content_pages)%></td>
 							</tr>
 							<%end%>
 						</tbody>
@@ -142,12 +142,16 @@
 											-
 											<%end%>
 										</td>
-										<tr>
-											<th>Condensado de Notas</th>
-											<td>
-											<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :dashboard, :action => :generate_detailed_course_report, :params => {:courseid => @course.moodleid, :institution => @institution,:format => "pdf"}}, :target => "_blank" %>
-											</td>
-										</tr>
+									</tr>
+									<tr>
+										<th>Desfase con la Plantilla</th>
+										<td><%=@page_offset%> Páginas</td>
+									</tr>
+									<tr>
+										<th>Condensado de Notas</th>
+										<td>
+										<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :dashboard, :action => :generate_detailed_course_report, :params => {:courseid => @course.moodleid, :institution => @institution,:format => "pdf"}}, :target => "_blank" %>
+										</td>
 									</tr>
 								</tbody>
 							</table>

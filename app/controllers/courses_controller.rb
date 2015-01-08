@@ -306,6 +306,28 @@ class CoursesController < ApplicationController
         @course_statuses = CourseStatus.all()
     end
 
+    def students_login_data
+        @course = Course.find(params[:courseid])
+        student_list = CourseMember.where(:course_id => @course.id)
+        @students = WebUser.where(:id => student_list.map{|s| s.web_user_id})
+    end
+
+    def send_moodle_student_data
+        begin
+            params[:student_ids].each do |student|
+                user = WebUser.find(student)
+                password = params["password_#{user.id}"]
+                #enviar correo con datos
+                NotificationMailer.notify_new_user(user,password).deliver
+            end
+            flash[:notice] = "Los correos con la información de las cuentas de usuario han sido entregados exitosamente"
+        rescue => e
+            puts e.inspect
+            flash[:notice] = "Ocurrió un error al enviar las notificaciones. Pongase en contacto con el administrador del sistema y para notificarle sobre este problema."
+        end
+        redirect_to :action => :students_login_data, :courseid => params[:courseid]
+    end
+
     def course_students
         @course = Course.find(params[:courseid])
         c_students = CourseMember.where(:course_id => @course.id).map{|c| c.web_user_id}
@@ -330,7 +352,7 @@ class CoursesController < ApplicationController
         @new_student = WebUser.create(web_user_params)
         if @new_student.valid?
             if params[:enrol]
-                enrol_student(@web_user.id, params[:courseid])
+                enrol_student(@new_student.id, params[:courseid])
             end
             redirect_to :action => :course_students, :courseid => params[:courseid]
         else
@@ -437,6 +459,8 @@ class CoursesController < ApplicationController
                 init_task.request_id = req.id
                 init_task.save!
             end
+            #notificaciones de inicio de curso para los estudiantes registrados
+            course_init_notifications(course)
         ensure
             members_attachment.close
             members_attachment.unlink
@@ -564,6 +588,18 @@ class CoursesController < ApplicationController
 
 
     private
+
+    def course_init_notifications(course)
+        students_ids = CourseMember.where(:course_id => course.id).map{|c| c.web_user_id}
+        students = WebUser.where(:id => students_ids)
+        begin
+            students.each do |student|
+                NotificationMailer.course_init_student_notification(student, course).deliver
+            end
+        rescue => e
+            puts e.inspect
+        end
+    end
 
     def course_sessions_file(file,course)
         sessions = CourseSession.where(:commerce_course_id => course.id)

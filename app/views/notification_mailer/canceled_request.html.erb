@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
+<%=render :partial => "mailer_header"%>
     <h1>Estimad@ <%= @user.firstname+" "+@user.lastname %>,</h1>
     <p>
       La solicitud con el título "<%=@request.subject%>" ha sido cancelada.<br>
@@ -17,5 +12,4 @@
     
     -------------------------------------------------------
     <p>Este correo fue generado automáticamente, por lo cual se sugiere no responderlo.</p>
-  </body>
-</html>
+<%=render :partial => "mailer_footer"%>

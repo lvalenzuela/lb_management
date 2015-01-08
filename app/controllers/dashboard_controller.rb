@@ -49,13 +49,14 @@ class DashboardController < ApplicationController
 		@course = MoodleCourseV.find_by_moodleid(params[:id])
 		@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
 		#obtencion del contenido de las sesiones
-		@taken_sessions = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
+		@session_content_pages = StudentAttendanceReport.where("courseid = #{params[:id]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
 		@course_observations = CourseObservation.where(:course_id => params[:id])
 		if @students_info.blank?
 			@institution = ""
 		else
 			@institution = StudentV.find(@students_info.first().userid).institution
 		end
+		@page_offset = calc_template_page_offset(@session_content_pages, @course.id, @template_sessions)
 	end
 
     def template_selector_options
@@ -208,6 +209,7 @@ class DashboardController < ApplicationController
 		@min_grade = parameters.find_by_param_name("approve_grade").value
 		@min_attendance = parameters.find_by_param_name("min_attendance").value
 		@max_attendance_delay = parameters.find_by_param_name("max_attendance_delay").value
+		@max_page_offset = parameters.find_by_param_name("max_page_offset").value
 	end
 
 	def update_alarm_parameters
@@ -222,6 +224,10 @@ class DashboardController < ApplicationController
 		max_att_delay = CourseAlarmParameter.find_by_param_name("max_attendance_delay")
 		max_att_delay.value = params[:max_attendance_delay]
 		max_att_delay.save!
+
+		max_page_offset = CourseAlarmParameter.find_by_param_name("max_page_offset")
+		max_page_offset.value = params[:max_page_offset]
+		max_page_offset.save!
 		redirect_to :action => :configuration
 	end
 
@@ -252,6 +258,23 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
+	def calc_template_page_offset(registered_pages, courseid, template_sessions)
+		last_page_visited = last_non_zero_record(registered_pages)
+		current_session_number = CourseAttendanceReport.where(:courseid => courseid, :created_at => Date.today).first().current_taken_sessions
+		template_current_page = template_sessions.find_by_session_number(current_session_number).page
+		return last_page_visited - template_current_page
+	end
+
+	def last_non_zero_record(record_array)
+		last_record = 0
+		record_array.each do |r|
+			if r != 0
+				last_record = r
+			end
+		end
+		return last_record
+	end
 
 	def course_details_params
 		params.require(:course_details).permit(:moodleid, :coursename, :description, :location_id, :course_type_id, :students_qty, :zoho_product_id, :course_template_id, :mode, :course_level_id, :classroom_matching_id, :start_date)

@@ -45,6 +45,14 @@
 							<%=select_tag :max_attendance_delay, options_for_select((1..15).step(1).map{|att| ["#{att}", att]},@max_attendance_delay.to_i), {:class => "form-control"}%>
 						</div>
 					</div>
+					<div class="row">
+						<div class="form-group col-xs-4 col-xs-offset-2">
+							<label>Páginas de Desfase con el Plan</label>
+						</div>
+						<div class="form-group col-xs-3">
+							<%=number_field_tag :max_page_offset, @max_page_offset, :class => "form-control"%>
+						</div>
+					</div>
 				</div>
 				<div class="box-footer clearfix">
 					<div class="col-xs-10 col-xs-offset-1">
