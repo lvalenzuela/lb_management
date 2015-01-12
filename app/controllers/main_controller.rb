@@ -453,7 +453,7 @@ class MainController < ApplicationController
     end
 
     def update_classroom
-        c = Classroom.find(params[:course_classroom][:id])
+        c = Classroom.find(params[:classroom][:id])
         c.update_attributes(classroom_params)
         redirect_to :action => :classrooms_list
     end

@@ -14,7 +14,7 @@
 <section class="content">
 	<div class="row">
 		<div class="col-xs-8 col-xs-offset-2">
-			<%=form_for :course_classroom, :url => {:action => :update_classroom} do |f|%>
+			<%=form_for :classroom, :url => {:action => :update_classroom} do |f|%>
 			<%=f.hidden_field :id, :value => @classroom.id%>
 			<div class="box">
 				<div class="box-header">
@@ -24,6 +24,10 @@
 					<div class="form-group">
 						<label>Nombre Sala</label>
 						<%=f.text_field :name, :value => @classroom.name, :class => "form-control"%>
+					</div>
+					<div class="form-group">
+						<label>Ubicación</label>
+						<%=f.text_field :location, :value => @classroom.location, :class => "form-control"%>
 					</div>
 					<div class="form-group">
 						<label>Capacidad</label>
