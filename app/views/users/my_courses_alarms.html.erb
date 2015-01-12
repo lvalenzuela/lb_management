@@ -25,6 +25,9 @@
                 <li class="<%=activate_menu_item("low_grades",@active)%>">
                     <%=link_to "Promedio Bajo", {:controller => :users, :action => :my_courses_alarms, :params => {:opt => "low_grades"}}%>
                 </li>
+                <li class="<%=activate_menu_item("offset_content",@active)%>">
+                    <%=link_to "Contenido Desfasado", {:controller => :users, :action => :my_courses_alarms, :params => {:opt => "offset_content"}}%>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active">

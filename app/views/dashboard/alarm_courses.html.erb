@@ -25,6 +25,9 @@
                 <li class="<%=activate_menu_item("low_grades",@active)%>">
                     <%=link_to "Promedio Bajo", {:controller => :dashboard, :action => :alarm_courses, :params => {:opt => "low_grades"}}%>
                 </li>
+                <li class="<%=activate_menu_item("offset_content",@active)%>">
+                    <%=link_to "Contenido Desfasado", {:controller => :dashboard, :action => :alarm_courses, :params => {:opt => "offset_content"}}%>
+                </li>
                 <li>
                     <%=link_to "Profesores", {:controller => :dashboard, :action => :alarm_teachers}%>
                 </li>

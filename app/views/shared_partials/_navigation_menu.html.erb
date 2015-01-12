@@ -58,6 +58,11 @@ usuario
                         <li>
                             <ul class="menu">
                                 <li>
+                                    <%=link_to :controller => :users, :action => :my_courses_alarms, :params => {:opt => "offset_content"} do%>
+                                        <i class="fa fa-clock-o danger"></i><strong><%=user_alerts[:offset_content]%></strong> Cursos con contenido desfasado
+                                    <%end%>
+                                </li>
+                                <li>
                                     <%=link_to :controller => :users, :action => :my_courses_alarms, :params => {:opt => "delayed_sessions"} do%>
                                         <i class="fa fa-clock-o info"></i><strong><%=user_alerts[:late_sessions]%></strong> Cursos con sesiones atrasadas
                                     <%end%>
@@ -89,6 +94,11 @@ usuario
                         <li class="header">Alarmas de Longbourn</li>
                         <li>
                             <ul class="menu">
+                                <li>
+                                    <%=link_to :controller => :dashboard, :action => :alarm_courses, :params => {:opt => "offset_content"} do%>
+                                        <i class="fa fa-clock-o danger"></i><strong><%=alerts[:offset_content]%></strong> Cursos con contenido desfasado
+                                    <%end%>
+                                </li>
                                 <li>
                                     <%=link_to :controller => :dashboard, :action => :alarm_courses, :params => {:opt => "delayed_sessions"} do%>
                                         <i class="fa fa-clock-o info"></i><strong><%=alerts[:late_sessions]%></strong> Cursos con sesiones atrasadas

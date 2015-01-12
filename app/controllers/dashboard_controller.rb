@@ -239,6 +239,9 @@ class DashboardController < ApplicationController
 		when "low_grades"
 			courses_list = low_grades_courses
 			@active = "low_grades"
+		when "offset_content"
+			courses_list = offset_content_courses
+			@active = "offset_content"
 		else #"low_attendance"
 			courses_list = low_attendance_courses
 			@active = "low_attendance"
@@ -284,6 +287,7 @@ class DashboardController < ApplicationController
 		courses = low_attendance_courses.map{|c| c.courseid}
 		courses << low_grades_courses.where("courseid not in (?)",courses).map{|c| c.courseid}
 		courses << delayed_sessions_courses.where("courseid not in (?)",courses).map{|c| c.courseid}
+		courses << offset_content_courses.where("courseid not in (?)", courses).map{|c| c.courseid}
 		return courses.flatten
 	end
 
@@ -301,6 +305,11 @@ class DashboardController < ApplicationController
 		min_grade = CourseAlarmParameter.where(:param_name => "approve_grade").first().value
 		min_grade = grade_to_points(min_grade)
 		return DashboardCoursesV.where("mean_grade < #{min_grade} and visible = 1 and gradetype = 2")
+	end
+
+	def offset_content_courses
+		max_offset_pages = CourseAlarmParameter.where(:param_name => "max_page_offset").first.value
+		return DashboardCoursesV.where("last_visited_page = #{max_offset_pages} and visible = 1 and gradetype = 2")
 	end
 
 	def delayed_sessions_courses

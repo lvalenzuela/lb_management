@@ -17,12 +17,12 @@ class CourseTemplate < ActiveRecord::Base
 	def adjust_template_sessions
 		last_session = CourseTemplateSession.where(:course_template_id => self.id).order("session_number DESC").first()
 		if last_session.blank?
-			create_sessions
+			create_template_sessions
 		else
 			current_total_sessions = last_session.session_number
 			if current_total_sessions < self.total_sessions
 				#Crear las sesiones que faltan
-				for session in (current_total_sessions)..(self.total_sessions)
+				for session in (current_total_sessions + 1)..(self.total_sessions)
 					CourseTemplateSession.create(:course_template_id => self.id, :session_number => session)
 				end
 			elsif current_total_sessions > self.total_sessions

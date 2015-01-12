@@ -11,10 +11,12 @@ module ApplicationHelper
 			alerts[:failing_grades] = 0
 			alerts[:failing_attendance] = 0
 			alerts[:late_sessions] = 0
+			alerts[:offset_content] = 0
 		else
 			alerts[:failing_grades] = a.courses_failing_grades ? a.courses_failing_grades : 0
 			alerts[:failing_attendance] = a.courses_failing_attendance ? a.courses_failing_attendance : 0
 			alerts[:late_sessions] = a.courses_late_sessions ? a.courses_late_sessions : 0
+			alerts[:offset_content] = a.courses_offset_content ? a.courses_offset_content : 0
 		end
 		return alerts
 	end
@@ -25,6 +27,7 @@ module ApplicationHelper
 		alerts[:failing_grades] = a.courses_failing_grades
 		alerts[:failing_attendance] = a.courses_failing_attendance
 		alerts[:late_sessions] = a.courses_late_sessions
+		alerts[:offset_content] = a.courses_offset_content
 		alerts[:alert_teachers] = a.teachers_low_performance
 		return alerts
 	end
