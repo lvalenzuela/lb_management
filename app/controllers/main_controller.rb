@@ -437,6 +437,7 @@ class MainController < ApplicationController
     def classrooms_list
         @classrooms = Classroom.all()
         @classroom = Classroom.new()
+        @locations = Location.all()
     end
 
     def create_classroom
@@ -450,6 +451,7 @@ class MainController < ApplicationController
 
     def edit_classroom
         @classroom = Classroom.find(params[:id])
+        @locations = Location.all()
     end
 
     def update_classroom
@@ -562,7 +564,7 @@ class MainController < ApplicationController
     end
 
     def classroom_params
-        params.require(:classroom).permit(:name, :location, :capacity)
+        params.require(:classroom).permit(:name, :location_id, :capacity)
     end
 
     def request_tag_params

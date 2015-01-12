@@ -20,7 +20,7 @@
 				</div>
 				<div class="col-xs-6">
 					<div class="form-group">
-						<%=f.text_field :location, :class => "form-control", :min => 0%>
+						<%=f.select :location_id, options_for_select(@locations.collect{|l| [l.name, l.id]}), {}, {:class => "form-control"}%>
 					</div>
 				</div>
 			</div>

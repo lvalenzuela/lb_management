@@ -62,7 +62,7 @@
 													<tr>
 														<td><%=cr.name%></td>
 														<td style="text-align: center;"><%=cr.capacity%></td>
-														<td><%=cr.location%></td>
+														<td><%=location_label(cr.location_id)%></td>
 														<td style="text-align: center;"><%=link_to "<i class='fa fa-edit'></i>".html_safe, {:controller => :main, :action => :edit_classroom, :params => {:id => cr.id}}, {:class => "btn btn-warning"}%></td>
 														<td style="text-align: center;"><%=link_to "<i class='fa fa-times'></i>".html_safe, {:controller => :main, :action => :delete_classroom, :params => {:id => cr.id}}, {:class => "btn btn-danger", :data => {:confirm => "Estas Seguro?"}, :method => :delete}%></td>
 													</tr>
