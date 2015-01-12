@@ -265,8 +265,13 @@ class DashboardController < ApplicationController
 	def calc_template_page_offset(registered_pages, courseid, template_sessions)
 		last_page_visited = last_non_zero_record(registered_pages)
 		current_session_number = CourseAttendanceReport.where(:courseid => courseid, :created_at => Date.today).first().current_taken_sessions
-		template_current_page = template_sessions.find_by_session_number(current_session_number).page
-		return last_page_visited - template_current_page
+		template_current_session = template_sessions.find_by_session_number(current_session_number)
+		if template_current_session.blank?
+			#el template no esta registrado
+			return last_page_visited
+		else
+			return last_page_visited - template_current_session.page
+		end
 	end
 
 	def last_non_zero_record(record_array)
