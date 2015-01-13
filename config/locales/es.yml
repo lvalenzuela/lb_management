@@ -20,7 +20,14 @@ es:
       - day
       - year
   activerecord:
+    errors:
       models:
+        request:
+          attributes:
+            subject: 
+              blank: "El título del mensaje no puede estar vacío"
+            msg: 
+              blank: "El mensaje no puede estar vacio"
         web_user:
           attributes:
             firstname:

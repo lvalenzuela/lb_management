@@ -148,6 +148,7 @@
                 <div class="box-footer clearfix">
                     <div class="pull-right">
                         <%=link_to "<i class='fa fa-eye fa-lg'></i> Ver Detalles".html_safe, {:controller => :courses, :action => :show, :params => {:id => course.id}}, {:class => "btn btn-primary"}%>
+                        <%=link_to "<i class='fa fa-times fa-lg'></i> Eliminar".html_safe, {:controller => :courses, :action => :destroy_course, :params => {:id => course.id}}, {:class => "btn btn-danger", :data => {:confirm => "Estas Seguro?"}, :method => :delete}%>
                     </div>
                 </div>
             </div>

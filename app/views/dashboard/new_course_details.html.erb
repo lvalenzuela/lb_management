@@ -107,7 +107,7 @@
                         </div>
                         <div class="col-xs-6">
                             <div class="form-group">
-                                <%=f.select :location_id, options_for_select(@locations.collect{|l| [l.name, l.id]}),{:include_blank => true},{:class => "form-control"}%>
+                                <%=f.select :location_id, options_for_select(@locations.collect{|l| [l.name, l.id]},1),{:include_blank => true},{:class => "form-control"}%>
                             </div>
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="col-xs-6">
                             <div class="form-group">
-                                <%=f.select :classroom_matching_id, options_for_select(@classroom_matchings.collect{|c| [c.matching_label,c.id]}), {}, {:class => "form-control"}%>
+                                <%=render :partial => "classroom_matching_selector", :locals => {:classroom_matchings => @classroom_matchings, :selected => nil}%>
                             </div>
                         </div>
                     </div>
@@ -227,6 +227,9 @@
 <%=form_tag product_selector_options_dashboard_index_path, :remote => true, :id => "product_options_form" do%>
 <%=hidden_field_tag :coursemode%>
 <%end%>
+<%=form_tag classroom_matching_selector_options_dashboard_index_path, :remote => true, :id => "classroom_matching_options_form" do%>
+<%=hidden_field_tag :courselocation%>
+<%end%>
 
 <script>
 $( "#course_details_course_level_id" ).change(function(){
@@ -239,6 +242,12 @@ $( "#course_details_mode" ).change(function(){
     var mode = $("#course_details_mode option:selected").val();
     $( "#coursemode" ).val(mode);
     $( "#product_options_form" ).submit();
+});
+
+$( "#course_details_location_id").change(function(){
+    var location = $( "#course_details_location_id option:selected").val();
+    $("#courselocation").val(location);
+    $("#classroom_matching_options_form").submit();
 });
 
 $("#new-course-btn").click(function(){

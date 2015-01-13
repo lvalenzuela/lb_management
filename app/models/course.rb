@@ -1,7 +1,7 @@
 class Course < ActiveRecord::Base
 	before_create :set_defaults
 	after_create :init_instance
-	before_destroy :destroy_features, :destroy_sessions
+	before_destroy :destroy_sessions
 	validates :coursename, :mode, :course_level_id, :course_template_id, :zoho_product_id, :presence => true
 
 	def set_defaults
@@ -21,10 +21,6 @@ class Course < ActiveRecord::Base
 		#3. Cursos
 		#4. Comercial
 		Context.create(:typeid => 3, :instanceid => self.id)
-	end
-
-	def destroy_features
-		CourseFeature.where(:course_id => self.id).destroy_all
 	end
 
 	def destroy_sessions

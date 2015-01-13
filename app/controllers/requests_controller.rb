@@ -174,6 +174,7 @@ class RequestsController < ApplicationController
 			@priorities = RequestPriority.all()
 			@area = Area.find(@request.areaid)
 			@area_tags = RequestTag.where(:area_id => @request.areaid)
+			@selected_tag = RequestTag.find(@request.tagid)
 			flash[:notice] = "No se pudo registrar la solicitud."
 			render "new_request"
 		end

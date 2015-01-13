@@ -73,6 +73,19 @@ class DashboardController < ApplicationController
         end
     end
 
+    def classroom_matching_selector_options
+    	#si se selecciona la sede de coronel pereira, se dan opciones de classroom matchings.
+    	#en otro caso, el arreglo se deja nulo
+    	if params[:courselocation].to_i == 1 #sede coronel pereira
+        	@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+        else
+        	@classroom_matchings = nil
+        end
+        respond_to do |format|
+            format.js
+        end
+    end
+
 	def new_course_details
 		@moodle_course = MoodleCourseV.find_by_moodleid(params[:courseid])
 		@course_details = Course.new()
@@ -93,6 +106,7 @@ class DashboardController < ApplicationController
 		@course_details = Course.create(course_details_params)
 		if @course_details.valid?
 			@course_details.course_status_id = 3 #curso en desarrollo
+			@course_details.end_date = replicate_moodle_course_sessions(@course_details.moodleid,@course_details.id)
 			@course_details.save!
 			redirect_to :action => :course, :id => @course_details.moodleid
 		else
@@ -261,6 +275,23 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
+	def replicate_moodle_course_sessions(courseid, commerce_course_id)
+		moodle_sessions = MoodleCourseSessionV.where(:courseid => courseid).order("session_date ASC")
+		counter = 1
+		moodle_sessions.each do |session|
+			new_session = CourseSession.new()
+			new_session.commerce_course_id = commerce_course_id
+			new_session.moodle_course_id = courseid
+			new_session.startdatetime = session.session_date
+			new_session.session_number = counter
+			new_session.save!
+			#se aumenta el contador y se guarda la ultima fecha registrada
+			counter+=1
+		end
+		#retorna la fecha de la última sesion registrada
+		return moodle_sessions.last.session_date
+	end
 
 	def calc_template_page_offset(registered_pages, courseid, template_sessions)
 		last_page_visited = last_non_zero_record(registered_pages)

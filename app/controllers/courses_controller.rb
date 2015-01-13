@@ -507,6 +507,13 @@ class CoursesController < ApplicationController
         redirect_to :action => :index
     end
 
+    def destroy_course
+        c = Course.find(params[:id])
+        #curso eliminado
+        c.destroy
+        redirect_to :action => :index, :opt => "cancel"
+    end
+
 
     def course_templates
         @templates = CourseTemplate.where(:deleted => 0).page(params[:page]).per(10)

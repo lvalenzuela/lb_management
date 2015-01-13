@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       post "create_course_details"
       post "product_selector_options"
       post "template_selector_options"
+      post "classroom_matching_selector_options"
       post "pair_summit_moodle_course"
       post "unpair_summit_moodle_course"
       #detalles de estudiantes
@@ -40,6 +41,7 @@ Rails.application.routes.draw do
       get "new"
       get "show"
       post "create"
+      delete "destroy_course"
       get "import_courses"
       post "bulk_course_creation"
       get "edit"
