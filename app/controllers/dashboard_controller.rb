@@ -107,6 +107,8 @@ class DashboardController < ApplicationController
 		if @course_details.valid?
 			@course_details.course_status_id = 3 #curso en desarrollo
 			@course_details.end_date = replicate_moodle_course_sessions(@course_details.moodleid,@course_details.id)
+			@course_details.main_teacher_id = get_teacher_for_moodle_course(@course_details.moodleid)
+			@course_details.students_qty = get_students_qty_for_moodle_course(@course_details.moodleid)
 			@course_details.save!
 			redirect_to :action => :course, :id => @course_details.moodleid
 		else
@@ -136,6 +138,8 @@ class DashboardController < ApplicationController
 		moodle_course = MoodleCourseV.find(params[:moodleid])
 		summit_course = Course.find(moodle_course.summitid)
 		summit_course.moodleid = nil
+		#el curso es ocultado
+		summit_course.course_status_id = 1 #hidden
 		summit_course.save!
 		redirect_to :action => :course, :id => moodle_course.moodleid
 	end
@@ -275,6 +279,17 @@ class DashboardController < ApplicationController
 	end
 
 	private
+
+	def get_students_qty_for_moodle_course(courseid)
+		#retorna la cantidad de estudiantes registrados en el curso
+		#segun el ultimo reporte de asistencia obtenido
+		return StudentAttendanceReport.where(:courseid => courseid, :created_at => Date.today).count("distinct userid")
+	end
+
+	def get_teacher_for_moodle_course(courseid)
+		#retorna el primer profesor asignado al curso segun la vista de moodle
+		return MoodleRoleAssignationV.where(:courseid => courseid, :roleid => 9).first().userid
+	end
 
 	def replicate_moodle_course_sessions(courseid, commerce_course_id)
 		moodle_sessions = MoodleCourseSessionV.where(:courseid => courseid).order("session_date ASC")

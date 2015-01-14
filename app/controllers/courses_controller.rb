@@ -142,30 +142,39 @@ class CoursesController < ApplicationController
     end
 
     def modify_session_data
-        if !params[:classroom_match].blank? && !params[:start_date].blank?
-            p_colitions = Course.where("classroom_matching_id = #{params[:classroom_match]} and '#{params[:start_date]}' between start_date and end_date")
-            if !p_colitions.blank?
-                flash[:notice] = "<strong>Error!</strong><br> Ya hay un curso con clases en la fecha seleccionada. Por favor, seleccione otra fecha de inicio u otro horario."
-                redirect_to :action => :session_data, :id => params[:courseid]
-            else
-                course = Course.find(params[:courseid])
-                if available_date_for_course(params[:classroom_match], params[:start_date], course.course_template_id)
-                    #guardar datos de la sesion
-                    course.start_date = params[:start_date]
-                    course.classroom_matching_id = params[:classroom_match]
-                    course.save!
-                    #eliminacion de las sesiones antiguas del curso, si es que las hay
-                    CourseSession.where(:commerce_course_id => course.id).destroy_all
-                    create_course_sessions(course)
-                    redirect_to :action => :assign_teacher, :id => course.id
-                else
-                    flash[:notice] = "<strong>Error!</strong><br> Existen cursos con horarios asignados para las fechas seleccionadas. Por favor, seleccione otra fecha de inicio u otro horario."
-                    redirect_to :action => :session_data, :id => params[:courseid]
-                end
-            end
+        if params[:outside_course]
+            #el curso se desarrolla en las oficinas del cliente, por lo tanto no se le
+            #puede asignar un horario y una sala
+            course = Course.find(params[:courseid])
+            course.classroom_matching_id = 0
+            course.save!
+            redirect_to :action => :assign_teacher, :id => course.id
         else
-            flash[:notice] = "<strong>Error!</strong><br> Debe seleccionar un horario y una fecha de inicio."
-            redirect_to :action => :session_data, :id => params[:courseid]
+            if !params[:classroom_match].blank? && !params[:start_date].blank?
+                p_colitions = Course.where("classroom_matching_id = #{params[:classroom_match]} and '#{params[:start_date]}' between start_date and end_date")
+                if !p_colitions.blank?
+                    flash[:notice] = "<strong>Error!</strong><br> Ya hay un curso con clases en la fecha seleccionada. Por favor, seleccione otra fecha de inicio u otro horario."
+                    redirect_to :action => :session_data, :id => params[:courseid]
+                else
+                    course = Course.find(params[:courseid])
+                    if available_date_for_course(params[:classroom_match], params[:start_date], course.course_template_id)
+                        #guardar datos de la sesion
+                        course.start_date = params[:start_date]
+                        course.classroom_matching_id = params[:classroom_match]
+                        course.save!
+                        #eliminacion de las sesiones antiguas del curso, si es que las hay
+                        CourseSession.where(:commerce_course_id => course.id).destroy_all
+                        create_course_sessions(course)
+                        redirect_to :action => :assign_teacher, :id => course.id
+                    else
+                        flash[:notice] = "<strong>Error!</strong><br> Existen cursos con horarios asignados para las fechas seleccionadas. Por favor, seleccione otra fecha de inicio u otro horario."
+                        redirect_to :action => :session_data, :id => params[:courseid]
+                    end
+                end
+            else
+                flash[:notice] = "<strong>Error!</strong><br> Debe seleccionar un horario y una fecha de inicio."
+                redirect_to :action => :session_data, :id => params[:courseid]
+            end
         end
     end
 
@@ -218,65 +227,62 @@ class CoursesController < ApplicationController
             @teachers = TeacherV.where(:id => teacher_list)
             #listado de profesores disponibles en horario extra
             @teachers_extra = TeacherV.where(:id => extra_teachers_list)
+        end
 
-            gon.events = []
+        #sesiones del curso para mostrar en el calendario
+        gon.events = []
 
-            #sesiones del nuevo curso
-            c_sessions = CourseSession.where(:commerce_course_id => @course.id)
-            c_sessions.each do |cs|
+        #sesiones del nuevo curso
+        c_sessions = CourseSession.where(:commerce_course_id => @course.id)
+        c_sessions.each do |cs|
+            gon.events << {
+                "title" => @course.coursename,
+                "start" => cs.startdatetime,
+                "allDay" => false,
+                "backgroundColor" => "#0073b7",#azul
+                "borderColor" => "#0073b7"
+            }
+        end
+
+        if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
+            #sesiones de la simulacion [cursos moodle]
+            @simulated = TeacherV.find(params[:teacherid])
+            t_sessions = teacher_courses_sessions(params[:teacherid])
+            t_sessions.each do |s|
                 gon.events << {
-                    "title" => @course.coursename,
-                    "start" => cs.startdatetime,
+                    "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
+                    "start" => s.session_date,
                     "allDay" => false,
-                    "backgroundColor" => "#0073b7",#azul
-                    "borderColor" => "#0073b7"
+                    "backgroundColor" => "#f56954",#rojo
+                    "borderColor" => "#f56954"
                 }
             end
-
-            if params[:teacherid] && params[:teacherid].to_i != @course.main_teacher_id
-                #sesiones de la simulacion [cursos moodle]
-                @simulated = TeacherV.find(params[:teacherid])
-                t_sessions = teacher_courses_sessions(params[:teacherid])
-                t_sessions.each do |s|
-                    gon.events << {
-                        "title" => MoodleCourseV.find_by_moodleid(s.courseid).coursename,
-                        "start" => s.session_date,
-                        "allDay" => false,
-                        "backgroundColor" => "#f56954",#rojo
-                        "borderColor" => "#f56954"
-                    }
-                end
-                #sesiones de la simulación[Cursos summit]
-                s_sessions = teacher_summit_courses_sessions(params[:teacherid])
-                s_sessions.each do |ss|
-                    gon.events << {
-                        "title" => Course.find(ss.commerce_course_id).coursename,
-                        "start" => ss.startdatetime,
-                        "allDay" => false,
-                        "backgroundColor" => "#f39c12",#Amarillo
-                        "borderColor" => "#f39c12"
-                    }
-                end
-                @moodle_collisions = find_collisions(t_sessions.map{|moodle| moodle.session_date}, c_sessions.map{|new_course| new_course.startdatetime})
-                @summit_collisions = find_collisions(s_sessions.map{|summit| summit.startdatetime}, c_sessions.map{|new_course| new_course.startdatetime})
+            #sesiones de la simulación[Cursos summit]
+            s_sessions = teacher_summit_courses_sessions(params[:teacherid])
+            s_sessions.each do |ss|
+                gon.events << {
+                    "title" => Course.find(ss.commerce_course_id).coursename,
+                    "start" => ss.startdatetime,
+                    "allDay" => false,
+                    "backgroundColor" => "#f39c12",#Amarillo
+                    "borderColor" => "#f39c12"
+                }
             end
-            if @course.main_teacher_id
-                #sesiones del profesor que ya tiene el curso asignado
-                m_sessions = teacher_courses_sessions(@course.main_teacher_id)
-                m_sessions.each do |ms|
-                    gon.events << {
-                        "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
-                        "start" => ms.session_date,
-                        "allDay" => false,
-                        "backgroundColor" => "#00a65a",#verde
-                        "borderColor" => "#00a65a"
-                    }
-                end
+            @moodle_collisions = find_collisions(t_sessions.map{|moodle| moodle.session_date}, c_sessions.map{|new_course| new_course.startdatetime})
+            @summit_collisions = find_collisions(s_sessions.map{|summit| summit.startdatetime}, c_sessions.map{|new_course| new_course.startdatetime})
+        end
+        if @course.main_teacher_id
+            #sesiones del profesor que ya tiene el curso asignado
+            m_sessions = teacher_courses_sessions(@course.main_teacher_id)
+            m_sessions.each do |ms|
+                gon.events << {
+                    "title" => MoodleCourseV.find_by_moodleid(ms.courseid).coursename,
+                    "start" => ms.session_date,
+                    "allDay" => false,
+                    "backgroundColor" => "#00a65a",#verde
+                    "borderColor" => "#00a65a"
+                }
             end
-            @week_sessions = CourseSessionWeekday.where(:course_id => @course.id)
-        else
-            flash[:notice] = "Debe definir el horario en que se realizará el curso"
-            redirect_to :action => :session_data, :id => @course.id
         end
     end
 

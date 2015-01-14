@@ -35,7 +35,7 @@
         <tr>
             <th style="width:200px;">Sesiones</th>
             <td>
-                <%=course.classroom_matching_id ? ClassroomMatching.find(course.classroom_matching_id).matching_label : ""%>
+                <%=course.classroom_matching_id ? ClassroomMatching.find(course.classroom_matching_id).matching_label : "-"%>
             </td>
         </tr>
     </table>

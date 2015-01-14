@@ -151,7 +151,7 @@ class DetailedCourseReportPdf < Prawn::Document
 
 	def course_members(courseid)
 		#listado de alumnos
-		students = StudentGradesReport.where(:courseid => courseid, :created_at => Date.today).group(:userid).map{|s| s.userid}
+		students = StudentGradesReport.where("courseid = #{courseid} and created_at = '#{Date.today}' and finalgrade is not null").group(:userid).map{|s| s.userid}
 		return StudentV.where(:id => students)
 	end
 

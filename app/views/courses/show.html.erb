@@ -78,7 +78,11 @@
                                 </tr>
                                 <tr>
                                     <td><b>ID Web de Estudiantes</b></td>
-                                    <td><%=@course.moodleid%></td>
+                                    <%if @course.moodleid%>
+                                        <td><%=@course.moodleid%> <%=link_to "Ver Curso", {:controller => :dashboard, :action => :course, :params => {:id => @course.moodleid}}%></td>
+                                    <%else%>
+                                        <td>-</td>
+                                    <%end%>
                                 </tr>
                             </table>
                         </div>
