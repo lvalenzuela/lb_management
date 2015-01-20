@@ -1,0 +1,32 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "sales"%>
+<section class="content-header">
+    <h1>
+        Promociones de Longbourn
+        <small>Listado de Promociones</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="active">Promociones</li>
+    </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-xs-8 col-xs-offset-2">
+			<div class="box box-primary">
+				<div class="box-header">
+					<h3 class="box-title">Nueva Promocion</h3>
+				</div>
+				<%=form_for :promotion, :url => {} do |f|%>
+				<div class="box-body">
+				</div>
+				<div class="box-footer clearfix">
+					<div class="pull-right">
+						<%=f.submit "Crear Promocion", :class => "btn btn-primary"%>
+					</div>
+				</div>
+				<%end%>
+			</div>
+		</div>
+	</div>
+</section>

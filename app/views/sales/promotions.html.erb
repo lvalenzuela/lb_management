@@ -1,0 +1,66 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "sales"%>
+<section class="content-header">
+    <h1>
+        Promociones de Longbourn
+        <small>Listado de Promociones</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="active">Promociones</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-xs-12">
+        	<div class="box box-primary">
+        		<div class="box-header">
+        			<h3 class="box-title">Listado de Promociones de Longbourn</h3>
+        			<div class="box-tools">
+        				<div class="pull-right">
+        					<%=link_to "Nueva Promocion", {:controller => :sales, :action => :new_promotion}, :class => "btn btn-default"%>
+        				</div>
+        			</div>
+        		</div>
+        		<div class="box-body">
+        			<table class="table table-striped">
+        				<thead>
+        					<tr>
+	        					<th>ID</th>
+	        					<th>Promocion</th>
+	        					<th>Fecha de Inicio</th>
+	        					<th>Fecha de Término</th>
+	        					<th>Descuento Asociado</th>
+	        					<th>Editar</th>
+	        					<th>Eliminar</th>
+        					</tr>
+        				</thead>
+        				<tbody>
+        					<%if @promotions.blank?%>
+        					<tr>
+        						<td colspan="7">No hay promociones para mostrar</td>
+        					</tr>
+        					<%else%>
+								<%@promotions.each do |promo|%>
+								<tr>
+									<td><%=promo.id%></td>
+									<td><%=promo.shortname%></td>
+									<td><%=l(promo.start_date, :format => "%d de %B del %Y")%></td>
+									<td><%=l(promo.end_date, :format => "%d de %B del %Y")%></td>
+									<td><%=promo.discount_index%></td>
+									<td><i class="fa fa-edit fa-lg"></i></td>
+									<td><i class="fa fa-times fa-lg"></i></td>
+								</tr>
+				    			<%end%>
+				    		<%end%>
+        				</tbody>
+        			</table>
+        		</div>
+        		<div class="box-footer">
+        		</div>
+        	</div>
+    	</div>
+    </div>
+</section>

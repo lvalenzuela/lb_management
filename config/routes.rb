@@ -1,6 +1,18 @@
 Rails.application.routes.draw do
   root 'requests#sent_requests'
 
+  resources :sales do
+    collection do
+      get "index"
+      get "promotions"
+      get "new_promotion"
+      post "create_promotion"
+      get "edit_promotion"
+      post "update_promotion"
+      get "delete_promotion"
+    end
+  end
+
   resources :dashboard do
     collection do
       #detalles de cursos
