@@ -1,0 +1,52 @@
+<!-- Barra de navegacion superior e izquierda -->
+<%= render "shared_partials/navigation_menu", :active_item => "sales"%>
+<section class="content-header">
+    <h1>
+        Atributos de Promociones
+        <small><%=@promotion.shortname%></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li>Promociones</li>
+        <li>Configuración de Promociones</li>
+        <li class="active">Atributos de Promociones</li>
+    </ol>
+</section>
+
+<section class="content">    
+	<div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Nuevo Atributo</h3>
+                </div>
+                <%=form_for :promotion_attribute, :url => {:controller => :sales, :action => :update_promotion_attribute} do |f|%>
+                <%=f.hidden_field :id, :value => @promotion_attribute.id%>
+                <%=f.hidden_field :promotion_id, :value => @promotion_attribute.promotion_id%>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>Atributo</label>
+                                <%=f.text_field :attribute_name, :value => @promotion_attribute.attribute_name, :class => "form-control"%>
+                            </div>
+                        </div>
+                        <div class="col-xs-8">
+                            <div class="form-group">
+                                <label>Descripcion</label>
+                                <%=f.text_field :attribute_description, :value => @promotion_attribute.attribute_description, :class => "form-control"%>
+                            </div>
+                        </div>
+                    </div>                   
+                </div>
+                <div class="box-footer clearfix">
+                	<label>Habilitar</label>
+                	<%=f.check_box :enabled, :value => @promotion_attribute.enabled%>
+                    <div class="pull-right">
+                        <%=f.submit "Crear Atributo", :class => "btn btn-primary btn-lg"%>
+                    </div>
+                </div>
+                <%end%>
+            </div>
+        </div>
+    </div>
+</section>

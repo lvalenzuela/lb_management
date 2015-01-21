@@ -32,9 +32,9 @@
 	        					<th>Promocion</th>
 	        					<th>Fecha de Inicio</th>
 	        					<th>Fecha de Término</th>
-	        					<th>Descuento Asociado</th>
-	        					<th>Editar</th>
-	        					<th>Eliminar</th>
+	        					<th style="width: 160px;">Descuento Asociado</th>
+	        					<th style="text-align: center; width: 80px;">Editar</th>
+	        					<th style="text-align: center; width: 80px;">Eliminar</th>
         					</tr>
         				</thead>
         				<tbody>
@@ -46,12 +46,16 @@
 								<%@promotions.each do |promo|%>
 								<tr>
 									<td><%=promo.id%></td>
-									<td><%=promo.shortname%></td>
+									<td><%=link_to promo.shortname, :controller => :sales, :action => :promotion_config, :params => {:id => promo.id}%></td>
 									<td><%=l(promo.start_date, :format => "%d de %B del %Y")%></td>
 									<td><%=l(promo.end_date, :format => "%d de %B del %Y")%></td>
-									<td><%=promo.discount_index%></td>
-									<td><i class="fa fa-edit fa-lg"></i></td>
-									<td><i class="fa fa-times fa-lg"></i></td>
+									<td><%=promo.discount_index%> %</td>
+									<td style="text-align: center;">
+                                        <%=link_to "<i class='fa fa-edit fa-lg'></i>".html_safe, {:controller => :sales, :action => :edit_promotion, :params => {:id  => promo.id}}%>
+                                    </td>
+									<td style="text-align: center;">
+                                        <%=link_to "<i class='fa fa-times fa-lg'></i>".html_safe, {:controller => :sales, :action => :delete_promotion, :params => {:id => promo.id}}, {:method => :delete, :data => {:confirm => "Está seguro de que desea eliminar esta promocion?"}}%>
+                                    </td>
 								</tr>
 				    			<%end%>
 				    		<%end%>

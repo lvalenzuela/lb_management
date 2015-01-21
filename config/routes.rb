@@ -9,7 +9,12 @@ Rails.application.routes.draw do
       post "create_promotion"
       get "edit_promotion"
       post "update_promotion"
-      get "delete_promotion"
+      delete "delete_promotion"
+      get "promotion_config"
+      post "create_promotion_attribute"
+      get "edit_promotion_attribute"
+      post "update_promotion_attribute"
+      get "disable_promotion_attribute"
     end
   end
 
