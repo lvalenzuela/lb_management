@@ -2,6 +2,9 @@ class UsersController < ApplicationController
 	protect_from_forgery
 	require 'bcrypt'
 	layout :resolve_layout
+
+	#modulo con funciones para copiar cursos desde moodle a summit
+	include CourseDetails 
 	
 	def index
 	    #Si el usuario ya esta logeado, se redirige al panel de control
@@ -160,6 +163,94 @@ class UsersController < ApplicationController
 		end
 	end
 
+    def template_selector_options
+        @templates = CourseTemplate.where(:course_level_id => params[:courselevel], :deleted => 0)
+        respond_to do |format|
+            format.js
+        end
+    end
+
+    def product_selector_options
+        @products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => params[:coursemode])
+        respond_to do |format|
+            format.js
+        end
+    end
+
+    def classroom_matching_selector_options
+    	#si se selecciona la sede de coronel pereira, se dan opciones de classroom matchings.
+    	#en otro caso, el arreglo se deja nulo
+    	if params[:courselocation].to_i == 1 #sede coronel pereira
+        	@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+        else
+        	@classroom_matchings = nil
+        end
+        respond_to do |format|
+            format.js
+        end
+    end
+
+	def register_course_details
+		@moodle_course = MoodleCourseV.find_by_moodleid(params[:moodleid])
+		@course_details = Course.new()
+
+        @locations = Location.all()
+    	@types = CourseType.all()
+    	@course = Course.new()
+        @course_levels = CourseLevel.all()
+        @modes = CourseMode.where(:enabled => true)
+        @templates = nil
+        #classroom_matchings
+        used_matchings = Course.where("'#{@moodle_course.start_date}' between start_date and end_date and course_status_id in (2,3)").map{|c| c.classroom_matching_id}
+        @classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1",used_matchings.nil? ? used_matchings : [0])
+	end
+
+	def create_course_details
+		@course_details = Course.create(course_details_params)
+		if @course_details.valid?
+			@course_details.course_status_id = 3 #curso en desarrollo
+			@course_details.end_date = replicate_moodle_course_sessions(@course_details.moodleid,@course_details.id)
+			@course_details.main_teacher_id = get_teacher_for_moodle_course(@course_details.moodleid)
+			@course_details.students_qty = get_students_qty_for_moodle_course(@course_details.moodleid)
+			@course_details.save!
+			redirect_to :action => :show_course, :id => @course_details.moodleid
+		else
+			@moodle_course = MoodleCourseV.find_by_moodleid(params[:course_details][:moodleid])
+	        @locations = Location.all()
+	    	@types = CourseType.all()
+	    	@course = Course.new()
+	        @course_levels = CourseLevel.all()
+	        @modes = CourseMode.where(:enabled => true)
+	        @templates = nil
+	        #classroom_matchings
+	        used_matchings = Course.where("'#{@moodle_course.start_date}' between start_date and end_date and course_status_id in (2,3)").map{|c| c.classroom_matching_id}
+	        @classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1",used_matchings.nil? ? used_matchings : [0])
+	        @summit_courses = Course.where(:moodleid => nil, :course_status_id => [2,3])
+	        render :register_course_details
+		end
+	end
+
+	def edit_course_details
+		@moodle_course = MoodleCourseV.find_by_moodleid(params[:moodleid])
+		@course_details = Course.find(@moodle_course.summitid)
+		@locations = Location.all()
+		@types = CourseType.all()
+		@course_levels = CourseLevel.all()
+		@modes = CourseMode.all()
+		#cosas que se pueden editar
+		@templates = CourseTemplate.where(:course_level_id => @course_details.course_level_id, :deleted => 0)
+		@products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course_details.mode)
+		if @course_details.location_id == 1
+			@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+		else
+			@classroom_matchings = nil
+		end
+	end
+
+	def update_course_details
+		#pendiente
+	end
+
 	def show_student
 		if check_own_course(params[:courseid])
 			@course_grades = StudentGradesReport.where("userid = #{params[:studentid]} and courseid = #{params[:courseid]} and created_at = curdate()").order("sortorder ASC")
@@ -194,6 +285,10 @@ class UsersController < ApplicationController
 	end
 
 	private
+
+	def course_details_params
+		params.require(:course_details).permit(:moodleid, :coursename, :description, :location_id, :course_type_id, :students_qty, :zoho_product_id, :course_template_id, :mode, :course_level_id, :classroom_matching_id, :start_date)
+	end
 
 	def my_courses_list
 		return MoodleRoleAssignationV.where(:userid => current_user.id, :roleid => [4,9]).map{|u| u.courseid}

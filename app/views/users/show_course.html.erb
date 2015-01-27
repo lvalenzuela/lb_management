@@ -78,6 +78,13 @@
 			<div class="box box-warning">
 				<div class="box-header">
 					<h3 class="box-title">Información Adicional</h3>
+					<div class="box-tools">
+						<%if @course.summitid%>
+							<%=link_to "Modificar Datos de Curso", {:action => :edit_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :stle => "color: #FFF;"}%>
+						<%else%>
+							<%=link_to "Instanciar Curso en Summit", {:action => :register_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
+						<%end%>
+					</div>
 				</div>
 				<div class="box-body table-responsive">
 					<div class="row">

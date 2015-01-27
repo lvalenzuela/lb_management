@@ -1,0 +1,1 @@
+$("#template_options").replaceWith("<%= escape_javascript(render(:partial => 'template_selector', :locals => {:templates => @templates, :selected => nil}))%>");

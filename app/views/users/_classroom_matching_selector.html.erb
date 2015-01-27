@@ -1,0 +1,7 @@
+<div id="classroom_matching_options">
+	<%if classroom_matchings%>
+		<%=select_tag "course_details[classroom_marching_id]", options_for_select(classroom_matchings.collect{|t| [t.matching_label,t.id]}, selected), {:class => "form-control"}%>
+	<%else%>
+		<%=select_tag "course_details[classroom_matching_id]", options_for_select([nil]), {:class => "form-control", :prompt => "No disponible", :disabled => true}%>
+	<%end%>
+</div>

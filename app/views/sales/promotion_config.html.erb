@@ -43,7 +43,7 @@
                             <%else%>
                                 <%@promotion_attributes.each do |att|%>
                                 <tr>
-                                    <td><%=att.id%></td>
+                                    <td><%=att.sort_order%></td>
                                     <td><%=att.attribute_name%></td>
                                     <td><%=att.attribute_description%></td>
                                     <td><%=att.enabled ? "Habilitado" : "Desabilitado"%></td>

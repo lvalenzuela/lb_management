@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150121181617) do
+ActiveRecord::Schema.define(version: 20150123132909) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -518,6 +518,7 @@ ActiveRecord::Schema.define(version: 20150121181617) do
   end
 
   create_table "promotion_user_attributes", force: true do |t|
+    t.integer  "sort_order"
     t.integer  "promotion_id"
     t.string   "attribute_name"
     t.string   "attribute_description"
@@ -541,7 +542,7 @@ ActiveRecord::Schema.define(version: 20150121181617) do
     t.string   "description"
     t.date     "start_date"
     t.date     "end_date"
-    t.decimal  "discount_index", precision: 3, scale: 2
+    t.integer  "discount_index"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

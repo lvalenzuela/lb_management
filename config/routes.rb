@@ -295,6 +295,13 @@ Rails.application.routes.draw do
       #panel de usuarios
       get "my_calendar"
       get "my_courses"
+      get "register_course_details"
+      post "product_selector_options"
+      post "template_selector_options"
+      post "classroom_matching_selector_options"
+      post "create_course_details"
+      get "edit_course_details"
+      post "update_course_details"
       get "my_courses_alarms"
       get "show_course"
       get "show_student"
