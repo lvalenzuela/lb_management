@@ -31,4 +31,9 @@ module CourseDetails
 		#retorna la fecha de la última sesion registrada
 		return moodle_sessions.last.session_date
 	end
+
+	def clear_course_sessions(courseid, commerce_course_id)
+		#Elimina las sessiones de un curso en summit.
+		CourseSession.where(:moodle_course_id => courseid, :commerce_course_id => commerce_course_id).destroy_all
+	end
 end

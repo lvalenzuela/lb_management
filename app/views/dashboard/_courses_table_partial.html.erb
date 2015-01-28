@@ -3,9 +3,10 @@
 		<tr>
 			<th style="width: 50px;">ID</th>
 			<th>Nombre</th>
+			<th style="width: 100px; text-align: center;">Detalles</th>
 			<th style="width: 100px; text-align: center;">Prom. Notas</th>
 			<th style="width: 100px; text-align: center;">Reprobando</th>
-			<th style="width: 140px; text-align: center;">Prom. Asistencia</th>
+			<th style="width: 100px; text-align: center;">Prom. Asistencia</th>
 			<th style="width: 100px; text-align: center;">Bajo <%=min_attendance%>%</th>
 			<th style="width: 100px; text-align: center;">Sesiones Registradas</th>
 			<th style="width: 100px; text-align: center;">Total Sesiones</th>
@@ -26,6 +27,7 @@
 					<%else%>
 					<td><%=link_to c.coursename.truncate(30), :controller => :dashboard, :action => :course, :params => {:id => c.courseid}%></td>
 					<%end%>
+					<td style="text-align: center;"><%=c.summitid ? "<i class='fa fa-check fa-lg'></i>".html_safe : "<i class='fa fa-times fa-lg'></i>".html_safe%></td>
 					<td style="text-align: center;"><span class="badge <%=grade_badge_class(c.mean_grade,c.gradetype)%>"><%=dashboard_grade_parser(c.mean_grade, c.gradetype.to_i)%></span></td>
 					<td style="text-align: center;"><%=failing_grades_students(c)%></td>
 					<td style="text-align: center;"><span class="badge <%=attendance_badge_class(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0)%>"><%=number_with_precision(c.avg_attendance_ratio ? c.avg_attendance_ratio*100 : 0, :precision => 1)%>%</span></td>

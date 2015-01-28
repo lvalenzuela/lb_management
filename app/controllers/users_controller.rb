@@ -213,7 +213,7 @@ class UsersController < ApplicationController
 			@course_details.main_teacher_id = get_teacher_for_moodle_course(@course_details.moodleid)
 			@course_details.students_qty = get_students_qty_for_moodle_course(@course_details.moodleid)
 			@course_details.save!
-			redirect_to :action => :show_course, :id => @course_details.moodleid
+			redirect_to :action => :show_course, :courseid => @course_details.moodleid
 		else
 			@moodle_course = MoodleCourseV.find_by_moodleid(params[:course_details][:moodleid])
 	        @locations = Location.all()
@@ -248,7 +248,37 @@ class UsersController < ApplicationController
 	end
 
 	def update_course_details
-		#pendiente
+		@course_details = Course.find(params[:course_details][:id])
+		@course_details.update_attributes(course_details_params)
+		if @course_details.valid?
+			#El resto de los atributos del curso no se modifican
+			#debido a que el formulario de edicion no permite modificarlos
+			redirect_to :action => :show_course, :courseid => params[:course_details][:moodleid]
+		else
+			@moodle_course = MoodleCourseV.find_by_moodleid(params[:course_details][:moodleid])
+			@locations = Location.all()
+			@types = CourseType.all()
+			@course_levels = CourseLevel.all()
+			@modes = CourseMode.all()
+			#cosas que se pueden editar
+			@templates = CourseTemplate.where(:course_level_id => @course_details.course_level_id, :deleted => 0)
+			@products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course_details.mode)
+			if @course_details.location_id == 1
+				@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+			else
+				@classroom_matchings = nil
+			end
+			render :edit_course_details
+		end
+	end
+
+	def update_course_calendar
+		course_details = Course.find(params[:id])
+		clear_course_sessions(course_details.moodleid, course_details.id)
+		#si cambian las sesiones en moodle, tambien cambiara la fecha de termino del curso
+		course_details.end_date = replicate_moodle_course_sessions(course_details.moodleid,course_details.id)
+		course_details.save!
+		redirect_to :action => :show_course, :courseid => course_details.moodleid
 	end
 
 	def show_student

@@ -80,7 +80,7 @@
 					<h3 class="box-title">Información Adicional</h3>
 					<div class="box-tools">
 						<%if @course.summitid%>
-							<%=link_to "Modificar Datos de Curso", {:action => :edit_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :stle => "color: #FFF;"}%>
+							<%=link_to "Modificar Datos de Curso", {:action => :edit_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :style => "color: #FFF;"}%>
 						<%else%>
 							<%=link_to "Instanciar Curso en Summit", {:action => :register_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
 						<%end%>
@@ -102,6 +102,10 @@
 									<tr>
 										<th>Fecha de Inicio</th>
 										<td><%=l(@course.start_date, :format => "%d de %B del %Y")%></td>
+									</tr>
+									<tr>
+										<th>Fecha de Término</th>
+										<td><%=@course.end_date ? l(@course.end_date, :format => "%d de %B del %Y") : "-"%></td>
 									</tr>
 									<tr>
 										<th>Sence</th>

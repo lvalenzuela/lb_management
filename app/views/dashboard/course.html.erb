@@ -82,10 +82,7 @@
 					<h3 class="box-title">Información Adicional</h3>
 					<div class="box-tools">
 						<%if @course.summitid%>
-							<%=form_tag :action => :unpair_summit_moodle_course do%>
-								<%=hidden_field_tag :moodleid, @course.moodleid%>
-								<%=submit_tag "Desasociar con Curso Summit", :class => "btn btn-danger btn-sm pull-right"%>
-							<%end%>
+							<%=link_to "Editar Detalles de Curso", {:action => :edit_course_details, :params => {:moodleid => @course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :style => "color: #FFF;"}%>
 						<%else%>
 							<%=link_to "Asociar con datos de Summit", {:controller => :dashboard, :action => :new_course_details, :params => {:courseid => @course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
 						<%end%>
@@ -106,7 +103,11 @@
 									</tr>
 									<tr>
 										<th>Fecha de Inicio</th>
-										<td><%=l(@course.start_date, :format => "%d de %B del %Y")%></td>
+										<td><%=@course.start_date ? l(@course.start_date, :format => "%d de %B del %Y") : "-"%></td>
+									</tr>
+									<tr>
+										<th>Fecha de Término</th>
+										<td><%=@course.end_date ? l(@course.end_date, :format => "%d de %B del %Y") : "-"%></td>
 									</tr>
 									<tr>
 										<th>Sence</th>

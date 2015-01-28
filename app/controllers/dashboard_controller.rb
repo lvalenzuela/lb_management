@@ -137,14 +137,54 @@ class DashboardController < ApplicationController
 		redirect_to :action => :course, :id => params[:moodle_id]
 	end
 
-	def unpair_summit_moodle_course
-		moodle_course = MoodleCourseV.find(params[:moodleid])
-		summit_course = Course.find(moodle_course.summitid)
-		summit_course.moodleid = nil
-		#el curso es ocultado
-		summit_course.course_status_id = 1 #hidden
-		summit_course.save!
-		redirect_to :action => :course, :id => moodle_course.moodleid
+	def edit_course_details
+		@moodle_course = MoodleCourseV.find_by_moodleid(params[:moodleid])
+		@course_details = Course.find(@moodle_course.summitid)
+		@locations = Location.all()
+		@types = CourseType.all()
+		@course_levels = CourseLevel.all()
+		@modes = CourseMode.all()
+		#cosas que se pueden editar
+		@templates = CourseTemplate.where(:course_level_id => @course_details.course_level_id, :deleted => 0)
+		@products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course_details.mode)
+		if @course_details.location_id == 1
+			@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+		else
+			@classroom_matchings = nil
+		end
+	end
+
+	def update_course_details
+		@course_details = Course.find(params[:course_details][:id])
+		@course_details.update_attributes(course_details_params)
+		if @course_details.valid?
+			#el resto de los atributos no se actualiza
+			redirect_to :action => :course, :id => @course_details.moodleid
+		else
+			@moodle_course = MoodleCourseV.find_by_moodleid(@course_details.moodleid)
+			@locations = Location.all()
+			@types = CourseType.all()
+			@course_levels = CourseLevel.all()
+			@modes = CourseMode.all()
+			#cosas que se pueden editar
+			@templates = CourseTemplate.where(:course_level_id => @course_details.course_level_id, :deleted => 0)
+			@products = CourseModeZohoProductMap.where(:enabled => true, :course_mode_id => @course_details.mode)
+			if @course_details.location_id == 1
+				@classroom_matchings = ClassroomMatching.where("id not in (?) and enabled = 1", [0])
+			else
+				@classroom_matchings = nil
+			end
+			render :edit_course_details
+		end
+	end
+
+	def update_course_calendar
+		course_details = Course.find(params[:id])
+		clear_course_sessions(course_details.moodleid, course_details.id)
+		#si cambian las sesiones en moodle, tambien cambiara la fecha de termino del curso
+		course_details.end_date = replicate_moodle_course_sessions(course_details.moodleid,course_details.id)
+		course_details.save!
+		redirect_to :action => :course, :id => course_details.moodleid
 	end
 
 	def generate_detailed_course_report
