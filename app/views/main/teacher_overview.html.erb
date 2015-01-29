@@ -58,26 +58,26 @@
 				<div class="box-body">
 					<i>Valores de ejemplo, no tomar en cuenta</i>
 					<div class="form-group">
-						<label>Cursos Aprobando</label>
+						<label>Cursos Aprobando en Notas (<%=@user_kpi.approving_on_grades.to_s+" de "+@user_kpi.period_active_courses.to_s%>)</label>
 						<div class="progress progress-striped active">
-							<div class="progress-bar progress-bar-primary" style="width: 20%;">
-								<strong>20%</strong>
+							<div class="progress-bar progress-bar-primary" style="width: <%=progress_bar_pct(@user_kpi.approving_on_grades,@user_kpi.period_active_courses)%>;">
+								<strong><%=progress_bar_pct(@user_kpi.approving_on_grades,@user_kpi.period_active_courses)%></strong>
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label>Cursos al Día</label>
+						<label>Cursos Aprobando en Asistencia (<%=@user_kpi.approving_on_attendance.to_s+" de "+@user_kpi.period_active_courses.to_s%>)</label>
 						<div class="progress progress-striped active">
-							<div class="progress-bar progress-bar-success" style="width: 60%;">
-								<strong>60%</strong>
+							<div class="progress-bar progress-bar-warning" style="width: <%=progress_bar_pct(@user_kpi.approving_on_attendance,@user_kpi.period_active_courses)%>;">
+								<strong><%=progress_bar_pct(@user_kpi.approving_on_attendance,@user_kpi.period_active_courses)%></strong>
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label>Asistencia Promedio</label>
+						<label>Cursos al Día (<%=@user_kpi.courses_on_schedule.to_s+" de "+@user_kpi.period_active_courses.to_s%>)</label>
 						<div class="progress progress-striped active">
-							<div class="progress-bar progress-bar-warning" style="width: 50%;">
-								<strong>50%</strong>
+							<div class="progress-bar progress-bar-success" style="width: <%=progress_bar_pct(@user_kpi.courses_on_schedule,@user_kpi.period_active_courses)%>;">
+								<strong><%=progress_bar_pct(@user_kpi.courses_on_schedule,@user_kpi.period_active_courses)%></strong>
 							</div>
 						</div>
 					</div>

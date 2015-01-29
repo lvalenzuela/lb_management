@@ -176,6 +176,8 @@ class MainController < ApplicationController
             }
         end
         gon.events = calendar_events
+
+        @user_kpi = UserPerformanceIndicator.where(:user_id => @teacher.id, :year => Date.today.year, :period => 1).first() #solo como ejemplo
     end
 
     def set_user_disponibility
