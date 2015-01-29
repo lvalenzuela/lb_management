@@ -53,6 +53,7 @@
 			                    							<th>Nombre</th>
 			                    							<th style="width: 180px;">Plantilla Asociada</th>
 			                    							<th style="width: 130px; text-align: center;">Curso Sence</th>
+			                    							<th style="width: 100px; text-align: center;">Detalles</th>
 			                    							<th style="width:100px; text-align: center;">Sesiones</th>
 			                    							<th style="width: 100px; text-align: center;">Calendario</th>
 			                    						</tr>
@@ -64,6 +65,7 @@
 			                    							<td><%=link_to course.coursename, :controller => :dashboard, :action => :course, :params => {:id => course.moodleid}%></td>
 			                    							<td><%=get_template_name(course.course_template_id)%></td>
 			                    							<td style="text-align: center;"><%=check_if_sence(course.sence_idnumber).html_safe%></td>
+			                    							<td style="text-align: center;"><%=course.summitid ? "<i class='fa fa-check fa-lg'></i>".html_safe : "<i class='fa fa-times fa-lg'></i>".html_safe%></td>
 			                    							<td style="text-align: center;"><%=course_total_sessions(course.moodleid)%></td>
 			                    							<td style="text-align: center;"><%=link_to "<i class='fa fa-calendar fa-lg'></i>".html_safe, {:action => :course_calendar, :params => {:id => course.moodleid}}, {}%></td>
 			                    						</tr>

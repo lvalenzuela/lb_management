@@ -1,0 +1,93 @@
+<div class="box box-warning">
+	<div class="box-header">
+		<h3 class="box-title">Información Adicional</h3>
+		<div class="box-tools">
+			<%if controller_name == "dashboard"%>
+				<%if course.summitid%>
+					<%=link_to "Editar Detalles de Curso", {:action => :edit_course_details, :params => {:moodleid => course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :style => "color: #FFF;"}%>
+				<%else%>
+					<%=link_to "Instanciar Curso en Summit", {:controller => :dashboard, :action => :new_course_details, :params => {:courseid => course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
+				<%end%>
+			<%elsif controller_name == "users"%>
+				<%if course.summitid%>
+					<%=link_to "Editar Detalles de Curso", {:action => :edit_course_details, :params => {:moodleid => course.moodleid}}, {:class => "btn btn-danger btn-sm pull-right", :style => "color: #FFF;"}%>
+				<%else%>
+					<%=link_to "Instanciar Curso en Summit", {:action => :register_course_details, :params => {:moodleid => course.moodleid}}, {:class => "btn btn-default btn-sm pull-right"}%>
+				<%end%>
+			<%end%>
+		</div>
+	</div>
+	<div class="box-body table-responsive">
+		<div class="row">
+			<div class="col-xs-10 col-xs-offset-1">
+				<table class="table table-striped">
+					<tbody>
+						<tr>
+							<th>Nombre</th>
+							<td><%=course.coursename%></td>
+						</tr>
+						<tr>
+							<th>Libro</th>
+							<td><%=template_name(course.course_template_id)%></td>
+						</tr>
+						<tr>
+							<th>Fecha de Inicio</th>
+							<td><%=course.start_date ? l(course.start_date, :format => "%d de %B del %Y") : "-"%></td>
+						</tr>
+						<tr>
+							<th>Fecha de Término</th>
+							<td><%=course.end_date ? l(course.end_date, :format => "%d de %B del %Y") : "-"%></td>
+						</tr>
+						<tr>
+							<th>Sence</th>
+							<td><%=check_if_sence(course.sence_idnumber).html_safe%></td>
+						</tr>
+
+						<tr>
+							<th>Total de Sesiones</th>
+							<td><%=attendance_reports ? attendance_reports.total_sessions : "-"%></td>
+						</tr>
+						<tr>
+							<th>Sesiones a la Fecha</th>
+							<td><%=attendance_reports ? attendance_reports.current_booked_sessions : "-"%></td>
+						</tr>
+						<tr>
+							<th>Sesiones Registradas</th>
+							<td><%=attendance_reports ? attendance_reports.current_taken_sessions : "-"%></td>
+						</tr>
+						<tr>
+							<th>Ultima Sesion Registrada</th>
+							<td><%=attendance_reports ? l(attendance_reports.last_taken_session_date, :format =>"%d de %B del %Y") : "-"%></td>
+						</tr>
+						<tr>
+							<th>Asistencia Promedio</th>
+							<td><%=@attendance_reports ? (attendance_reports.avg_attendance_ratio*100).round(1) : "-"%>%</td>
+						</tr>
+						<tr>
+							<th>Promedio Curso</th>
+							<td>
+								<%if @course_grade%>
+								<span class="badge <%=grade_badge_class(@course_grade.mean_grade,@course_grade.gradetype)%>"><%=dashboard_grade_parser(course_grade.mean_grade, course_grade.gradetype)%></span>
+								<%else%>
+								-
+								<%end%>
+							</td>
+						</tr>
+						<tr>
+							<th>Desfase con la Plantilla</th>
+							<td><%=page_offset%> Páginas</td>
+						</tr>
+						<tr>
+							<th>Condensado de Notas</th>
+							<td>
+							<%=link_to (image_tag "pdf_icon.png", :size => "30x30"), {:controller => :dashboard, :action => :generate_detailed_course_report, :params => {:courseid => course.moodleid, :institution => institution,:format => "pdf"}}, :target => "_blank" %>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="box-footer">
+	</div>
+</div>

@@ -1,0 +1,37 @@
+<div class="box">
+	<div class="box-header">
+		<h3 class="box-title">Listado de Alumnos</h3>
+	</div>
+	<div class="box-body table-responsive">
+		<table class="table table-hover table-striped">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th style="text-align: center;">Asistencias</th>
+					<th style="text-align: center;">Ausente</th>
+					<th style="text-align: center;">% Asistencia</th>
+					<th style="text-align: center;">Promedio</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%if @students_info.blank?%>
+					<tr>
+						<td colspan="5">No hay información para mostrar</td>
+					</tr>
+				<%else%>
+					<%@students_info.each do |si|%>
+					<tr>
+						<td><%=link_to student_name(si.userid), :controller => :dashboard, :action => :student, :params => {:courseid => si.courseid, :studentid => si.userid}%></td>
+						<td style="text-align: center;"><%=si.present_sessions%></td>
+						<td style="text-align: center;"><%=si.absent_sessions%></td>
+						<td style="text-align: center;"><%=attendance_pct(si)%>%</td>
+						<td style="text-align: center;"><span class="badge <%=grade_badge_class(si.finalgrade,si.gradetype)%>"><%=dashboard_grade_parser(si.finalgrade,si.gradetype)%></span></td>
+					</tr>
+					<%end%>
+				<%end%>
+			</tbody>
+		</table>
+	</div>
+	<div class="box-footer">
+	</div>
+</div>

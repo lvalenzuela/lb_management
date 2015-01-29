@@ -323,28 +323,6 @@ class DashboardController < ApplicationController
 
 	private
 
-	def calc_template_page_offset(registered_pages, courseid, template_sessions)
-		last_page_visited = last_non_zero_record(registered_pages)
-		current_session_number = CourseAttendanceReport.where(:courseid => courseid, :created_at => Date.today).first().current_taken_sessions
-		template_current_session = template_sessions.find_by_session_number(current_session_number)
-		if template_current_session.blank?
-			#el template no esta registrado
-			return last_page_visited
-		else
-			return last_page_visited - template_current_session.page
-		end
-	end
-
-	def last_non_zero_record(record_array)
-		last_record = 0
-		record_array.each do |r|
-			if r != 0
-				last_record = r
-			end
-		end
-		return last_record
-	end
-
 	def course_details_params
 		params.require(:course_details).permit(:moodleid, :coursename, :description, :location_id, :course_type_id, :students_qty, :zoho_product_id, :course_template_id, :mode, :course_level_id, :classroom_matching_id, :start_date)
 	end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150123132909) do
+ActiveRecord::Schema.define(version: 20150129150128) do
 
   create_table "areas", force: true do |t|
     t.string   "areaname"
@@ -378,6 +378,8 @@ ActiveRecord::Schema.define(version: 20150123132909) do
     t.datetime "start_date"
     t.date     "end_date"
     t.integer  "course_template_id"
+    t.integer  "summitid",                            default: 0
+    t.integer  "main_teacher_id"
     t.integer  "total_sessions"
     t.integer  "current_booked_sessions"
     t.integer  "current_taken_sessions"
@@ -389,6 +391,41 @@ ActiveRecord::Schema.define(version: 20150123132909) do
     t.float    "std_dev_grade"
     t.integer  "gradetype"
     t.date     "created_at"
+  end
+
+  create_table "diagnostic_test_answers", force: true do |t|
+    t.integer  "num_resp"
+    t.string   "correcta"
+    t.string   "a"
+    t.string   "b"
+    t.string   "c"
+    t.string   "d"
+    t.string   "e"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "diagnostic_test_categories", force: true do |t|
+    t.string   "nombre"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "diagnostic_test_levels", force: true do |t|
+    t.string   "sigla"
+    t.string   "nombre"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "diagnostic_test_questions", force: true do |t|
+    t.text     "enunciado"
+    t.integer  "category_id"
+    t.integer  "level_id"
+    t.integer  "answer_id"
+    t.integer  "numero"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "diagnostic_tests", force: true do |t|
@@ -869,6 +906,20 @@ ActiveRecord::Schema.define(version: 20150123132909) do
     t.time     "extra_end_time"
     t.date     "start_date"
     t.date     "end_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "user_performance_indicators", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "period_active_courses"
+    t.integer  "approving_on_grades"
+    t.integer  "approving_on_attendance"
+    t.integer  "courses_on_schedule"
+    t.integer  "mean_feedback_score"
+    t.integer  "main_evaluation_score"
+    t.integer  "period"
+    t.integer  "year"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

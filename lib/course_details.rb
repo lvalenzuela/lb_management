@@ -36,4 +36,28 @@ module CourseDetails
 		#Elimina las sessiones de un curso en summit.
 		CourseSession.where(:moodle_course_id => courseid, :commerce_course_id => commerce_course_id).destroy_all
 	end
+
+	#cantidad de páginas de desfase entre las vistas en clase y las estipuladas
+	#en la carta gantt del curso
+	def calc_template_page_offset(registered_pages, courseid, template_sessions)
+		last_page_visited = last_non_zero_record(registered_pages)
+		current_session_number = CourseAttendanceReport.where(:courseid => courseid, :created_at => Date.today).first().current_taken_sessions
+		template_current_session = template_sessions.find_by_session_number(current_session_number)
+		if template_current_session.blank?
+			#el template no esta registrado
+			return last_page_visited
+		else
+			return last_page_visited - template_current_session.page
+		end
+	end
+
+	def last_non_zero_record(record_array)
+		last_record = 0
+		record_array.each do |r|
+			if r != 0
+				last_record = r
+			end
+		end
+		return last_record
+	end
 end

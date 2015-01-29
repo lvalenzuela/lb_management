@@ -150,7 +150,7 @@ class UsersController < ApplicationController
 			@course_grade = CourseGradesReport.where("courseid = #{@course.moodleid} and created_at = curdate() and categoryname = '?' and itemname is null").first()
 			@template_sessions = CourseTemplateSession.where(:course_template_id => @course.course_template_id)
 			#obtencion del contenido de las sesiones
-			@taken_sessions = StudentAttendanceReport.where("courseid = #{@course.moodleid} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
+			@session_content_pages = StudentAttendanceReport.where("courseid = #{params[:courseid]} and created_at = curdate()").group("sessionid").order("sessiondate ASC").map{|s| s.pagenum}
 			@course_observations = CourseObservation.where(:course_id => @course.moodleid)
 			#para generacion de reportes
 			if @students_info.blank?
@@ -158,6 +158,7 @@ class UsersController < ApplicationController
 			else
 				@institution = StudentV.find(@students_info.first().userid).institution
 			end
+			@page_offset = calc_template_page_offset(@session_content_pages, @course.id, @template_sessions)
 		else
 			redirect_to :action => :my_courses
 		end
